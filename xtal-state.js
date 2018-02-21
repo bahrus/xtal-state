@@ -13,48 +13,49 @@
                 },
                 bubbles: true,
                 composed: false
-            } as CustomEventInit);
+            });
             this.dispatchEvent(newEvent);
         }
-        _push: boolean;
-        get setStateAndPush(){
+        get setStateAndPush() {
             return this._push;
         }
         set setStateAndPush(newVal) {
             if (newVal) {
                 this.setAttribute(setStateAndPush, '');
-            } else {
+            }
+            else {
                 this.removeAttribute(setStateAndPush);
             }
         }
-        _replace: boolean;
-        get setStateAndReplace(){
+        get setStateAndReplace() {
             return this._replace;
         }
-        set setStateAndReplace(newVal){
-            if(newVal){
+        set setStateAndReplace(newVal) {
+            if (newVal) {
                 this.setAttribute(setStateAndReplace, '');
-            }else{
+            }
+            else {
                 this.removeAttribute(setStateAndReplace);
             }
         }
-
-        _source: any;
-        get source(){
+        get source() {
             return this._source;
         }
-        set source(newVal){
+        set source(newVal) {
             this._source = newVal;
             this.onPropsChange();
         }
-        onPropsChange(){
-            if(!this._push && !this._replace) return;
-            if(!this.source) return;
-            const newState = window.history.state ? Object.assign({}, window.history.state) :{};
+        onPropsChange() {
+            if (!this._push && !this._replace)
+                return;
+            if (!this.source)
+                return;
+            const newState = window.history.state ? Object.assign({}, window.history.state) : {};
             Object.assign(newState, this.source);
-            if(this._push){
+            if (this._push) {
                 window.history.pushState(newState, '');
-            }else{
+            }
+            else {
                 window.history.replaceState(newState, '');
             }
         }
@@ -62,14 +63,11 @@
             return [setStateAndPush, setStateAndReplace];
         }
         attributeChangedCallback(name, oldValue, newValue) {
-                
             switch (name) {
-
                 case setStateAndPush:
                     this._push = newValue !== null;
                     //this.onPropsChange();
                     break;
-                
                 case setStateAndReplace:
                     this._replace = newValue !== null;
                     break;
@@ -83,17 +81,18 @@
                 this[prop] = value;
             }
         }
-        connectedCallback(){
+        connectedCallback() {
             this._upgradeProperty('setStateAndPush');
             this._upgradeProperty('setStateAndReplace');
             window.addEventListener('popstate', this.updateState); //should I be concerned?:  https://jsperf.com/onpopstate-vs-addeventlistener
         }
-        disconnectedCallback(){
+        disconnectedCallback() {
             window.removeEventListener('popstate', this.updateState);
         }
-        updateState(){
+        updateState() {
             this.state = window.history.state;
         }
     }
     customElements.define('xtal-state', XtalState);
 })();
+//# sourceMappingURL=xtal-state.js.map

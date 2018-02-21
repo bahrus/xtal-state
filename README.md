@@ -24,7 +24,7 @@ With Polymer, one would instead typically use the following for declarative synt
 
 ```
 
-Other template frameworks will follow similar patterns.
+Other template frameworks may follow similar patterns.
 
 ## Applying changes
 
