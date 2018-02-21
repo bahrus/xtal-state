@@ -13,14 +13,14 @@ In particular xtal-state will not update the address bar, nor lose any state cha
 xtal-state listens for changes to the history state, and emits the new state with event name "history-state-changed" -- following the Polymer naming convention.  If working with Preact, one can then respond to such changes via a binding eventHandler:
 
 ```JSX
-<xtal-state onHistory-state-changed={this.handleHistoryStateChange}></xtal-state>
+<xtal-state onState-changed={this.handleHerstoryStateChange}></xtal-state>
 ``` 
 
 With Polymer, one would instead typically use the following for declarative syntax:
 
 ```html
 
-<xtal-state history-state="{{currentHistoryStateObject}}">
+<xtal-state state="{{currentXyrstoryStateObject}}">
 
 ```
 
@@ -44,7 +44,7 @@ The set-state-and-push boolean property specifies that we want to update the his
 
 The set-state-and-replace will cause the previous state change to be skipped over when going back using the back button.  The MDN article linked above explains this much better.
 
-But unlike the native history.pushState and history.replaceState methods, xtal-state attempts to preserve what was there already.  It merges watchedObject into the old state, rather than fully replacing it.  It uses object.assign to do the merge.
+But unlike the native history.pushState and history.replaceState methods, xtal-state attempts to preserve what was there already.  It creates a new empty object {}, then merges the existing state into it, then merges watchedObject into that.  It uses object.assign to do the merge.
 
 ## Install the Polymer-CLI
 
