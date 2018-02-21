@@ -2,11 +2,11 @@
 
 History api web component wrapper
 
-xtal-state is a dependency free web component that provides a thin, declarative wrapper around the [history api](https://developer.mozilla.org/en-US/docs/Web/API/History_API), with a few twists.
+xtal-state is a dependency free, 700B (gzipped and minified) web component that provides a thin, declarative wrapper around the [history api](https://developer.mozilla.org/en-US/docs/Web/API/History_API), with a few twists.
 
 xtal-state recognizes that most modern client-centric web applications use the history api as the foundation for routing.  But the history api can also be viewed as a rudimentary global state management system, including built-in time travel support via the back / forward buttons.  This component is designed to help leverage the latter perk of the history api, while attempting to avoid breaking existing routing solutions.  
 
-In particular xtal-state will not update the address bar, nor lose any state changes made from logic external to xtal-state.
+In particular, xtal-state will not update the address bar, nor lose any state changes made from logic external to xtal-state.
 
 ## Listening for changes
 
@@ -45,6 +45,12 @@ The set-state-and-push boolean property specifies that we want to update the his
 The set-state-and-replace will cause the previous state change to be skipped over when going back using the back button.  The MDN article linked above explains this much better.
 
 But unlike the native history.pushState and history.replaceState methods, xtal-state attempts to preserve what was there already.  It creates a new empty object {}, then merges the existing state into it, then merges watchedObject into that.  It uses object.assign to do the merge.
+
+## Cyclical problems
+
+What if your application is deeply nested, and some action, somewhere, triggers a change to the history.state, which has a complex cascading effect up and down the component hierarchy?  How should we handle the order of actions to the change of history.state?
+
+Basically, can we prevent on history state change from spawning other history state changes?
 
 ## Install the Polymer-CLI
 
