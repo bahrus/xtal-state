@@ -6,11 +6,13 @@
 
     <title>xtal-state demo</title>
 
-    <script src="../../webcomponentsjs/webcomponents-loader.js"></script>
-
+    <script src="../../webcomponentsjs/webcomponents-lite.js"></script>
+    <script async src="https://cdn.jsdelivr.net/npm/xtal-json-merge@0.1.1/build/ES6/json-merge.js"></script>
+    <script async src="https://cdn.jsdelivr.net/npm/xtal-json-editor/build/ES6/xtal-json-editor.js"></script>
+    <script async src="../xtal-state.js"></script>
     <link rel="import" href="../../iron-demo-helpers/demo-pages-shared-styles.html">
     <link rel="import" href="../../iron-demo-helpers/demo-snippet.html">
-    <link rel="import" href="../xtal-state.html">
+    <link rel="import" href="../../polymer/lib/elements/dom-bind.html">
 
     <custom-style>
       <style is="custom-style" include="demo-pages-shared-styles">
@@ -22,7 +24,43 @@
       <h3>Basic xtal-state demo</h3>
       <demo-snippet>
         <template>
-          <xtal-state></xtal-state>
+          <dom-bind>
+            <template>
+                <json-merge watch="[]" result="{{todos}}" delay="1000">
+                    <script type="application/json">
+                            [
+                              [
+                                { "id": 1, "value": "Sweep the floor", "done": false },
+                                { "id": 2, "value": "Prepare fancy salad", "done": true },
+                                { "id": 3, "value": "Get a funky haircut", "done": false }
+                              ]
+                            ]
+                    </script>
+                  </json-merge>
+                  <json-merge watch="[]" result="{{todos}}" delay="4000">
+                    <script type="application/json">
+                        [
+                          [
+                            { "id": 1, "value": "Mop the floor", "done": false },
+                            { "id": 2, "value": "Eat fancy salad", "done": true },
+                            { "id": 3, "value": "Cry about the haircut", "done": false },
+                            { "id": 4, "value": "Watch another celebrity flush their career down the toilet", "done": false }
+                          ]
+                        ]
+                      </script>
+                  </json-merge>
+                  
+                  <xtal-state id="outer"  history-state="{{regurgitatedTodos}}">
+                      <xtal-state id="inner" set-state-and-push source="[[todos]]"></xtal-state>
+                  </xtal-state>
+                  <xtal-json-editor watch="[[regurgitatedTodos]]"></xtal-json-editor>
+                  
+                  <!-- <xtal-json-editor watch="[[regurgitatedTodos]]"  edited-result="{{editedTodos}}"></xtal-json-editor>
+                  <xtal-state set-state-and-push source="[[editedTodos]]" state="{{latestStateHistory}}"></xtal-state>
+                  <textarea>[[latestStateHistory]]</textarea> -->
+            </template>
+          </dom-bind>
+          
         </template>
       </demo-snippet>
     </div>
