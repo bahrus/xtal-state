@@ -17,9 +17,13 @@
             return window.history.state;
         }
         set historyState(newVal) {
+            this.broadastHistoryChange(newVal, false);
+        }
+        broadastHistoryChange(newVal, fromPopEvent) {
             const newEvent = new CustomEvent(historyStateChanged, {
                 detail: {
                     value: newVal,
+                    fromPopEvent: fromPopEvent,
                 },
                 bubbles: true,
                 composed: true,
@@ -103,7 +107,8 @@
             window.addEventListener('popstate', e => {
                 // //debugger;
                 // this.updateState(e, _this);
-                _this.historyState = window.history.state;
+                // _this.historyState = window.history.state; 
+                _this.broadastHistoryChange(_this.historyState, true);
             }); //should I be concerned?:  https://jsperf.com/onpopstate-vs-addeventlistener
             this.addEventListener(historyStateChanged, this.updateState);
             this.historyState = window.history.state;
@@ -114,7 +119,8 @@
         updateState(e) {
             if (e.type === historyStateChanged && this === e.target)
                 return;
-            console.log(this);
+            if (e.detail && e.detail.fromPopEvent)
+                return;
             //this.historyState = Object.assign({}, window.history.state) ;
             this.historyState = window.history.state;
         }

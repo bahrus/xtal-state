@@ -26,7 +26,7 @@
         <template>
           <dom-bind>
             <template>
-                <json-merge watch="[]" result="{{todos}}" delay="1000">
+                <json-merge watch="[]" result="{{todos}}" delay="2000">
                     <script type="application/json">
                             [
                               [
@@ -50,10 +50,10 @@
                       </script>
                   </json-merge>
                   
-                  <xtal-state id="outer"  history-state="{{regurgitatedTodos}}">
+                  <xtal-state id="outer"  history-state="{{historicalTodos}}">
                       <xtal-state id="inner" set-state-and-push source="[[todos]]"></xtal-state>
                   </xtal-state>
-                  <xtal-json-editor watch="[[regurgitatedTodos]]"></xtal-json-editor>
+                  <xtal-json-editor watch="[[historicalTodos]]"></xtal-json-editor>
                   
                   <!-- <xtal-json-editor watch="[[regurgitatedTodos]]"  edited-result="{{editedTodos}}"></xtal-json-editor>
                   <xtal-state set-state-and-push source="[[editedTodos]]" state="{{latestStateHistory}}"></xtal-state>
