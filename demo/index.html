@@ -26,38 +26,15 @@
         <template>
           <dom-bind>
             <template>
-                <json-merge watch="[]" result="{{todos}}" delay="2000">
-                    <script type="application/json">
-                            [
-                              [
-                                { "id": 1, "value": "Sweep the floor", "done": false },
-                                { "id": 2, "value": "Prepare fancy salad", "done": true },
-                                { "id": 3, "value": "Get a funky haircut", "done": false }
-                              ]
-                            ]
-                    </script>
-                  </json-merge>
-                  <json-merge watch="[]" result="{{todos}}" delay="4000">
-                    <script type="application/json">
-                        [
-                          [
-                            { "id": 1, "value": "Mop the floor", "done": false },
-                            { "id": 2, "value": "Eat fancy salad", "done": true },
-                            { "id": 3, "value": "Cry about the haircut", "done": false },
-                            { "id": 4, "value": "Watch another celebrity flush their career down the toilet", "done": false }
-                          ]
-                        ]
-                      </script>
-                  </json-merge>
+                Type text in the text box.  Note how the text is echoed below based on the history object.  Then click the back button.
                   
-                  <xtal-state id="outer"  history-state="{{historicalTodos}}">
-                      <xtal-state id="inner" set-state-and-push source="[[todos]]"></xtal-state>
+                  
+                  <xtal-state id="outer"  history-state="{{historyTest}}">
+                      <xtal-state id="inner" set-state-and-push source="[[test]]"></xtal-state>
                   </xtal-state>
-                  <xtal-json-editor watch="[[historicalTodos]]"></xtal-json-editor>
+                  <input type="text" value="{{test::input}}">
+                  <div>[[historyTest]]</div>
                   
-                  <!-- <xtal-json-editor watch="[[regurgitatedTodos]]"  edited-result="{{editedTodos}}"></xtal-json-editor>
-                  <xtal-state set-state-and-push source="[[editedTodos]]" state="{{latestStateHistory}}"></xtal-state>
-                  <textarea>[[latestStateHistory]]</textarea> -->
             </template>
           </dom-bind>
           

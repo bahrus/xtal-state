@@ -65,8 +65,19 @@
         onPropsChange(){
             if(!this._push && !this._replace) return;
             if(!this.source) return;
-            const newState = window.history.state ? Object.assign({}, window.history.state) :{};
-            Object.assign(newState, this.source);
+            let newState;
+            switch(typeof this.source){
+                case 'object':
+                    newState = window.history.state ? Object.assign({}, window.history.state) :{};
+                    Object.assign(newState, this.source);
+                    break;
+                case 'string':
+                case 'number':
+                    newState = this.source;
+                    break;
+
+            }
+
             if(this._push){
                 //window.history.pushState(newState, 'p' + this._counter, 'p' + this._counter);
                 window.history.pushState(newState,'');
@@ -107,10 +118,12 @@
             this._upgradeProperty('setStateAndReplace');
             const _this = this;
             //window.addEventListener('popstate', this.updateState);
+            //const handler = this.broadastHistoryChange
             window.addEventListener('popstate', e =>{
                 // //debugger;
                 // this.updateState(e, _this);
                // _this.historyState = window.history.state; 
+               //console.log('popstate');
                _this.broadastHistoryChange(_this.historyState, true);
             }); //should I be concerned?:  https://jsperf.com/onpopstate-vs-addeventlistener
             this.addEventListener(historyStateChanged, this.updateState);
