@@ -6,16 +6,16 @@ xtal-state is a dependency free, 850B (gzipped and minified) web component that 
 
 xtal-state recognizes that most modern client-centric web applications use the history api as the foundation for routing.  But the history api can also be viewed as a rudimentary global state management system, including built-in time travel support via the back / forward buttons.  This component is designed to help leverage the latter perk of the history api, while attempting to avoid breaking existing routing solutions.  
 
-In particular, xtal-state will not update the address bar.  xtal-state also strives to minimize the chances of losing history state changes made from logic external to xtal-state.
+xtal-state also strives to minimize the chances of losing history state changes made from logic external to xtal-state.
 
 ## Listening for changes
 
-Currently, the history api doesn't provide a way of subscribing to all history state changes.  The popstate event only fires when a navigation change is made.
+xtal-state listens for all history changes, and it emits an event that local components can bind to. 
 
-But xtal-state provides a way of declaring history state changes, as will see, and when it does, it fires events which travel up the DOM hierarchy in a predictable way.  The name of the event is  "history-state-changed" -- following the Polymer naming convention.  If working with Preact, one can then respond to such changes via a binding eventHandler:
+For example, using a JSX library that can listen for custom events, like Preact, we can have code like:
 
 ```JSX
-<xtal-state onHistory-state-changed={this.handleHerstoryStateChange}></xtal-state>
+<xtal-state onHistory-state-changed={this.makeHerstory}></xtal-state>
 ``` 
 
 With Polymer, one would instead typically use the following for declarative syntax:
@@ -26,7 +26,7 @@ With Polymer, one would instead typically use the following for declarative synt
 
 ```
 
-Other template frameworks may follow similar patterns.
+Other template frameworks follow similar patterns.
 
 ## Applying changes
 
@@ -48,11 +48,6 @@ The set-state-and-replace will cause the previous state change to be skipped ove
 
 But unlike the native history.pushState and history.replaceState methods, xtal-state attempts to preserve what was there already.  If the source property is of type object or array, it creates a new empty object {}, then merges the existing state into it, then merges watchedObject into that.  It uses object.assign to do the merge.
 
-## Global State
-
-Although the history.state object is a global object accessible to all, and although it does trigger some events when the user navigates to different views, the ability to subscribe to all history state change events isn't currently available.
-
-In contrast, any history changes made via this component emits an event, which, barring any intentional blocking, travels all the way up to the body element of the entire DOM tree.  Thus a way for a local component to be aware of history state changes anywhere, not just from its descendants, would be to listen for history-state-changed events on document.body.
 
 ## Install the Polymer-CLI
 
