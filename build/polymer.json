@@ -3,6 +3,7 @@
   "fragments": [],
   "sources": [
     "xtal-state.js",
+    "xtal-state-watch.js",
     "index.html"
   ],
   "extraDependencies": [

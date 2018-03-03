@@ -1,126 +1,85 @@
 (function () {
-    const setStateAndPush = 'set-state-and-push';
-    const setStateAndReplace = 'set-state-and-replace';
-    const historyStateChanged = 'history-state-changed';
-    //const waitToSubscribe = 'wait-to-subscribe';
-    const xtalState = 'xtal-state';
-    const subscribers = [];
-    const originalPushState = history.pushState;
-    const boundPushState = originalPushState.bind(history);
-    history.pushState = function (newState, title, URL) {
-        boundPushState(newState, title, URL);
-        subscribers.forEach(subscriber => {
-            subscriber.historyState = newState;
-        });
-    };
-    const originalReplaceState = history.replaceState;
-    const boundReplaceState = originalReplaceState.bind(history);
-    history.replaceState = function (newState, title, URL) {
-        boundReplaceState(newState, title, URL);
-        subscribers.forEach(subscriber => {
-            subscriber.historyState = newState;
-        });
-    };
-    window.addEventListener('popstate', e => {
-        subscribers.forEach(subscriber => {
-            subscriber.historyState = history.state;
-        });
-    }); //should I be concerned?:  https://jsperf.com/onpopstate-vs-addeventlistener
-    this.addEventListener(historyStateChanged, this.updateState);
+    const tagName = 'xtal-state';
+    if (customElements.get(tagName))
+        return;
+    const make = 'make';
+    const rewrite = 'rewrite';
+    const history = 'history';
     /**
      * `xtal-state`
-     *  Web component wrapper around the history api
+     *  Web component wrapper around the history push/replace api
      *
      * @customElement
      * @polymer
      * @demo demo/index.html
      */
     class XtalState extends HTMLElement {
-        //_state: any;
-        //_counter = 0;
-        get historyState() {
-            return window.history.state;
+        static get properties() {
+            return [make, rewrite, history];
         }
-        set historyState(newVal) {
-            this.notifyHistoryChange(newVal);
+        get make() {
+            return this._make;
         }
-        notifyHistoryChange(newVal) {
-            const newEvent = new CustomEvent(historyStateChanged, {
-                detail: {
-                    value: newVal,
-                },
-                bubbles: true,
-                composed: false,
-            });
-            this.dispatchEvent(newEvent);
-        }
-        get setStateAndPush() {
-            return this._push;
-        }
-        set setStateAndPush(newVal) {
-            if (newVal) {
-                this.setAttribute(setStateAndPush, '');
+        set make(newVal) {
+            if (newVal !== null) {
+                this.setAttribute(make, '');
             }
             else {
-                this.removeAttribute(setStateAndPush);
+                this.removeAttribute(make);
             }
         }
-        get setStateAndReplace() {
-            return this._replace;
+        get rewrite() {
+            return this._rewrite;
         }
-        set setStateAndReplace(newVal) {
+        set rewrite(newVal) {
             if (newVal) {
-                this.setAttribute(setStateAndReplace, '');
+                this.setAttribute(rewrite, '');
             }
             else {
-                this.removeAttribute(setStateAndReplace);
+                this.removeAttribute(rewrite);
             }
         }
-        get source() {
-            return this._source;
+        get history() {
+            return this._history;
         }
-        set source(newVal) {
-            this._source = newVal;
+        set history(newVal) {
+            this._history = newVal;
             this.onInputPropsChange();
         }
         onInputPropsChange() {
-            if (!this._push && !this._replace)
+            if (!this._make && !this._rewrite)
                 return;
-            if (!this.source)
+            if (!this.history)
                 return;
             let newState;
-            switch (typeof this.source) {
+            switch (typeof this.history) {
                 case 'object':
                     newState = window.history.state ? Object.assign({}, window.history.state) : {};
-                    Object.assign(newState, this.source);
+                    Object.assign(newState, this.history);
                     break;
                 case 'string':
                 case 'number':
-                    newState = this.source;
+                    newState = this.history;
                     break;
             }
-            if (this._push) {
-                //window.history.pushState(newState, 'p' + this._counter, 'p' + this._counter);
+            if (this.make) {
                 window.history.pushState(newState, '');
             }
-            else {
-                //window.history.replaceState(newState, 'r' + this._counter, 'r' + this._counter);
+            else if (this.rewrite) {
                 window.history.replaceState(newState, '');
             }
-            //this._counter++;
-            //this.historyState = newState;
         }
         static get observedAttributes() {
-            return [setStateAndPush, setStateAndReplace];
+            const p = XtalState.properties;
+            return [p[0], p[1]];
         }
         attributeChangedCallback(name, oldValue, newValue) {
             switch (name) {
-                case setStateAndPush:
-                    this._push = newValue !== null;
-                    //this.onPropsChange();
+                case make:
+                    this._make = newValue !== null;
                     break;
-                case setStateAndReplace:
-                    this._replace = newValue !== null;
+                case rewrite:
+                    this._rewrite = newValue !== null;
                     break;
             }
             this.onInputPropsChange();
@@ -133,24 +92,9 @@
             }
         }
         connectedCallback() {
-            this._upgradeProperty('setStateAndPush');
-            this._upgradeProperty('setStateAndReplace');
-            this._upgradeProperty('source');
-            // const _this = this;
-            // //window.addEventListener('popstate', this.updateState);
-            // //const handler = this.broadastHistoryChange
-            // window.addEventListener('popstate', e =>{
-            //     // //debugger;
-            //     // this.updateState(e, _this);
-            //    // _this.historyState = window.history.state; 
-            //    //console.log('popstate');
-            //    _this.broadcastHistoryChange(_this.historyState, true);
-            // }); //should I be concerned?:  https://jsperf.com/onpopstate-vs-addeventlistener
-            // this.addEventListener(historyStateChanged, this.updateState);
-            this.historyState = window.history.state;
-            subscribers.push(this);
+            XtalState.properties.forEach(prop => this._upgradeProperty(prop));
         }
     }
-    customElements.define(xtalState, XtalState);
+    customElements.define(tagName, XtalState);
 })();
 //# sourceMappingURL=xtal-state.js.map

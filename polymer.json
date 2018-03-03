@@ -1,6 +1,7 @@
 {
   "sources":[
-    "xtal-state.js"
+    "xtal-state.js",
+    "xtal-state-watch.js"
   ],
   "lint": {
     "rules": [
