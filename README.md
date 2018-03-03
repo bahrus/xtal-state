@@ -15,14 +15,14 @@ xtal-state listens for all history changes, and it emits an event that local com
 For example, using a JSX library that can listen for custom events, like Preact, we can have code like:
 
 ```JSX
-<xtal-state onHistory-state-changed={this.makeHerstory}></xtal-state>
+<xtal-state onHistory-state-changed={this.handleNewsFlash}></xtal-state>
 ``` 
 
 With Polymer, one would instead typically use the following for declarative syntax:
 
 ```html
 
-<xtal-state history-state="{{currentXyrstoryStateObject}}">
+<xtal-state history-state="{{myNarrative}}"></xtal-state>
 
 ```
 
