@@ -93,6 +93,9 @@ export interface IXtalStateProperties {
             this._source = newVal;
             this.onInputPropsChange();
         }
+        updateState(){
+            
+        }
         onInputPropsChange() {
             if (!this._push && !this._replace) return;
             if (!this.source) return;

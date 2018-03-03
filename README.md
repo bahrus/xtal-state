@@ -4,9 +4,7 @@ History api web component wrapper
 
 xtal-state is a dependency free, 850B (gzipped and minified) web component that provides a thin, declarative wrapper around the [history api](https://developer.mozilla.org/en-US/docs/Web/API/History_API), with a few twists.
 
-xtal-state recognizes that most modern client-centric web applications use the history api as the foundation for routing.  But the history api can also be viewed as a rudimentary global state management system, including built-in time travel support via the back / forward buttons.  This component is designed to help leverage the latter perk of the history api, while attempting to avoid breaking existing routing solutions.  
-
-xtal-state also strives to minimize the chances of losing history state changes made from logic external to xtal-state.
+xtal-state recognizes that most modern client-centric web applications use the history api as the foundation for routing.  But the history api can also be viewed as a rudimentary global state management system, including built-in time travel support via the back / forward buttons.  This component is designed to help leverage the latter perk of the history api, while attempting to avoid breaking existing routing solutions..  In a nutshell, xtal-state strives to minimize the chances of losing history state changes made from logic external to xtal-state.
 
 ## Listening for changes
 

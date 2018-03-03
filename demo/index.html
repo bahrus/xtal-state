@@ -28,11 +28,10 @@
             <template>
                 Type text in the text box.  Note how the text is echoed below based on the history object.  Then click the back button.
                   
-                  
-                  <xtal-state id="outer"  history-state="{{historyTest}}"></xtal-state>
-                  <xtal-state id="inner" set-state-and-push source="[[test]]"></xtal-state>
-                  
                   <input type="text" value="{{test::input}}">
+                  <xtal-state  set-state-and-push source="[[test]]"></xtal-state>
+
+                  <xtal-state history-state="{{historyTest}}"></xtal-state>
                   <div>[[historyTest]]</div>
                   
             </template>
