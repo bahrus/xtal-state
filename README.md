@@ -2,50 +2,53 @@
 
 History api web component wrapper
 
-xtal-state is a dependency free, 850B (gzipped and minified) web component that provides a thin, declarative wrapper around the [history api](https://developer.mozilla.org/en-US/docs/Web/API/History_API), with a few twists.
+This solution provides two small, dependency-free custom elements that provide declarative wrappers around the [history api](https://developer.mozilla.org/en-US/docs/Web/API/History_API), with a few twists.
 
-xtal-state recognizes that most modern client-centric web applications use the history api as the foundation for routing.  But the history api can also be viewed as a rudimentary global state management system, including built-in time travel support via the back / forward buttons.  This component is designed to help leverage the latter perk of the history api, while attempting to avoid breaking existing routing solutions..  In a nutshell, xtal-state strives to minimize the chances of losing history state changes made from logic external to xtal-state.
+## Listening for history changes
 
-## Listening for changes
-
-xtal-state listens for all history changes, and it emits an event that local components can bind to. 
+*xtal-state-watch* is a ~650B (minified and gzipped) js custom element that listens for all history changes, and it emits an event that local components can bind to. 
 
 For example, using a JSX library that can listen for custom events, like Preact, we can have code like:
 
 ```JSX
-<xtal-state onHistory-state-changed={this.handleNewsFlash}></xtal-state>
+<xtal-state-watch watch onHistory-changed={this.handleNewsFlash}></xtal-state-watch>
 ``` 
 
 With Polymer, one would instead typically use the following for declarative syntax:
 
 ```html
 
-<xtal-state history-state="{{myNarrative}}"></xtal-state>
+<xtal-state watch history="{{myTruth}}"></xtal-state>
 
 ```
 
 Other template frameworks follow similar patterns.
 
+The boolean attribute/property "history" is there so neighboring elements can ignore history changes when the attribute is removed, or the property is set to false.  This might be useful, for example, if an element is present but hidden.  When watch becomes true, it will notify the neighbors of the new state of history.
+
 ## Applying changes
 
-xtal-state provides three properties that allow the developer to declaratively modify the state.
+*xtal-state* is another custom element, that recognizes that most modern client-centric web applications use the history api as the foundation for routing.  But the history api can also be viewed as a rudimentary global state management system, including built-in time travel support via the back / forward buttons.  This component is designed to help leverage the latter perk of the history api, while attempting to avoid breaking existing routing solutions.  In a nutshell, xtal-state strives to minimize the chances of losing history state changes made from logic external to xtal-state.
+
+xtal-state provides three properties that allow the developer to declaratively modify the global history.state object.
 
 With Polymer syntax, this would look as follows:
 
 ```html
 
-<xtal-state set-state-and-push source="[[watchedObject]]" ></xtal-state>
+<xtal-state make history="[[watchedObject]]" ></xtal-state>
 
-<xtal-state set-state-and-replace source="[[watchedObject]]"></xtal-state>
+<xtal-state rewrite history="[[watchedObject]]"></xtal-state>
 
 ```
 
-The set-state-and-push boolean property specifies that we want to update the history object based on the watchedObject changes, and mark this as a new state in the history.
+The "make" boolean attribute/property specifies that we want to **update** the history object based on the watchedObject changes, and mark this as a new state in the history.
 
-The set-state-and-replace will cause the previous state change to be skipped over when going back using the back button.  The MDN article linked above explains this much better.
+The "rewrite" boolean attribute/property will cause the previous state change to be skipped over when going back using the back button.  The MDN article linked above explains this much better.
 
 But unlike the native history.pushState and history.replaceState methods, xtal-state attempts to preserve what was there already.  If the source property is of type object or array, it creates a new empty object {}, then merges the existing state into it, then merges watchedObject into that.  It uses object.assign to do the merge.
 
+xtal-state is ~660B (minified and gzipped).
 
 ## Install the Polymer-CLI
 
