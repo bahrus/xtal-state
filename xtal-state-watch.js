@@ -77,7 +77,16 @@
         connectedCallback() {
             this._upgradeProperty('watch');
             subscribers.push(this);
-            //this.notify();
+        }
+        disconnectedCallback() {
+            this.delete(subscribers, this);
+        }
+        delete(array, element) {
+            //https://blog.mariusschulz.com/2016/07/16/removing-elements-from-javascript-arrays
+            const index = array.indexOf(element);
+            if (index !== -1) {
+                array.splice(index, 1);
+            }
         }
     }
     customElements.define(tagName, XtalStateWatch);

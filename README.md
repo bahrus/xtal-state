@@ -6,7 +6,7 @@ This solution provides two small, dependency-free custom elements that provide d
 
 ## Listening for history changes
 
-*xtal-state-watch* is a ~650B (minified and gzipped) js custom element that listens for all history changes, and it emits an event that local components can bind to. 
+*xtal-state-watch* is a ~700B (minified and gzipped) js custom element that listens for all history changes, and it emits an event that local components can bind to. 
 
 For example, using a JSX library that can listen for custom events, like Preact, we can have code like:
 
@@ -28,9 +28,9 @@ The boolean attribute/property "history" is there so neighboring elements can ig
 
 ## Applying changes
 
-*xtal-state* is another custom element, that recognizes that most modern client-centric web applications use the history api as the foundation for routing.  But the history api can also be viewed as a rudimentary global state management system, including built-in time travel support via the back / forward buttons.  This component is designed to help leverage the latter perk of the history api, while attempting to avoid breaking existing routing solutions.  In a nutshell, xtal-state strives to minimize the chances of losing history state changes made from logic external to xtal-state.
+*xtal-state-update* is another custom element, that recognizes that most modern client-centric web applications use the history api as the foundation for routing.  But the history api can also be viewed as a rudimentary global state management system, including built-in time travel support via the back / forward buttons.  This component is designed to help leverage the latter perk of the history api, while attempting to avoid breaking existing routing solutions.  In a nutshell, xtal-state-update strives to minimize the chances of losing history state changes made from logic external to xtal-state.
 
-xtal-state provides three properties that allow the developer to declaratively modify the global history.state object.
+xtal-state-update provides three properties that allow the developer to declaratively modify the global history.state object.
 
 With Polymer syntax, this would look as follows:
 
@@ -46,9 +46,9 @@ The "make" boolean attribute/property specifies that we want to **update** the h
 
 The "rewrite" boolean attribute/property will cause the previous state change to be skipped over when going back using the back button.  The MDN article linked above explains this much better.
 
-But unlike the native history.pushState and history.replaceState methods, xtal-state attempts to preserve what was there already.  If the source property is of type object or array, it creates a new empty object {}, then merges the existing state into it, then merges watchedObject into that.  It uses object.assign to do the merge.
+But unlike the native history.pushState and history.replaceState methods, xtal-state attempts to preserve what was there already.  If the source property is of type object or array, it creates a new empty object {}, then merges the existing state into it, then does a [deep, recursive merge](https://davidwalsh.name/javascript-deep-merge) of watchedObject (in this example) into that.  
 
-xtal-state is ~660B (minified and gzipped).
+xtal-state-update is ~888B (minified and gzipped).
 
 ## Install the Polymer-CLI
 

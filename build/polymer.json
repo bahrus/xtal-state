@@ -2,7 +2,7 @@
   "entrypoint": "index.html",
   "fragments": [],
   "sources": [
-    "xtal-state.js",
+    "xtal-state-update.js",
     "xtal-state-watch.js",
     "index.html"
   ],
