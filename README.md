@@ -18,7 +18,7 @@ With Polymer, one would instead typically use the following for declarative synt
 
 ```html
 
-<xtal-state watch history="{{myTruth}}"></xtal-state>
+<xtal-state-watch watch history="{{myTruth}}"></xtal-state-watch>
 
 ```
 
@@ -36,9 +36,9 @@ With Polymer syntax, this would look as follows:
 
 ```html
 
-<xtal-state make history="[[watchedObject]]" ></xtal-state>
+<xtal-state-update make history="[[watchedObject]]" ></xtal-state-update>
 
-<xtal-state rewrite history="[[watchedObject]]"></xtal-state>
+<xtal-state-update rewrite history="[[watchedObject]]"></xtal-state-update>
 
 ```
 

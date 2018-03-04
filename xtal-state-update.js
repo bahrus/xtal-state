@@ -1,52 +1,44 @@
-export interface IXtalStateProperties {
-    make: boolean;
-    rewrite: boolean;
-    history: any;
-}
-
 (function () {
-    const tagName = 'xtal-state';
-    if(customElements.get(tagName)) return;
+    const tagName = 'xtal-state-update';
+    if (customElements.get(tagName))
+        return;
     const make = 'make';
     const rewrite = 'rewrite';
     const history = 'history';
-    
     /**
      * `xtal-state`
-     *  Web component wrapper around the history push/replace api 
+     *  Web component wrapper around the history push/replace api
      *
      * @customElement
      * @polymer
      * @demo demo/index.html
      */
-    class XtalState extends HTMLElement implements IXtalStateProperties {
-        static get properties(){
-            return [make, rewrite, history]
+    class XtalStateUpdate extends HTMLElement {
+        static get properties() {
+            return [make, rewrite, history];
         }
-        _make: boolean;
         get make() {
             return this._make;
         }
         set make(newVal) {
             if (newVal !== null) {
                 this.setAttribute(make, '');
-            } else {
+            }
+            else {
                 this.removeAttribute(make);
             }
         }
-        _rewrite: boolean;
         get rewrite() {
             return this._rewrite;
         }
         set rewrite(newVal) {
             if (newVal) {
                 this.setAttribute(rewrite, '');
-            } else {
+            }
+            else {
                 this.removeAttribute(rewrite);
             }
         }
-
-        _history: any;
         get history() {
             return this._history;
         }
@@ -54,10 +46,11 @@ export interface IXtalStateProperties {
             this._history = newVal;
             this.onInputPropsChange();
         }
-
         onInputPropsChange() {
-            if (!this._make && !this._rewrite) return;
-            if (!this.history) return;
+            if (!this._make && !this._rewrite)
+                return;
+            if (!this.history)
+                return;
             let newState;
             switch (typeof this.history) {
                 case 'object':
@@ -68,26 +61,23 @@ export interface IXtalStateProperties {
                 case 'number':
                     newState = this.history;
                     break;
-
             }
             if (this.make) {
                 window.history.pushState(newState, '');
-            } else if(this.rewrite) {
+            }
+            else if (this.rewrite) {
                 window.history.replaceState(newState, '');
             }
         }
         static get observedAttributes() {
-            const p = XtalState.properties;
+            const p = XtalStateUpdate.properties;
             return [p[0], p[1]];
         }
         attributeChangedCallback(name, oldValue, newValue) {
-
             switch (name) {
-
                 case make:
                     this._make = newValue !== null;
                     break;
-
                 case rewrite:
                     this._rewrite = newValue !== null;
                     break;
@@ -102,8 +92,9 @@ export interface IXtalStateProperties {
             }
         }
         connectedCallback() {
-            XtalState.properties.forEach(prop => this._upgradeProperty(prop));
+            XtalStateUpdate.properties.forEach(prop => this._upgradeProperty(prop));
         }
     }
-    customElements.define(tagName, XtalState);
+    customElements.define(tagName, XtalStateUpdate);
 })();
+//# sourceMappingURL=xtal-state-update.js.map
