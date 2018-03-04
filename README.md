@@ -26,6 +26,16 @@ Other template frameworks follow similar patterns.
 
 The boolean attribute/property "watch" is there so neighboring elements can ignore history changes when the attribute is removed, or the property is set to false.  This might be useful, for example, if an element is present but hidden.  When watch becomes true, it will notify the neighbors of the new state of history.
 
+## Departmentalizing [TODO]
+
+It's likely that most components won't be interested in the entire state object, assuming it is used for managing complex state in a large complex application.  Large numbers of components subscribing to every history change event, then, could be problematic -- in short we have a scalability problem.  We could give up, and just say use MobX, or Redux in such cases, but instead we shall stick our fingers into the fan and try a few tweaks that might allow us to hold such solutions at bay.
+
+The first such tweak is to specify only a certain part of the history which is of interest.  We enhance the markup:
+
+```html
+<xtal-state-watch watch history="{{policeBlotter}}" where-path="World.UnitedStates.Texas.Montgomery.CutAndShoot"></xtal-state-watch>
+``` 
+
 ## Applying changes
 
 *xtal-state-update* is another custom element, that recognizes that most modern client-centric web applications use the history api as the foundation for routing.  But the history api can also be viewed as a rudimentary global state management system, including built-in time travel support via the back / forward buttons.  This component is designed to help leverage the latter perk of the history api, while attempting to avoid breaking existing routing solutions.  In a nutshell, xtal-state-update strives to minimize the chances of losing history state changes made from logic external to xtal-state.
@@ -58,9 +68,11 @@ Unfortunately, our [friends at Microsoft](https://www.computerworld.com/article/
 
 For an application of any complexity, then, sharing the URL to a particular state would need to be accompanied by some sort of storage.
 
-xtal-state-transcribe helps with this.  xtal-state-transcribe recognizes that most modern client-centric web applications have abandoned the location.hash portion of the URL, in favor of location.href.  This opens up the location.hash as an area we use to indicate location where the storage of the full (or subset of) the current history is deposited.
+xtal-state-transcribe helps with this.  xtal-state-transcribe recognizes that most modern client-centric web applications have abandoned the location.hash portion of the URL, in favor of location.href.  This opens up the location.hash as an area we can use to indicate location where the storage of the full (or subset of) the current history is deposited.
 
 But where to deposit it?  There are lots of options, of course.  One option that requires no token or account is [myjson.com](http://myjson.com/) (maximum size unknown.)
+
+One could also imagine scenarios where application developers want to 
 
 ```html
 <xtal-state-transcribe deposit-when-fn transcribe-fn ></xtal-state-transcripe>
