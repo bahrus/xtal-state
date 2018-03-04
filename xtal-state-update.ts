@@ -1,4 +1,4 @@
-export interface IXtalStateProperties {
+export interface IXtalStateUpdateProperties {
     make: boolean;
     rewrite: boolean;
     history: any;
@@ -19,7 +19,7 @@ export interface IXtalStateProperties {
      * @polymer
      * @demo demo/index.html
      */
-    class XtalStateUpdate extends HTMLElement implements IXtalStateProperties {
+    class XtalStateUpdate extends HTMLElement implements IXtalStateUpdateProperties {
         static get properties() {
             return [make, rewrite, history]
         }

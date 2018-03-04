@@ -24,7 +24,7 @@ With Polymer, one would instead typically use the following for declarative synt
 
 Other template frameworks follow similar patterns.
 
-The boolean attribute/property "history" is there so neighboring elements can ignore history changes when the attribute is removed, or the property is set to false.  This might be useful, for example, if an element is present but hidden.  When watch becomes true, it will notify the neighbors of the new state of history.
+The boolean attribute/property "watch" is there so neighboring elements can ignore history changes when the attribute is removed, or the property is set to false.  This might be useful, for example, if an element is present but hidden.  When watch becomes true, it will notify the neighbors of the new state of history.
 
 ## Applying changes
 
