@@ -29,7 +29,7 @@
     "postinstall": "node -e \"try { require('fs').symlinkSync(require('path').resolve('node_modules/@bower_components'), 'bower_components', 'junction') } catch (e) { }\""
   },
   "name": "xtal-state",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "Web component wrapper around the history api",
   "main": "xtal-state.js",
   "repository": "https://github.com/bahrus/xtal-state",
