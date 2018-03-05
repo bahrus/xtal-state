@@ -26,7 +26,7 @@ Other template frameworks follow similar patterns.
 
 The boolean attribute/property "watch" is there so neighboring elements can ignore history changes when the attribute is removed, or the property is set to false.  This might be useful, for example, if an element is present but hidden.  When watch becomes true, it will notify the neighbors of the new state of history.
 
-## Departmentalizing [TODO]
+## Departmentalizing, Part I [TODO]
 
 It's likely that most components won't be interested in the entire state object, assuming it is used for managing complex state in a large complex application.  Large numbers of components subscribing to every history change event, then, could be problematic -- in short we have a scalability problem.  We could give up, and just say use MobX, or Redux in such cases, but instead we shall stick our fingers into the fan and try a few tweaks that might allow us to hold such solutions at bay.
 
@@ -59,6 +59,12 @@ The "rewrite" boolean attribute/property will cause the previous state change to
 But unlike the native history.pushState and history.replaceState methods, xtal-state-update attempts to preserve what was there already.  If the source property is of type object or array, it creates a new empty object {}, then merges the existing state into it, then does a [deep, recursive merge](https://davidwalsh.name/javascript-deep-merge) of watchedObject (in this example) into that.  
 
 xtal-state-update is ~888B (minified and gzipped).
+
+## Departmentalizing Part II [TODO]
+
+To specify that the history path we want to write to is actually a sub path of the root object, we also use attribute where-path:
+
+<xtal-state-update make history="[[policeBlotter]]"  where-path="World.UnitedStates.Texas.Montgomery.CutAndShoot"></xtal-state-update>
 
 ## Recording history [TODO]
 
