@@ -2,6 +2,7 @@ export interface IXtalStateUpdateProperties {
     make: boolean;
     rewrite: boolean;
     history: any;
+    wherePath: string;
 }
 
 (function () {
@@ -10,7 +11,7 @@ export interface IXtalStateUpdateProperties {
     const make = 'make';
     const rewrite = 'rewrite';
     const history = 'history';
-
+    const wherePath = 'where-path';
     /**
      * `xtal-state-update`
      *  Web component wrapper around the history push/replace api 
@@ -55,21 +56,40 @@ export interface IXtalStateUpdateProperties {
             this.onInputPropsChange();
         }
 
+        get nsHistory(){
+            if(!this._wherePath || !this._history) return this._history;
+            const returnObj = {};
+            let currPath = returnObj;
+            this._wherePath.split('.').forEach(path =>{
+                currPath[path] = {};
+                currPath = currPath[path];
+            })
+            Object.assign(currPath, this._history);
+            return returnObj;
+        }
+        _wherePath: string;
+        get wherePath(){return this._wherePath;}
+        set wherePath(val){
+            this.setAttribute(wherePath, val);
+        }
+        static _lastPath: string;
         onInputPropsChange() {
             if (!this._make && !this._rewrite) return;
             if (!this.history) return;
             let newState;
-            switch (typeof this.history) {
+            let history = this.nsHistory;
+            switch (typeof history) {
                 case 'object':
                     newState = window.history.state ? Object.assign({}, window.history.state) : {};
-                    this.mergeDeep(newState, this.history);
+                    this.mergeDeep(newState, history);
                     break;
                 case 'string':
                 case 'number':
-                    newState = this.history;
+                    newState = history;
                     break;
 
             }
+            XtalStateUpdate._lastPath = this._wherePath;
             if (this.make) {
                 window.history.pushState(newState, '');
             } else if (this.rewrite) {
