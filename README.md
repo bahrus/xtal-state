@@ -33,7 +33,10 @@ It's likely that most components won't be interested in the entire state object,
 The first such tweak is to specify only a certain part of the history which is of interest.  We enhance the markup:
 
 ```html
-<xtal-state-watch watch history="{{policeBlotter}}" where-path="World.UnitedStates.Texas.Montgomery.CutAndShoot"></xtal-state-watch>
+<xtal-state-watch 
+    watch history="{{policeBlotter}}" 
+    where-path="MilkyWay.Earth.UnitedStates.Texas.Montgomery.CutAndShoot">
+</xtal-state-watch>
 ``` 
 
 ## Applying changes
@@ -64,7 +67,13 @@ xtal-state-update is ~888B (minified and gzipped).
 
 To specify that the history path we want to write to is actually a sub path of the root object, we also use attribute where-path:
 
-<xtal-state-update make history="[[policeBlotter]]"  where-path="World.UnitedStates.Texas.Montgomery.CutAndShoot"></xtal-state-update>
+<xtal-state-update make history="[[policeBlotter]]"  
+    where-path="MilkyWay.Earth.UnitedStates.Texas.Montgomery.CutAndShoot">
+</xtal-state-update>
+
+If the history state is null, or doesn't have a nested object hierarchy matching the long path specified above, xtal-state-update will first create such an object hierarchy before inserting the policeBlotter object.
+
+xtal-state-update will not the path being updated.  xtal-state-watch components will ignore history updates if their where-path is not in alignment with thewhere-path of xtalstate-update.
 
 ## Recording history [TODO]
 

@@ -1,11 +1,13 @@
 export interface IXtalStateWatchProperties {
     history: any;
     watch: any;
+    wherePath: string;
 }
 (function () {
     const tagName = 'xtal-state-watch';
     if(customElements.get(tagName)) return;
     const historyChanged = 'history-changed';
+    const wherePath = 'where-path';
     const watch = 'watch';
     const subscribers: XtalStateWatch[] = [];
     const originalPushState = history.pushState;
@@ -45,9 +47,15 @@ export interface IXtalStateWatchProperties {
                 this.removeAttribute(watch);
             }
         }
+        _wherePath: string;
+        get wherePath(){return this._wherePath;}
+        set wherePath(val){
+            this.setAttribute(wherePath, val);
+        }
+        
         notify(newVal?: any){
+            if(!this._watch) return;
             if(!newVal) newVal = history.state;
-
             const newEvent = new CustomEvent(historyChanged, {
                 detail: {
                     value: window.history.state,
@@ -66,14 +74,18 @@ export interface IXtalStateWatchProperties {
             }
         }
         static get observedAttributes() {
-            return [watch];
+            return [watch, wherePath];
         }
         attributeChangedCallback(name, oldValue, newValue) {
 
             switch (name) {
                 case watch:
                     this._watch = newValue !== null;
-                    if(this._watch) this.notify();
+                    this.notify();
+                    break;
+                case wherePath:
+                    this._wherePath = newValue;
+                    this.notify();
                     break;
             }
         }
