@@ -26,7 +26,7 @@ Other template frameworks follow similar patterns.
 
 The boolean attribute/property "watch" is there so neighboring elements can ignore history changes when the attribute is removed, or the property is set to false.  This might be useful, for example, if an element is present but hidden.  When watch becomes true, it will notify the neighbors of the new state of history.
 
-## Departmentalizing, Part I [TODO]
+## Departmentalizing, Part I
 
 It's likely that most components won't be interested in the entire state object, assuming it is used for managing complex state in a large complex application.  Large numbers of components subscribing to every history change event, then, could be problematic -- in short we have a scalability problem.  We could give up, and just say use MobX, or Redux in such cases, but instead we shall stick our fingers into the fan and try a few tweaks that might allow us to hold such solutions at bay.
 
@@ -73,7 +73,7 @@ To specify that the history path we want to write to is actually a sub path of t
 
 If the history state is null, or doesn't have a nested object hierarchy matching the long path specified above, xtal-state-update will first create such an object hierarchy before inserting the policeBlotter object.
 
-xtal-state-update will not the path being updated.  xtal-state-watch components will ignore history updates if their where-path is not in alignment with thewhere-path of xtalstate-update.
+xtal-state-update will not the path being updated.  xtal-state-watch components will ignore history updates if their where-path is not in alignment with thewhere-path of xtal-state-update.
 
 ## Recording history [TODO]
 

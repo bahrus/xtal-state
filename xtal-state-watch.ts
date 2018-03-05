@@ -33,10 +33,10 @@ export interface IXtalStateWatchProperties {
     });
     class XtalStateWatch extends HTMLElement implements IXtalStateWatchProperties{
         get history() {
-            return window.history.state;
+            return this.filter();
         }
         set history(newVal) {
-            if(this.watch) this.notify(newVal);
+            if(this.watch) this.notify();
         }
         _watch: boolean;
         get watch(){return this._watch;}
@@ -52,13 +52,24 @@ export interface IXtalStateWatchProperties {
         set wherePath(val){
             this.setAttribute(wherePath, val);
         }
+
+        filter(){
+            if(!this._wherePath) return window.history.state;
+            let obj = window.history.state;
+            const paths = this._wherePath.split('.');
+            let idx = 0;
+            while(obj){
+                obj = obj[paths[idx++]];
+            }
+            return obj;
+        }
         
-        notify(newVal?: any){
+        notify(){
             if(!this._watch) return;
-            if(!newVal) newVal = history.state;
+            const newVal = this.filter();
             const newEvent = new CustomEvent(historyChanged, {
                 detail: {
-                    value: window.history.state,
+                    value: newVal,
                 },
                 bubbles: true,
                 composed: false,

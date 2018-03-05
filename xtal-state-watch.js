@@ -3,6 +3,7 @@
     if (customElements.get(tagName))
         return;
     const historyChanged = 'history-changed';
+    const wherePath = 'where-path';
     const watch = 'watch';
     const subscribers = [];
     const originalPushState = history.pushState;
@@ -28,11 +29,11 @@
     });
     class XtalStateWatch extends HTMLElement {
         get history() {
-            return window.history.state;
+            return this.filter();
         }
         set history(newVal) {
             if (this.watch)
-                this.notify(newVal);
+                this.notify();
         }
         get watch() { return this._watch; }
         set watch(newVal) {
@@ -43,12 +44,28 @@
                 this.removeAttribute(watch);
             }
         }
-        notify(newVal) {
-            if (!newVal)
-                newVal = history.state;
+        get wherePath() { return this._wherePath; }
+        set wherePath(val) {
+            this.setAttribute(wherePath, val);
+        }
+        filter() {
+            if (!this._wherePath)
+                return window.history.state;
+            let obj = window.history.state;
+            const paths = this._wherePath.split('.');
+            let idx = 0;
+            while (obj) {
+                obj = obj[paths[idx++]];
+            }
+            return obj;
+        }
+        notify() {
+            if (!this._watch)
+                return;
+            const newVal = this.filter();
             const newEvent = new CustomEvent(historyChanged, {
                 detail: {
-                    value: window.history.state,
+                    value: newVal,
                 },
                 bubbles: true,
                 composed: false,
@@ -63,14 +80,17 @@
             }
         }
         static get observedAttributes() {
-            return [watch];
+            return [watch, wherePath];
         }
         attributeChangedCallback(name, oldValue, newValue) {
             switch (name) {
                 case watch:
                     this._watch = newValue !== null;
-                    if (this._watch)
-                        this.notify();
+                    this.notify();
+                    break;
+                case wherePath:
+                    this._wherePath = newValue;
+                    this.notify();
                     break;
             }
         }
