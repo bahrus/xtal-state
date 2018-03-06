@@ -28,7 +28,7 @@ The boolean attribute/property "watch" is there so neighboring elements can igno
 
 ## Departmentalizing, Part I
 
-It's likely that most components won't be interested in the entire state object, assuming it is used for managing complex state in a large complex application.  Large numbers of components subscribing to every history change event, then, could be problematic -- in short we have a scalability problem.  We could give up, and just say use MobX, or Redux in such cases, but instead we shall stick our fingers into the fan and try a few tweaks that might allow us to hold such solutions at bay.
+It's likely that most components won't be interested in the entire state object, assuming it is used for managing complex state in a large complex application.  Large numbers of components subscribing to every history change event, then, could be problematic -- in short we have a scalability problem.  We employ a few tweaks that might allow us to keep more complex, but comprehensive solutions at bay.
 
 The first such tweak is to specify only a certain part of the history which is of interest.  We enhance the markup:
 

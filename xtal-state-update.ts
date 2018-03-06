@@ -22,7 +22,7 @@ export interface IXtalStateUpdateProperties {
      */
     class XtalStateUpdate extends HTMLElement implements IXtalStateUpdateProperties {
         static get properties() {
-            return [make, rewrite, history]
+            return [make, rewrite, wherePath, history ]
         }
         _make: boolean;
         get make() {
@@ -56,31 +56,50 @@ export interface IXtalStateUpdateProperties {
             this.onInputPropsChange();
         }
 
-        get nsHistory(){
-            if(!this._wherePath || !this._history) return this._history;
+        get nsHistory() {
+            if (!this._wherePath || !this._history) return this._history;
             const returnObj = {};
             let currPath = returnObj;
-            this._wherePath.split('.').forEach(path =>{
-                currPath[path] = {};
+            const tokens = this._wherePath.split('.');
+            const len = tokens.length - 1;
+            let count = 0;
+            tokens.forEach(path => {
+                currPath[path] = count === len ? this._history : {};
                 currPath = currPath[path];
-            })
-            Object.assign(currPath, this._history);
+                count++;
+            });
+            //debugger;
+            //Object.assign(currPath, this._history);
+            //this.applyObject(currPath, this._history);
             return returnObj;
         }
+        // applyObject(target: any, source: any){
+        //     switch (typeof source) {
+        //         case 'object':
+        //             this.mergeDeep(target, history);
+        //             break;
+        //         case 'string':
+        //         case 'number':
+        //             target = history;
+        //             break;
+
+        //     }
+        //     return target;
+        // }
         _wherePath: string;
-        get wherePath(){return this._wherePath;}
-        set wherePath(val){
+        get wherePath() { return this._wherePath; }
+        set wherePath(val) {
             this.setAttribute(wherePath, val);
         }
         static _lastPath: string;
         onInputPropsChange() {
             if (!this._make && !this._rewrite) return;
             if (!this.history) return;
-            let newState;
+            let newState = window.history.state ? Object.assign({}, window.history.state) : {};
             let history = this.nsHistory;
+            //newState = this.applyObject(newState, history);
             switch (typeof history) {
                 case 'object':
-                    newState = window.history.state ? Object.assign({}, window.history.state) : {};
                     this.mergeDeep(newState, history);
                     break;
                 case 'string':
@@ -98,7 +117,7 @@ export interface IXtalStateUpdateProperties {
         }
         static get observedAttributes() {
             const p = XtalStateUpdate.properties;
-            return [p[0], p[1]];
+            return [p[0], p[1], p[2]];
         }
         attributeChangedCallback(name, oldValue, newValue) {
 
@@ -110,6 +129,10 @@ export interface IXtalStateUpdateProperties {
 
                 case rewrite:
                     this._rewrite = newValue !== null;
+                    break;
+
+                case wherePath:
+                    this._wherePath = newValue;
                     break;
             }
             this.onInputPropsChange();

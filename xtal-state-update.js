@@ -16,7 +16,7 @@
      */
     class XtalStateUpdate extends HTMLElement {
         static get properties() {
-            return [make, rewrite, history];
+            return [make, rewrite, wherePath, history];
         }
         get make() {
             return this._make;
@@ -52,11 +52,17 @@
                 return this._history;
             const returnObj = {};
             let currPath = returnObj;
-            this._wherePath.split('.').forEach(path => {
-                currPath[path] = {};
+            const tokens = this._wherePath.split('.');
+            const len = tokens.length - 1;
+            let count = 0;
+            tokens.forEach(path => {
+                currPath[path] = count === len ? this._history : {};
                 currPath = currPath[path];
+                count++;
             });
-            Object.assign(currPath, this._history);
+            //debugger;
+            //Object.assign(currPath, this._history);
+            //this.applyObject(currPath, this._history);
             return returnObj;
         }
         get wherePath() { return this._wherePath; }
@@ -68,11 +74,11 @@
                 return;
             if (!this.history)
                 return;
-            let newState;
+            let newState = window.history.state ? Object.assign({}, window.history.state) : {};
             let history = this.nsHistory;
+            //newState = this.applyObject(newState, history);
             switch (typeof history) {
                 case 'object':
-                    newState = window.history.state ? Object.assign({}, window.history.state) : {};
                     this.mergeDeep(newState, history);
                     break;
                 case 'string':
@@ -90,7 +96,7 @@
         }
         static get observedAttributes() {
             const p = XtalStateUpdate.properties;
-            return [p[0], p[1]];
+            return [p[0], p[1], p[2]];
         }
         attributeChangedCallback(name, oldValue, newValue) {
             switch (name) {
@@ -99,6 +105,9 @@
                     break;
                 case rewrite:
                     this._rewrite = newValue !== null;
+                    break;
+                case wherePath:
+                    this._wherePath = newValue;
                     break;
             }
             this.onInputPropsChange();

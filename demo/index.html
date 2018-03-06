@@ -30,9 +30,9 @@
                 Type text in the text box.  Note how the text is echoed below based on the history object.  Then click the back button.
                   
                   <input type="text" value="{{characters::input}}">
-                  <xtal-state-update  make history="[[characters]]"></xtal-state-update>
+                  <xtal-state-update  make history="[[characters]]" where-path="MilkyWay.Earth.UnitedStates.Texas.Montgomery.CutAndShoot"></xtal-state-update>
 
-                  <xtal-state-watch watch history="{{currentHistory}}"></xtal-state-watch>
+                  <xtal-state-watch watch history="{{currentHistory}}" where-path="MilkyWay.Earth.UnitedStates.Texas.Montgomery.CutAndShoot"></xtal-state-watch>
                   <div>[[currentHistory]]</div>
                   
             </template>

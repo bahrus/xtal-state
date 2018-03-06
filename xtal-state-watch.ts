@@ -58,7 +58,8 @@ export interface IXtalStateWatchProperties {
             let obj = window.history.state;
             const paths = this._wherePath.split('.');
             let idx = 0;
-            while(obj){
+            const len = paths.length;
+            while(obj && idx < len){
                 obj = obj[paths[idx++]];
             }
             return obj;
