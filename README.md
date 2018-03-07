@@ -63,31 +63,37 @@ But unlike the native history.pushState and history.replaceState methods, xtal-s
 
 xtal-state-update is ~888B (minified and gzipped).
 
-## Departmentalizing Part II [TODO]
+## Departmentalizing Part II
 
 To specify that the history path we want to write to is actually a sub path of the root object, we also use attribute where-path:
 
+```html
 <xtal-state-update make history="[[policeBlotter]]"  
     where-path="MilkyWay.Earth.UnitedStates.Texas.Montgomery.CutAndShoot">
 </xtal-state-update>
+```
 
-If the history state is null, or doesn't have a nested object hierarchy matching the long path specified above, xtal-state-update will first create such an object hierarchy before inserting the policeBlotter object.
+If the history state is null, or doesn't have a nested object hierarchy matching the long path specified above, xtal-state-update will first create such an object hierarchy before inserting the policeBlotter object without losing the state created elsewhere.
 
-xtal-state-update will not the path being updated.  xtal-state-watch components will ignore history updates if their where-path is not in alignment with thewhere-path of xtal-state-update.
+xtal-state-update will note the path being updated.  xtal-state-watch components will ignore history updates if their where-path is not in alignment with the where-path of xtal-state-update.
 
 ## Recording history [TODO]
 
-The benefit of updating the window.location object (location.href and/or location.hash) as the user interacts with a web site is that it allows the user to copy and paste the url corresponding to what they are seeing, and communicate it via email, text message etc.  Others can then open the application and zoom right to the place the user was excited to convey.  The [webshare api](https://developers.google.com/web/updates/2016/09/navigator-share) also rests on sending a url, and would benefit in the same way.  Search results is another example.    This was the original intention of bookmarks, and is used, for example, when we want to send the line number of a code snippet from github.  Speaking of bookmarks, aside from sharing with others a user may want to bookmark different parts of an application, so jumping to that part of the application is more convenient.
+The benefit of updating the window.location object (location.href and/or location.hash) as the user interacts with a web site is that it allows the user to copy and paste the url corresponding to what they are seeing, and communicate it via email, text message etc.  Others can then open the application and zoom right to the place the user was excited to convey.  The [webshare api](https://developers.google.com/web/updates/2016/09/navigator-share) also rests on sending a url, and would benefit in the same way.  Search results is another example.    This was the original intention of bookmarks, and is used, for example, when we want to send the line number of a code snippet from github.  Speaking of bookmarks, aside from sharing with others, a user may want to bookmark different parts of an application, so jumping to that part of the application is more convenient.
 
 Unfortunately, our [friends at Microsoft](https://www.computerworld.com/article/2534312/operating-systems/the--640k--quote-won-t-go-away----but-did-gates-really-say-it-.html) have determined that [2k ought to be enough for anybody](https://stackoverflow.com/questions/16247162/max-size-of-location-hash-in-browser).
 
-For an application of any complexity, then, sharing the URL to a particular state would need to be accompanied by some sort of storage.
+For an application with a large amount of complexity, then, sharing the URL to a particular state of an application would need to be accompanied by some sort of external storage on these browsers.  While this can easily work within the web page via user defined share/bookmark buttons, it is quite problematic to rely on this technique when users are accessing the site through a traditional browser (as opposed to a PWA), with their native bookmarking / add to homescreen / sharing utilities.  For privacy reasons, the web application won't be privy to such interactions.  The only way it would work would be to persist the history object to the external store with every change.  That could present performance degradation.
 
-xtal-state-transcribe helps with this.  xtal-state-transcribe recognizes that most modern client-centric web applications have abandoned the location.hash portion of the URL, in favor of location.href.  This opens up the location.hash as an area we can use to indicate location where the storage of the full (or subset of) the current history is deposited.
 
-But where to deposit it?  There are lots of options, of course.  One option that requires no token or account is [myjson.com](http://myjson.com/) (maximum size unknown.)
 
-One could also imagine scenarios where application developers want to 
+xtal-state-transcribe helps with this.  xtal-state-transcribe recognizes that most modern client-centric web applications have abandoned the location.hash portion of the URL, in favor of location.href.  This opens up the location.hash as an area we can use to indicate location where the storage of the full (or a subset of) the current history is deposited.
+
+But where to deposit it?  There are lots of options, of course.  One option that requires no token or account is [myjson.com](http://myjson.com/) (maximum size unknown.)   
+
+One could also imagine scenarios where application developers want to "freeze" certain views as part of their testing regiment, or areas where they are focusing on development.  In this case, files local to the web site itself would be sufficient.
+
+Other places
 
 ```html
 <xtal-state-transcribe deposit-when-fn transcribe-fn ></xtal-state-transcripe>
