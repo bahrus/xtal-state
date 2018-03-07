@@ -39,6 +39,24 @@ The first such tweak is to specify only a certain part of the history which is o
 </xtal-state-watch>
 ``` 
 
+## Support for reference pointers, part I [TODO]
+
+Suppose we want to use the history to reference a large object or a  function.  In the latter case, functions can't be stored in the history.state because it doesn't support cloning.  And the size of the history state is also limited (to 640K, Bill Gates's favorite number).
+```JavaScript
+    [{
+        caseNumber: 0102945
+        "details-fn":"(ce,)=>footnotes.getDetails"
+    }]
+```
+```html
+<xtal-state-watch watch history="{{policeBlotter}}"
+    where-path="MilkyWay.Earth.UnitedStates.Texas.Montgomery.CutAndShoot"
+    has-refs
+    footnotes="[[courtCaseIndexLookup]]"
+>
+</xtal-state-watch>
+```
+
 ## Applying changes
 
 *xtal-state-update* is another custom element, that recognizes that most modern client-centric web applications use the history api as the foundation for routing.  But the history api can also be viewed as a rudimentary global state management system, including built-in time travel support via the back / forward buttons.  This component is designed to help leverage the latter perk of the history api, while attempting to avoid breaking existing routing solutions.  In a nutshell, xtal-state-update strives to minimize the chances of losing history state changes made from logic external to xtal-state.
@@ -83,9 +101,11 @@ The benefit of updating the window.location object (location.href and/or locatio
 
 Unfortunately, our [friends at Microsoft](https://www.computerworld.com/article/2534312/operating-systems/the--640k--quote-won-t-go-away----but-did-gates-really-say-it-.html) have determined that [2k ought to be enough for anybody](https://stackoverflow.com/questions/16247162/max-size-of-location-hash-in-browser).
 
-For an application with a large amount of complexity, then, sharing the URL to a particular state of an application would need to be accompanied by some sort of external storage on these browsers.  While this can easily work within the web page via user defined share/bookmark buttons, it is quite problematic to rely on this technique when users are accessing the site through a traditional browser (as opposed to a PWA), with their native bookmarking / add to homescreen / sharing utilities.  For privacy reasons, the web application won't be privy to such interactions.  The only way it would work would be to persist the history object to the external store with every change.  That could present performance degradation.
+The smallest maximum size of the history api appears to be 640k characters (ironically).  Here Microsoft has been more genererous.
 
+For an application with a large amount of complexity, then, sharing the URL to a particular state of an application might need to be accompanied by some sort of external storage on these browsers.  While storing such objects could easily be triggered on demand from within a web page, via user defined share/bookmark buttons, it is quite problematic to rely on this technique when users are accessing the site through a traditional browser (as opposed to a PWA), with their native bookmarking / add to homescreen / sharing utilities.  For privacy reasons, the web application won't be privy to such interactions.  The only way it would work would be to persist the history object to the external store with every change.  That could result in performance degradation, especially if the entire serialized object is sent every time.
 
+I'm of the view that users of powerful browsers shouldn't be collectively punished due to the parsimonious behavior of one browser.
 
 xtal-state-transcribe helps with this.  xtal-state-transcribe recognizes that most modern client-centric web applications have abandoned the location.hash portion of the URL, in favor of location.href.  This opens up the location.hash as an area we can use to indicate location where the storage of the full (or a subset of) the current history is deposited.
 
