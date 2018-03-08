@@ -4,6 +4,42 @@ History api web component wrapper
 
 This solution provides two small, dependency-free custom elements that provide declarative wrappers around the [history api](https://developer.mozilla.org/en-US/docs/Web/API/History_API), with a few twists.
 
+## Problem Statement
+
+A unit of the CIA, led by Agent Sarah Walker, is investigating a series of mysterious disappearances of prominent CEO's, artists, and scientists from around the world, each of them leaving behind the same note:
+
+>Who is Soorjo Alexander William Langobard Oliphant Chuckerbutty III?
+
+Oliphant Chuckerbutty (senior) was a cinema organist / composer, best known for his piece "Pæan," but what did that have to do with anything?
+
+Agent Walker sends recent recruit Chuck Bartowski to visit Chuckerbutty's tombstone in Paddington, in search of clues.
+
+Chuck is a lanky, earnest looking twenty-something with tangled, somewhat curly dark hair.  He works at Buy-more as a computer service technician, after being expelled from Standford University's CS Program. Chuck is relieved and excited to be sent away on his first solo mission.  Relieved, because he had just admitted to his feelings for Agent Walker the previous day, who stood there, stoically.
+
+"We should keep our relationship purely professional" she responded.  But was there a faint glimmer of ambiguity in her face?  Or was Chuck just desperate for any sign of mutual attraction?  Anyway, things had become rather awkward between them -- and going on this mission would help him keep his mind off of Sarah.
+
+Chuck decided he would kill two birds with one stone, and brought along one of his customer's Windows 7 laptops, that needed updating to Windows 10.  He began the upgrade at the Hollywood Burank airport while waiting for his flight to London.
+
+When Chuck arrives at the gravesite of Oliphant Chuckerbutty some 12 hours later, he is disappointed to see that the place was rather neglected, with no interesting markings that might lead anywhere.  Feeling like a total failure, Chuck sits down on the wet earth, burying his head in his hands.  Twenty minutes go by, and then Chuck hears someone whistling a tune that sounds eerily familiar, yet new and exciting at the same time.  The tune was clearly written by Krzysztof Penderecki, and obviously harkens to the melodies of Symphony No. 3, "Threnody to the Victims of Hiroshima."  But it was something Chuck had never heard before.  Of course! This must be the rumored Symphony No. 4, dedicated to the victims of war and fascism, but Chuck knew Penderecky had not yet completed the work.  Pendercky was one of the recent disappearances, who had left behind the mysterious note!
+
+Chuck spun around to determine the source of the melody.  It was a young lad, the cemetary's groundkeeper.
+
+"Where did you learn that piece?" Chuck demanded.
+
+Startled at first, the lad quickly regained his composure. 
+
+"Who is Soorjo Alexander William Langobard Oliphant Chuckerbutty III?" he asked, playfully, and turned around and walked away.
+
+It was then that Chuck spotted the tatoo on the back of the young lad's neck.  Chuck experienced one of his flashes, that started the day his old roomate, Bryce, had sent Chuck a high speed tansmission of the most valuable CIA secrets, which somehow seeped right into Chuck's subconscious.
+
+That tatoo was also spotted on Czech politician Vít Jedlička!
+
+Whipping out his laptop, which was still undergoing the Windows 10 update, Chuck opened up the edge browser, and paged through the introductory tutorial.  Once that was done, he opened up a top secret web site maintained by the CIA.  The website allowed Chuck to select any business he wanted, and it would display a tree-like org-chart, starting from the CEO on down.  It allowed Chuck to add multiple such companies on the same page, showing different org charts, so Chuck could look for patterns.  Chuck expanded the nodes on each company whose CEO had disappeared -- Amazon, Whole Foods (prior to the merger), Overstock, Craiglist, the Dallas Mavericks... In each case Chuck was able to find Vít Jedlička, working the cigar stand closest to the CEO's office, joining a week or two before the CEO disappeared!
+
+Chuck couldn't wait to send the page he was on, which so clearly showed the pattern so clearly.  Getting a warning that the fourth reboot would start in 15 seconds, Chuck quickly copied the url in the address bar, and sent it to Agent Walker's secured email account, just in the nick of time before the browser shut down for the reboot.
+
+\<xtal-state\> is a dependency free web component that helps applications build url's like the one that Chuck sent Sarah, that allows sharing complex views of an application state.
+
 ## Listening for history changes
 
 *xtal-state-watch* is a ~700B (minified and gzipped) js custom element that listens for all history changes, and it emits an event that local components can bind to. 
@@ -45,14 +81,13 @@ Suppose we want to use the history to reference a large object or a  function.  
 ```JavaScript
     [{
         caseNumber: 0102945
-        "details-fn":"(ce,)=>footnotes.getDetails"
+        "get()":"refs.getDetails"
     }]
 ```
 ```html
 <xtal-state-watch watch history="{{policeBlotter}}"
     where-path="MilkyWay.Earth.UnitedStates.Texas.Montgomery.CutAndShoot"
-    has-refs
-    footnotes="[[courtCaseIndexLookup]]"
+    refs="[[courtCaseIndexLookup]]"
 >
 </xtal-state-watch>
 ```
@@ -73,6 +108,15 @@ With Polymer syntax, this would look as follows:
 
 ```
 
+## Support for reference pointers, part II [TODO]
+
+```JavaScript
+   [{
+        caseNumber: 0102945,
+        "set()":"refs.persistChanges"
+    }]
+```
+
 The "make" boolean attribute/property specifies that we want to **update** the history object based on the watchedObject changes, and mark this as a new state in the history.
 
 The "rewrite" boolean attribute/property will cause the previous state change to be skipped over when going back using the back button.  The MDN article linked above explains this much better.
@@ -81,7 +125,7 @@ But unlike the native history.pushState and history.replaceState methods, xtal-s
 
 xtal-state-update is ~888B (minified and gzipped).
 
-## Departmentalizing Part II
+## Departmentalizing Part II [TODO]
 
 To specify that the history path we want to write to is actually a sub path of the root object, we also use attribute where-path:
 
@@ -95,6 +139,8 @@ If the history state is null, or doesn't have a nested object hierarchy matching
 
 xtal-state-update will note the path being updated.  xtal-state-watch components will ignore history updates if their where-path is not in alignment with the where-path of xtal-state-update.
 
+
+
 ## Recording history [TODO]
 
 The benefit of updating the window.location object (location.href and/or location.hash) as the user interacts with a web site is that it allows the user to copy and paste the url corresponding to what they are seeing, and communicate it via email, text message etc.  Others can then open the application and zoom right to the place the user was excited to convey.  The [webshare api](https://developers.google.com/web/updates/2016/09/navigator-share) also rests on sending a url, and would benefit in the same way.  Search results is another example.    This was the original intention of bookmarks, and is used, for example, when we want to send the line number of a code snippet from github.  Speaking of bookmarks, aside from sharing with others, a user may want to bookmark different parts of an application, so jumping to that part of the application is more convenient.
@@ -103,9 +149,7 @@ Unfortunately, our [friends at Microsoft](https://www.computerworld.com/article/
 
 The smallest maximum size of the history api appears to be 640k characters (ironically).  Here Microsoft has been more genererous.
 
-For an application with a large amount of complexity, then, sharing the URL to a particular state of an application might need to be accompanied by some sort of external storage on these browsers.  While storing such objects could easily be triggered on demand from within a web page, via user defined share/bookmark buttons, it is quite problematic to rely on this technique when users are accessing the site through a traditional browser (as opposed to a PWA), with their native bookmarking / add to homescreen / sharing utilities.  For privacy reasons, the web application won't be privy to such interactions.  The only way it would work would be to persist the history object to the external store with every change.  That could result in performance degradation, especially if the entire serialized object is sent every time.
-
-I'm of the view that users of powerful browsers shouldn't be collectively punished due to the parsimonious behavior of one browser.
+For an application with a large amount of complexity, then, sharing the URL to a particular state of an application might need to be accompanied by some sort of external storage on these browsers.  
 
 xtal-state-transcribe helps with this.  xtal-state-transcribe recognizes that most modern client-centric web applications have abandoned the location.hash portion of the URL, in favor of location.href.  This opens up the location.hash as an area we can use to indicate location where the storage of the full (or a subset of) the current history is deposited.
 
