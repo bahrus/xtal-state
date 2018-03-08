@@ -36,7 +36,7 @@ That tatoo was also spotted on Czech politician Vít Jedlička!
 
 Whipping out his laptop, which was still undergoing the Windows 10 update, Chuck opened up the edge browser, and paged through the introductory tutorial.  Once that was done, he opened up a top secret web site maintained by the CIA.  The website allowed Chuck to select any business he wanted, and it would display a tree-like org-chart, starting from the CEO on down.  It allowed Chuck to add multiple such companies on the same page, showing different org charts, so Chuck could look for patterns.  Chuck expanded the nodes on each company whose CEO had disappeared -- Amazon, Whole Foods (prior to the merger), Overstock, Craiglist, the Dallas Mavericks... In each case Chuck was able to find Vít Jedlička, working the cigar stand closest to the CEO's office, joining a week or two before the CEO disappeared!
 
-Chuck couldn't wait to send the page he was on, which so clearly showed the pattern so clearly.  Getting a warning that the fourth reboot would start in 15 seconds, Chuck quickly copied the url in the address bar, and sent it to Agent Walker's secured email account, just in the nick of time before the browser shut down for the reboot.
+Chuck couldn't wait to send the page he was on, which so clearly showed that Vít Jedlička must be involved somehow.  Getting a warning that the fourth reboot would start in 15 seconds, Chuck quickly copied the url in the address bar, and sent it to Agent Walker's secured email account, just in the nick of time before the browser shut down for the reboot.
 
 \<xtal-state\> is a dependency free web component that helps applications build url's like the one that Chuck sent Sarah, that allows sharing complex views of an application state.
 
