@@ -1,8 +1,6 @@
 # \<xtal-state\>
 
-History api web component wrapper
-
-This solution provides two small, dependency-free custom elements that provide declarative wrappers around the [history api](https://developer.mozilla.org/en-US/docs/Web/API/History_API), with a few twists.
+\<xtal-state\> provides declarative wrappers around the [history api](https://developer.mozilla.org/en-US/docs/Web/API/History_API), with a few twists.
 
 ## Problem Statement
 
@@ -18,13 +16,13 @@ Chuck is a lanky, earnest looking twenty-something with tangled, somewhat curly 
 
 "We should keep our relationship purely professional" she responded.  But was there a faint glimmer of ambiguity in her face?  Or was Chuck just desperate for any sign of mutual attraction?  Anyway, things had become rather awkward between them -- and going on this mission would help him keep his mind off of Sarah.
 
-Chuck decided he would kill two birds with one stone, and brought along one of his customer's Windows 7 laptops, that needed updating to Windows 10.  He began the upgrade at the Hollywood Burank airport while waiting for his flight to London.
+Chuck decided he would kill two birds with one stone, and brought along one of his customer's Windows 7 laptops, that needed updating to Windows 10.  He began the upgrade at the Hollywood Burbank airport while waiting for his flight to London.
 
-When Chuck arrives at the gravesite of Oliphant Chuckerbutty some 12 hours later, he is disappointed to see that the place was rather neglected, with no interesting markings that might lead anywhere.  Feeling like a total failure, Chuck sits down on the wet earth, burying his head in his hands.  Twenty minutes go by, and then Chuck hears someone whistling a tune that sounds eerily familiar, yet new and exciting at the same time.  The tune was clearly written by Krzysztof Penderecki, and obviously harkens to the melodies of Symphony No. 3, "Threnody to the Victims of Hiroshima."  But it was something Chuck had never heard before.  Of course! This must be the rumored Symphony No. 4, dedicated to the victims of war and fascism, but Chuck knew Penderecky had not yet completed the work.  Pendercky was one of the recent disappearances, who had left behind the mysterious note!
+When Chuck arrives at the gravesite of Oliphant Chuckerbutty some 12 hours later, he is disappointed to see that the place was rather neglected, with no interesting markings that might lead anywhere.  Feeling like a total failure, Chuck sits down on the wet earth, burying his head in his hands.  Twenty minutes go by, and then Chuck hears someone whistling a tune that sounds eerily familiar, yet new and exciting at the same time.  The tune was clearly written by Krzysztof Penderecki, and obviously harkens to the melodies of his Symphony No. 3, "Threnody to the Victims of Hiroshima."  But it was something Chuck had never heard before.  Of course! This must be the rumored Symphony No. 4, dedicated to the victims of war and fascism, but Chuck knew Penderecky had not yet completed the work.  Pendercky was one of the recent disappearances, who had left behind the mysterious note!
 
 Chuck spun around to determine the source of the melody.  It was a young lad, the cemetary's groundkeeper.
 
-"Where did you learn that piece?" Chuck demanded.
+"Where did you learn that piece that you are whistling?" Chuck demanded.
 
 Startled at first, the lad quickly regained his composure. 
 
@@ -34,15 +32,33 @@ It was then that Chuck spotted the tatoo on the back of the young lad's neck.  C
 
 That tatoo was also spotted on Czech politician Vít Jedlička!
 
-Whipping out his laptop, which was still undergoing the Windows 10 update, Chuck opened up the edge browser, and paged through the introductory tutorial.  Once that was done, he opened up a top secret web site maintained by the CIA.  The website allowed Chuck to select any business he wanted, and it would display a tree-like org-chart, starting from the CEO on down.  It allowed Chuck to add multiple such companies on the same page, showing different org charts, so Chuck could look for patterns.  Chuck expanded the nodes on each company whose CEO had disappeared -- Amazon, Whole Foods (prior to the merger), Overstock, Craiglist, the Dallas Mavericks... In each case Chuck was able to find Vít Jedlička, working the cigar stand closest to the CEO's office, joining a week or two before the CEO disappeared!
+Whipping out his laptop, which was still undergoing the Windows 10 update, Chuck opened up the edge browser, and paged through the introductory tutorial.  Once that was done, he opened up a top secret web site maintained by the CIA.  The website allowed Chuck to select any business he wanted, and it would display a tree-like org-chart, starting from the CEO on down.  It allowed Chuck to add multiple such companies on the same page, showing different org charts, so Chuck could look for patterns.  Chuck expanded the nodes on each company whose CEO had disappeared -- Amazon, Whole Foods (prior to the merger), Overstock.com, Craiglist, the Dallas Mavericks... In each case Chuck was able to find Vít Jedlička, working the cigar stand closest to the CEO's office, joining a week or two before the CEO disappeared!
 
-Chuck couldn't wait to send the page he was on, which so clearly showed that Vít Jedlička must be involved somehow.  Getting a warning that the fourth reboot would start in 15 seconds, Chuck quickly copied the url in the address bar, and sent it to Agent Walker's secured email account, just in the nick of time before the browser shut down for the reboot.
+Chuck couldn't wait to send Sarah the page he was on, which so clearly showed that Vít Jedlička must be involved somehow.  Getting a warning that the fourth reboot would start in 15 seconds, Chuck quickly copied the url in the address bar, and sent it to Agent Walker's secured email account, just in the nick of time before the browser shut down for the reboot.
 
-\<xtal-state\> is a dependency free web component that helps applications build url's like the one that Chuck sent Sarah, that allows sharing complex views of an application state.
+\<xtal-state\> is a set of dependency free web components that help applications build url's like the one that Chuck sent Sarah.  It allows sharing complex views of an application state.
+
+## Some browser-based obstacles
+
+The benefit of updating the window.location object (location.href and/or location.hash) as the user interacts with a web site is that it allows the user to copy and paste the url corresponding to what they are seeing, and communicate it via email, text message etc.  Others can then open the application and zoom right to the place the user was excited to convey.  The [webshare api](https://developers.google.com/web/updates/2016/09/navigator-share) also rests on sending a url, and would benefit in the same way.  Search results is another example.    This was the original intention of bookmarks, and is used, for example, when we want to send the line number of a code snippet from github.  Speaking of bookmarks, aside from sharing with others, a user may want to bookmark different parts of an application, so jumping to that part of the application is more convenient.
+
+Unfortunately, our [friends at Microsoft](https://www.computerworld.com/article/2534312/operating-systems/the--640k--quote-won-t-go-away----but-did-gates-really-say-it-.html) have determined that [2k ought to be enough for anybody](https://stackoverflow.com/questions/16247162/max-size-of-location-hash-in-browser).
+
+For an application with a large amount of complexity, then, sharing the URL to a particular state of an application might need to be accompanied by some sort of external storage on these browsers.  
+
+The smallest maximum size of the history api appears to be 640k characters (ironically).  Here even Microsoft has been more genererous (their limit is 1 MB).  So we have a major mismatch (two orders of magnitude) between the amount of data we can store in the history api vs what can be serialized in the address bar of approximately 7% of browser used today.
+
+The simplest solution to this dilemma would be to persist the history.state object to a central database with every modification, and to just add the id pointing to this object to the address bar.  The web components provided here will certainly not get in the way of doing just that.
+
+One example of an existing service that requires no token or account, where one could store the object is [myjson.com](http://myjson.com/) (maximum size unknown.)   
+
+But this approach isn't very efficient.  It would require uploading a larger and larger object / JSON string as the user's application state grows, which could happen quite quickly.
+
+# \<xtal-state-watch\>
 
 ## Listening for history changes
 
-*xtal-state-watch* is a ~700B (minified and gzipped) js custom element that listens for all history changes, and it emits an event that local components can bind to. 
+*xtal-state-watch* is (for now) a ~700B (minified and gzipped) js custom element that listens for all history changes, and it emits an event that local components can bind to. 
 
 For example, using a JSX library that can listen for custom events, like Preact, we can have code like:
 
@@ -66,7 +82,7 @@ The boolean attribute/property "watch" is there so neighboring elements can igno
 
 It's likely that most components won't be interested in the entire state object, assuming it is used for managing complex state in a large complex application.  Large numbers of components subscribing to every history change event, then, could be problematic -- in short we have a scalability problem.  We employ a few tweaks that might allow us to keep more complex, comprehensive solutions at bay.
 
-The first such tweak is to specify only a certain part of the history which is of interest.  We enhance the markup:
+The first such tweak is to specify only a certain part of the history which is of interest to that area of the application.  We enhance the markup:
 
 ```html
 <xtal-state-watch 
@@ -78,6 +94,7 @@ The first such tweak is to specify only a certain part of the history which is o
 ## Support for reference pointers, part I [TODO]
 
 Suppose we want to use the history to reference a large object or a  function.  In the latter case, functions can't be stored in the history.state because it doesn't support cloning.  And the size of the history state is also limited (to 640K, Bill Gates's favorite number).
+
 ```JavaScript
     [{
         caseNumber: 0102945
@@ -85,12 +102,15 @@ Suppose we want to use the history to reference a large object or a  function.  
     }]
 ```
 ```html
+<!-- Polymer binding syntax -->
 <xtal-state-watch watch history="{{policeBlotter}}"
     where-path="MilkyWay.Earth.UnitedStates.Texas.Montgomery.CutAndShoot"
     refs="[[courtCaseIndexLookup]]"
 >
 </xtal-state-watch>
 ```
+
+Here we are assuming that the object passed to the refs property: courtCaseIndexLookup has a method called getDetails.  xtal-state-watch will pass the method the object containing the "get()" key.  getDetails can then fill in the details, either immediately, or via a promise.  Once the details are filled in, the binding event history-changed will be called, and the UI will be able to work with a more complete representaton of the state than what is actually stored in the history api.  Our goal, remember, is to keep the history api state object as small as possible, while not imposing arbitrary limits on the size of the objects the UI can work with. 
 
 ## Applying changes
 
@@ -107,6 +127,20 @@ With Polymer syntax, this would look as follows:
 <xtal-state-update rewrite history="[[watchedObject]]"></xtal-state-update>
 
 ```
+
+## Departmentalizing Part II [TODO]
+
+To specify that the history path we want to write to is actually a sub path of the root object, we also use attribute where-path:
+
+```html
+<xtal-state-update make history="[[policeBlotter]]"  
+    where-path="MilkyWay.Earth.UnitedStates.Texas.Montgomery.CutAndShoot">
+</xtal-state-update>
+```
+
+If the history state is null, or doesn't have a nested object hierarchy matching the long path specified above, xtal-state-update will first create such an object hierarchy before inserting the policeBlotter object without losing the state created elsewhere.
+
+xtal-state-update will note the path being updated.  xtal-state-watch components will ignore history updates if their where-path is not in alignment with the where-path of xtal-state-update.
 
 ## Support for reference pointers, part II [TODO]
 
@@ -125,35 +159,17 @@ But unlike the native history.pushState and history.replaceState methods, xtal-s
 
 xtal-state-update is ~888B (minified and gzipped).
 
-## Departmentalizing Part II [TODO]
 
-To specify that the history path we want to write to is actually a sub path of the root object, we also use attribute where-path:
-
-```html
-<xtal-state-update make history="[[policeBlotter]]"  
-    where-path="MilkyWay.Earth.UnitedStates.Texas.Montgomery.CutAndShoot">
-</xtal-state-update>
-```
-
-If the history state is null, or doesn't have a nested object hierarchy matching the long path specified above, xtal-state-update will first create such an object hierarchy before inserting the policeBlotter object without losing the state created elsewhere.
-
-xtal-state-update will note the path being updated.  xtal-state-watch components will ignore history updates if their where-path is not in alignment with the where-path of xtal-state-update.
 
 
 
 ## Recording history [TODO]
 
-The benefit of updating the window.location object (location.href and/or location.hash) as the user interacts with a web site is that it allows the user to copy and paste the url corresponding to what they are seeing, and communicate it via email, text message etc.  Others can then open the application and zoom right to the place the user was excited to convey.  The [webshare api](https://developers.google.com/web/updates/2016/09/navigator-share) also rests on sending a url, and would benefit in the same way.  Search results is another example.    This was the original intention of bookmarks, and is used, for example, when we want to send the line number of a code snippet from github.  Speaking of bookmarks, aside from sharing with others, a user may want to bookmark different parts of an application, so jumping to that part of the application is more convenient.
 
-Unfortunately, our [friends at Microsoft](https://www.computerworld.com/article/2534312/operating-systems/the--640k--quote-won-t-go-away----but-did-gates-really-say-it-.html) have determined that [2k ought to be enough for anybody](https://stackoverflow.com/questions/16247162/max-size-of-location-hash-in-browser).
-
-The smallest maximum size of the history api appears to be 640k characters (ironically).  Here Microsoft has been more genererous.
-
-For an application with a large amount of complexity, then, sharing the URL to a particular state of an application might need to be accompanied by some sort of external storage on these browsers.  
 
 xtal-state-transcribe helps with this.  xtal-state-transcribe recognizes that most modern client-centric web applications have abandoned the location.hash portion of the URL, in favor of location.href.  This opens up the location.hash as an area we can use to indicate location where the storage of the full (or a subset of) the current history is deposited.
 
-But where to deposit it?  There are lots of options, of course.  One option that requires no token or account is [myjson.com](http://myjson.com/) (maximum size unknown.)   
+But where to deposit it?  There are lots of options, of course.  One option 
 
 One could also imagine scenarios where application developers want to "freeze" certain views as part of their testing regiment, or areas where they are focusing on development.  In this case, files local to the web site itself would be sufficient.
 
