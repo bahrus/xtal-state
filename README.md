@@ -161,23 +161,12 @@ xtal-state-update is ~888B (minified and gzipped).
 
 
 
-
-
 ## Recording history [TODO]
 
 
+xtal-state-transcribe listens for all history api changes, and it applies a user provided filter function, which can filter out those parts of history object which pertain only to the external routing solution.  xtal-state-transcribe recognizes that most modern client-centric web applications have abandoned the location.hash portion of the URL, in favor of location.href.  This opens up the location.hash as an area we can use to indicate location where the storage of the full (or a subset of) the current history is deposited.
 
-xtal-state-transcribe helps with this.  xtal-state-transcribe recognizes that most modern client-centric web applications have abandoned the location.hash portion of the URL, in favor of location.href.  This opens up the location.hash as an area we can use to indicate location where the storage of the full (or a subset of) the current history is deposited.
-
-But where to deposit it?  There are lots of options, of course.  One option 
-
-One could also imagine scenarios where application developers want to "freeze" certain views as part of their testing regiment, or areas where they are focusing on development.  In this case, files local to the web site itself would be sufficient.
-
-Other places
-
-```html
-<xtal-state-transcribe deposit-when-fn transcribe-fn ></xtal-state-transcripe>
-```  
+After applying the filter, xtal-state-transcribe JSON serializes/stringifies the remaining object, and checks if the resulting string is different from before.  If it is, it sets location.hash to that value.
 
 ## Install the Polymer-CLI
 
