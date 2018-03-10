@@ -38,7 +38,7 @@ Chuck can't wait to send Sarah the page he is on, which so clearly shows that VÃ
 
 ## Some browser-based obstacles
 
-The benefit of updating the window.location object (location.href and/or location.hash) as the user interacts with a web site, is that it allows the user to copy and paste the url corresponding to what they are seeing, and communicate it via email, text message etc.  Others can then open the application and zoom right to the place the user was excited to convey.  And these days, many browsers support a sharing button, external to the web site, which sends the current url.  Some browsers, like Firefox, include the hash tag part of the url.  Unfortunately, some browsers, like Chrome, haven't seen the light on this.  I argue this is quite problematic.  Sites like GitHub, allow you to select a line number, which causes a hash location update to the url, specifying the line number.  Why does Chrome assume the user doesn't want to share that part of the URL?  That's a rather rude assumption, it seems to me.  Even inserting the "bang" before the hash doesn't help.
+The benefit of updating the window.location object (location.href and/or location.hash) as the user interacts with a web site, is that it allows the user to copy and paste the url corresponding to what they are seeing, and communicate it via email, text message etc.  Others can then open the application and zoom right to the place the user was excited to convey.  And these days, many browsers support a sharing button, external to the web site, which sends the current url.  Some browsers, like Firefox, include the hash tag part ("hash fragment") of the url.  Unfortunately, some browsers, like Chrome, haven't seen the light on this.  I argue this is quite problematic.  Sites like GitHub, allow you to select a line number, which causes a hash location update to the url, specifying the line number.  Why does Chrome assume the user doesn't want to share that part of the URL?  That's a rather rude assumption, it seems to me.  Even inserting the "bang" before the hash doesn't help.
 
 Because the sharing buttons are external to the website, the website doesn't get notified when the user is about to invoke this button, so whatever is in the address bar at that moment (with the exception of Chrome's rude ignoring of the bookmark) will be exactly what is sent.
 
@@ -138,12 +138,12 @@ With Polymer syntax, this would look as follows:
 
 ```
 
-## Departmentalizing Part II [TODO]
+## Departmentalizing Part II
 
 To specify that the history path we want to write to is actually a sub path of the root object, we also use attribute where-path:
 
 ```html
-<xtal-state-update make history="[[policeBlotter]]"  
+<xtal-state-update make history="[[newPoliceBlotterEntry]]"  
     where-path="MilkyWay.Earth.UnitedStates.Texas.Montgomery.CutAndShoot">
 </xtal-state-update>
 ```
@@ -152,20 +152,50 @@ If the history state is null, or doesn't have a nested object hierarchy matching
 
 xtal-state-update will note the path being updated.  xtal-state-watch components will ignore history updates if their where-path is not in alignment with the where-path of xtal-state-update.
 
-## Support for reference pointers, part II [TODO]
-
-```JavaScript
-   [{
-        caseNumber: 0102945,
-        "set()":"refs.persistChanges"
-    }]
-```
-
 The "make" boolean attribute/property specifies that we want to **update** the history object based on the watchedObject changes, and mark this as a new state in the history.
 
 The "rewrite" boolean attribute/property will cause the previous state change to be skipped over when going back using the back button.  The MDN article linked above explains this much better.
 
-But unlike the native history.pushState and history.replaceState methods, xtal-state-update attempts to preserve what was there already.  If the source property is of type object or array, it creates a new empty object {}, then merges the existing state into it, then does a [deep, recursive merge](https://davidwalsh.name/javascript-deep-merge) of watchedObject (in this example) into that.  
+But unlike the native history.pushState and history.replaceState methods, xtal-state-update attempts to preserve what was there already.  If the source property is of type object or array, it creates a new empty object {}, then merges the existing state into it, then does a [deep, recursive merge](https://davidwalsh.name/javascript-deep-merge) of watchedObject (in this example) into that.
+
+## Support for reference pointers, part II [TODO]
+
+Suppose we have a new police blotter entry someone entered:
+
+```JavaSript
+    [{
+        caseNumber: 'unknown',
+        reporter: 'Michael Davis',
+        age: 20
+        address:  '112 Privet Drive',
+        incident: `Six men, their faces covered with red bandanas, got out of the Cherokee carrying a knife, baseball bat, billy club and rolling pin," said Davis, 20.
+
+        "I knew when I saw the rolling pin that something bad was going to go down," Davis said.
+        `,
+        "set()":"refs.persistChanges"
+    }]
+```
+
+We need to pass xtal-state-update an object which has persistChanges method, as the JavaScript above indicates:
+
+```html
+<xtal-state-update make history="[[newPoliceBlotterEntry]]"  
+    where-path="MilkyWay.Earth.UnitedStates.Texas.Montgomery.CutAndShoot"
+    refs="myObjectPersistenceEngine"
+>
+</xtal-state-update>
+```
+
+the method persistChanges can return an object, which might contain the id given when saving this new record.  This is what will get stored in the history object.  For example it might return
+
+```JavaScript
+   [{
+        caseNumber: 0102945,
+        "get()":"refs.getCaseDetails"
+    }]
+```
+
+  
 
 xtal-state-update is ~888B (minified and gzipped).
 
@@ -176,7 +206,7 @@ xtal-state-update is ~888B (minified and gzipped).
 
 xtal-state-transcribe listens for all history api changes, and it applies a user provided filter function, which can filter out those parts of history object which pertain only to the external routing solution.  xtal-state-transcribe recognizes that most modern client-centric web applications have abandoned the location.hash portion of the URL, in favor of location.href.  This opens up the location.hash as an area we can use to indicate location where the storage of the full (or a subset of) the current history is deposited.
 
-After applying the filter, xtal-state-transcribe JSON serializes/stringifies the remaining object, and checks if the resulting string is different from before.  If it is, it sets location.hash to that value.
+After applying the filter, xtal-state-transcribe JSON serializes/stringifies the remaining object, and checks if the resulting string is different from before.  If it is, it sets location.hash to that value (starting with the bang symbol).
 
 ## Install the Polymer-CLI
 
