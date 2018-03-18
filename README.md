@@ -8,25 +8,25 @@ A unit of the CIA, led by Agent Sarah Walker, is investigating a series of myste
 
 >Who is Soorjo Alexander William Langobard Oliphant Chuckerbutty III?
 
-Agent Walker sends recent recruit Chuck Bartowski to visit Chuckerbutty's tombstone in Paddington, in search of clues.
+Agent Walker sends recent recruit Chuck Bartowski to visit the senior Olipant Chuckerbutty's tombstone in Paddington, in search of clues.
 
-Chuck is a lanky, earnest looking twenty-something with tangled, somewhat curly dark hair.  He works at Buy-more as a computer service technician, after being expelled from Standford University's CS Program. Chuck is relieved and excited to be sent away on his first solo mission.  Relieved, because he had just admitted to his feelings for Agent Walker the previous day, who stood there, stoically.
+Chuck Bartowski is a lanky, earnest looking twenty-something with tangled, somewhat curly dark hair.  He works at Buy More as a computer service technician, after being expelled from Standford University's CS Program. Chuck is relieved and excited to be sent away on his first solo mission.  Relieved, because he had just admitted to his feelings for Agent Walker the previous day, who stood there, stoically.
 
 "We should keep our relationship purely professional" she responded.  But was there a faint glimmer of ambiguity in her face?  Or was Chuck just desperate for any sign of mutual attraction?  Anyway, things had become rather awkward between them -- and going on this mission would help him keep his mind off of Sarah.
 
 Chuck decides he would kill two birds with one stone, and brings along one of his customer's Windows 7 laptops that needs updating to Windows 10.  He begins the upgrade at the Hollywood Burbank airport while waiting for his flight to London.
 
-When Chuck arrives at the gravesite of Oliphant Chuckerbutty some 12 hours later, he is disappointed to see that the place was rather neglected, with no interesting markings that might lead anywhere.  Feeling like a total failure, Chuck sits down on the wet earth, burying his head in his hands.  Twenty minutes go by, and then Chuck hears someone whistling a tune that sounds eerily familiar, yet new and exciting at the same time.  The tune was clearly written by Krzysztof Penderecki, and obviously harkens to the melodies of his Symphony No. 3, "Threnody to the Victims of Hiroshima."  But it is something Chuck has never heard before.  Of course! This must be the rumored Symphony No. 4, dedicated to the victims of war and fascism, but Chuck knew Penderecky had not yet completed the work.  Penderecky was one of the recent disappearances, who had left behind the mysterious note!
+When Chuck arrives at the gravesite of Oliphant Chuckerbutty some 12 hours later, he is disappointed to see that the place was rather neglected, with no interesting markings that might lead anywhere.  Feeling like a total failure, Chuck sits down on the wet earth, burying his head in his hands.  Twenty minutes go by, and then Chuck hears someone whistling a tune that sounds eerily familiar, yet new and exciting at the same time.  The tune was clearly written by Krzysztof Penderecki, and clearly follows the mold he set with  "Threnody to the Victims of Hiroshima."  But it is something Chuck has never heard before.  Of course! This must be the rumored Dies Irae, but Chuck knew Penderecky had not yet completed the work.  Penderecky was one of the recent disappearances, who had left behind the mysterious note!
 
 Chuck spins around to determine the source of the melody.  It's a young lad, the cemetary's groundkeeper.
 
-"Where did you learn that piece that you are whistling?  I haven't seen any recordings of it yet!" Chuck demands.
+"Where did you learn that piece you're whistling?  I haven't seen any recordings of it yet!" Chuck demands.
 
 Startled at first, the lad quickly regains his composure. 
 
 "Who is Soorjo Alexander William Langobard Oliphant Chuckerbutty III?" he asks, playfully, and turns around and walks away.
 
-It was then that Chuck spotted the tatoo on the back of the groundkeeper's neck.  Chuck experiences one of his flashes, that started the day his old roomate, Bryce, had sent Chuck a high speed tansmission of the most valuable CIA secrets, which somehow seeped right into Chuck's subconscious.
+It was then that Chuck spots the tatoo on the back of the groundkeeper's neck.  Chuck experiences one of his flashes, that started the day his old roomate, Bryce, had sent Chuck a high speed transmission of the most valuable CIA secrets, which somehow seeped right into Chuck's subconscious.
 
 That tatoo was also spotted on Czech politician Vít Jedlička!
 
@@ -36,14 +36,16 @@ Chuck can't wait to send Sarah the page he is on, which so clearly shows that V�
 
 \<xtal-state\> is a set of dependency free web components that help applications build url's like the one that Chuck sent Sarah.  It allows sharing complex views of an application state.
 
-## Some browser-based obstacles
+## Some browser-based barriers
 
-The benefit of updating the window.location object (location.href and/or location.hash) as the user interacts with a web site, is that it allows the user to copy and paste the url corresponding to what they are seeing, and communicate it via email, text message etc.  Others can then open the application and zoom right to the place the user was excited to convey.  And these days, many browsers support a sharing button, external to the web site, which sends the current url.  Some browsers, like Firefox, and Edge, include the hash tag part ("hash fragment") of the url.  Unfortunately, some browsers, like Chrome, haven't seen the light on this.  I argue this is quite problematic.  Sites like GitHub allow you to select a line number, which causes a hash location update to the url, specifying the line number.  Why does Chrome assume the user doesn't want to share that part of the URL?  That's a rather rude assumption, it seems to me.  Even inserting the "bang" before the hash doesn't help.
+The benefit of updating the window.location object (location.href and/or location.hash) as the user interacts with a web site, is that it allows the user to copy and paste the url corresponding to what they are seeing, and communicate it via email, text message etc.  Others can then open the application and zoom right to the place the user was excited to convey.  And these days, many browsers support a sharing button, external to the web site, which sends the current url.  Sensible browsers, like Firefox, and Edge, include the hash tag part ("hash fragment") of the url.  Unfortunately, some browsers, like Chrome, haven't seen the light on this.  I argue this is quite problematic.  Sites like GitHub allow you to select a line number, which causes a hash location update to the url, specifying the line number.  Why does Chrome assume the user doesn't want to share that part of the URL?  That's a rather rude assumption, it seems to me.  Even inserting the "bang" after the hash doesn't help.
 
 Because the sharing buttons are external to the website, the website doesn't get notified when the user is about to invoke this button, so whatever is in the address bar at that moment (with the exception of Chrome's rude ignoring of the bookmark) will be exactly what is sent.
 
 
 The [webshare api](https://developers.google.com/web/updates/2016/09/navigator-share) also rests on sending a url, and would benefit in the same way.  Search results is another example, but hash fragments need to [include the bang symbol](https://www.oho.com/blog/explained-60-seconds-hash-symbols-urls-and-seo) for them to be honored.    Aside from sharing with others, a user may want to bookmark different parts of an application, so jumping to that part of the application is more convenient.  Here, Chrome doesn't fail us, and it includes the bookmark portion of the url in the bookmark.  Thanks, Chrome!
+
+Web servers have, for security reasons, I think, needed to impose limits on the size of a url that gets sent, which is perfectly fair.  But the hash fragment doesn't get sent to the server, so in theory browsers can allow more flexibility in terms of the size of this string.  And indeed, browsers have generally been quite permissive with respect to the hash fragment.  True, using the history api, one can also update the non hash part of the url without that modification going to the server.  But unfortunately, should the user want to click on the refresh button, or send such a url to a friend, that entire string will be sent to the server, which could result in an ungraceful server error, perhaps containing text of an accusatory nature.  So if we want to encode complex state into the url, the hash fragment seems to be the most natural place to look.
 
 Unfortunately, our [friends at Microsoft](https://www.computerworld.com/article/2534312/operating-systems/the--640k--quote-won-t-go-away----but-did-gates-really-say-it-.html) have determined that [2k ought to be enough for anybody](https://stackoverflow.com/questions/16247162/max-size-of-location-hash-in-browser).
 
@@ -51,13 +53,36 @@ For an application with a large amount of complexity, then, sharing the URL to a
 
 The smallest maximum size of the history api appears to be 640k characters (ironically).  Here even Microsoft has been more genererous (their limit is 1 MB).  So we have a major mismatch (two orders of magnitude) between the amount of data we can store in the history api vs what can be serialized in the address bar of approximately 7% of browser used today.
 
-The simplest solution to this dilemma would be to persist the history.state object to a central database with every modification, and to just add the id pointing to this object to the address bar somewhere.  The web components provided here will certainly not get in the way of doing just that, and will in fact provide some help in doing this.
+The simplest solution to this dilemma would be to persist the history.state object to a central database with every modification, and to just add the id pointing to this object to the address bar somewhere.  The web components provided here will certainly not get in the way of doing just that, and will in fact be somewhat helpful for this approach.
 
-One example of an existing service that requires no token or account, where one could store the stringified history.state object, is [myjson.com](http://myjson.com/) (maximum size unknown.)   
+One example of an existing service that requires no token or account, where one could store the stringified history.state object, is [myjson.com](http://myjson.com/) (maximum size unknown.)    
 
-But this approach isn't very efficient.  It would require rapidly uploading a larger and larger object / JSON string as the user's application state grows, which could happen quite quickly.
+But this strategy isn't very efficient.  It would require rapidly uploading a larger and larger object / JSON string as the user's application state grows, which could happen quite quickly.
 
 Hopefully, having gone through all that background, what these web components are doing will make more sense.  As we will see, they don't strive to solve every problem under the sun, but rather to establish the ground work so applications can achieve what they want more easily.
+
+## What's the Matter with Routing?
+
+Routing seems to be an unquestioned prerequisite for any self respecting framework.  For me, I've tended to always view it as one of those pain points I wanted to avoid thoroughly understanding.  I have routing PTSD, emanating from my early experiences with Angular 1.  This to me is the major draw of  cli's / scaffolding solutions.   It allows me to not really understand the routing, and quickly move on to the fun stuff.  Keep routing limited to opening a main view from the hamburger view, and drop it like a hot potato(e) after that.  Am I alone?  Is [the turmoil surrounding](http://www.amasik.com/angularjs-ngroute-vs-ui-router/) routing [solutions coming and going](https://auth0.com/blog/react-router-alternatives/) a sign that I'm not the only one who finds something deeply unsatisfactory about routing?  Let me also add to my evidence that something is amiss, the large number of applications I work with, where sending the url I see in the address bar to a colleague, and expecting the colleague to see what I'm seeing, never seems to work.
+
+This project was initially intended strictly as a way to supplement routing solutions, and hopefully when its done, it still will be.  But the issue of Chrome castrating / mutilating the URL has given me pause.  If you decide not to use the hash fragment with this solution, it is more than likely you will be conflicting with existing routing solutions, which is probably a buzzkill for most developers.  
+
+So allow me to stick my finger into the fan and argue why routing solutions all seem perfectly engineered to make meek developers like me feel like an idiot. 
+
+Let me first acknowledge what I like about routing solutions:
+
++1)  It results in a pretty looking string in the address bar.
++2)  by keeping such a narrow focus, they are probably fairly immune malicious attacks.   
+
+Now for the downsides:
+
+-1)  It involves reading lots of documentation
+-2)  It involves parsing strings, or reading even more documentation about how a library does that fancy parsing for you, and lots of guesswork about what will avoid causing the library to throw a conniption.
+-3)  Due to disadvantage -2) above, I have no way of really knowing if advantage +2) is valid, and I have no idea, what steps I need to take to prevent them.  For example, this [routing parser](https://www.npmjs.com/package/route-parser) mentions specifying the author and subject.  Does router preferent malicious content from going in there, which might be displayed?  Who knows?
+-4)  It involves maintaining a mapping.  This pain point may help avoid malicious attacks, however. 
+
+
+
 
 # \<xtal-state-watch\>
 
