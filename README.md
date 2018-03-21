@@ -61,28 +61,6 @@ But this strategy isn't very efficient.  It would require rapidly uploading a la
 
 Hopefully, having gone through all that background, what these web components are doing will make more sense.  As we will see, they don't strive to solve every problem under the sun, but rather to establish the ground work so applications can achieve what they want more easily.
 
-## What's the Matter with Routing?
-
-Routing seems to be an unquestioned prerequisite for any self respecting framework.  For me, I've tended to always view it as one of those pain points I wanted to avoid thoroughly understanding.  I have routing PTSD, emanating from my early experiences with Angular 1.  This to me is the major draw of  cli's / scaffolding solutions.   It allows me to not really understand the routing, and quickly move on to the fun stuff.  Keep routing limited to opening a main view from the hamburger view, and drop it like a hot potato(e) after that.  Am I alone?  Is [the turmoil surrounding](http://www.amasik.com/angularjs-ngroute-vs-ui-router/) routing [solutions coming and going](https://auth0.com/blog/react-router-alternatives/) a sign that I'm not the only one who finds something deeply unsatisfactory about routing?  Let me also add to my evidence that something is amiss, the large number of applications I work with, where sending the url I see in the address bar to a colleague, and expecting the colleague to see what I'm seeing, never seems to work.
-
-This project was initially intended strictly as a way to supplement routing solutions, and hopefully when its done, it still will be.  But the issue of Chrome castrating / mutilating the URL has given me pause.  If you decide not to use the hash fragment with this solution, it is more than likely you will be conflicting with existing routing solutions, which is probably a buzzkill for most developers.  
-
-So allow me to stick my finger into the fan and argue why routing solutions all seem perfectly engineered to make meek developers like me feel like an idiot. 
-
-Let me first acknowledge what I like about routing solutions:
-
-+1)  It results in a pretty looking string in the address bar.
-+2)  by keeping such a narrow focus, they are probably fairly immune malicious attacks.   
-
-Now for the downsides:
-
--1)  It involves reading lots of documentation
--2)  It involves parsing strings, or reading even more documentation about how a library does that fancy parsing for you, and lots of guesswork about what will avoid causing the library to throw a conniption.
--3)  Due to disadvantage -2) above, I have no way of really knowing if advantage +2) is valid, and I have no idea, what steps I need to take to prevent them.  For example, this [routing parser](https://www.npmjs.com/package/route-parser) mentions specifying the author and subject.  Does router preferent malicious content from going in there, which might be displayed?  Who knows?
--4)  It involves maintaining a mapping.  This pain point may help avoid malicious attacks, however. 
-
-
-
 
 # \<xtal-state-watch\>
 
@@ -121,35 +99,41 @@ The first such tweak is to specify only a certain part of the history which is o
 </xtal-state-watch>
 ``` 
 
-As we will see later, as long as you update the history.state object using the web components described in this document, then the where-path will limit which events the specific instance will respond to.  The downside of using this attribute is that if other external logic  decides to update the history at this specific location using native JavaScript, this web component won't detect that,for now.  Solving that issue is a TODO item.
+As we will see later, as long as you update the history.state object using the web components described in this document, then the where-path will limit which events the specific instance will respond to.  This attribute isn't all-powerful howerver.   If other external logic  decides to update the history outside the path specified , this web component will respond.  I.e. it will oversubscribe.  Solving that issue (if it is solvable?  maybe using proxies?) is a TODO item.
 
-## Support for reference pointers, part I [TODO]
+If you are using good UI components which are optimized for dealing with small changes to the model (e.g. a virtual DOM), then hopefully the consequences of this oversubscription (for now) won't be too bad.
 
-Suppose we want to use the history to reference a large object or a  function.  In the latter case, functions can't be stored in the history.state because it doesn't support cloning.  And the size of the history state is also limited (to 640K, Bill Gates's favorite number).
+## Data Injection [TODO]
 
-xtal-state-watch supports syntax where we specify how to populate an object, based on an ID:
+Suppose we want to use the history to reference a large object or a  function.  In the latter case, functions can't be stored in the history.state because it doesn't support cloning.  And the size of the history state is also limited (to 640K, Bill Gates's favorite number).  Not to mention that if we want to serialize that history to the address bar, it should be *really* small because Microsoft.
+
+xtal-state-watch supports asking containing elements for help filling in the details.  So say the following is put into history.state:
 
 ```JavaScript
-    [{
+    {
         caseNumber: 0102945
-        "get()":"refs.getDetails"
-    }]
+    }
 ```
+
+We can dispatch a request that passes up the DOM Tree, providing a name for the event using the event-name attribute:
+
 ```html
 <!-- Polymer binding syntax -->
 <xtal-state-watch watch history="{{policeBlotter}}"
-    where-path="MilkyWay.Earth.UnitedStates.Texas.Montgomery.CutAndShoot"
-    refs="[[courtCaseIndexLookup]]"
+    where-path="MilkyWay.Earth.UnitedStates.Texas.Montgomery.CutAndShoot"  
+    dispatch event-name="getPoliceIncidentDetails"
 >
 </xtal-state-watch>
 ```
 
+The event contains the value of the history object (restricted to the optional where-path).
 
-Here we are assuming that the object passed to the refs property: courtCaseIndexLookup has a method called getDetails.  xtal-state-watch will pass the method the object containing the "get()" key.  getDetails can then fill in the details, either immediately, or via a promise.  Once the details are filled in, the binding event history-changed will be called, and the UI will be able to work with a more complete representaton of the state than what is actually stored in the history api.  Our goal, remember, is to keep the history api state object as small as possible, while not imposing arbitrary limits on the size of the objects the UI can work with. 
+Subscribing elements can replace the value with a new value (in this example, performing a lookup on the caseNumber), or replace the value with a promise, which xtal-state-watch will wait for, before setting the history property / event for local elements.  
+
 
 ## Applying changes
 
-*xtal-state-update* is another custom element, that recognizes that most modern client-centric web applications use the history api as the foundation for routing.  But the history api can also be viewed as a rudimentary global state management system, including built-in time travel support via the back / forward buttons.  This component is designed to help leverage the latter perk of the history api, while attempting to avoid breaking existing routing solutions.  In a nutshell, xtal-state-update strives to minimize the chances of losing history state changes made from logic external to xtal-state.
+*xtal-state-update* is another custom element, that views the history api as a rudimentary global state management system, including built-in time travel support via the back / forward buttons.  xtal-state-update allows you to declaratively modify the history.state object.  But in the interest of being a good neighbor to other components that may work with the history api (like routing components), the changes made to the history.state are made so as not to trample on changes made externally.  In other words, xtal-state-update strives to minimize the chances of losing history state changes made from logic external to xtal-state-update.
 
 xtal-state-update provides three properties that allow the developer to declaratively modify the global history.state object.
 
@@ -162,6 +146,8 @@ With Polymer syntax, this would look as follows:
 <xtal-state-update rewrite history="[[watchedObject]]"></xtal-state-update>
 
 ```
+
+When the watchedObject changes, it will be merged into the (existing) history.state object, forming a new history.state object.
 
 ## Departmentalizing Part II
 
@@ -183,12 +169,12 @@ The "rewrite" boolean attribute/property will cause the previous state change to
 
 But unlike the native history.pushState and history.replaceState methods, xtal-state-update attempts to preserve what was there already.  If the source property is of type object or array, it creates a new empty object {}, then merges the existing state into it, then does a [deep, recursive merge](https://davidwalsh.name/javascript-deep-merge) of watchedObject (in this example) into that.
 
-## Support for reference pointers, part II [TODO]
+## Support for data extraction [TODO]
 
 Suppose we have a new police blotter entry someone entered:
 
-```JavaSript
-    [{
+```JavaScript
+    {
         caseNumber: 'unknown',
         reporter: 'Michael Davis',
         age: 20
@@ -197,8 +183,7 @@ Suppose we have a new police blotter entry someone entered:
 
         "I knew when I saw the rolling pin that something bad was going to go down," Davis said.
         `,
-        "set()":"refs.persistChanges"
-    }]
+    }
 ```
 
 We need to pass xtal-state-update an object which has persistChanges method, as the JavaScript above indicates:
@@ -206,18 +191,19 @@ We need to pass xtal-state-update an object which has persistChanges method, as 
 ```html
 <xtal-state-update make history="[[newPoliceBlotterEntry]]"  
     where-path="MilkyWay.Earth.UnitedStates.Texas.Montgomery.CutAndShoot"
-    refs="myObjectPersistenceEngine"
+    dispatch event-name="savePoliceBlotterEntry"
 >
 </xtal-state-update>
 ```
 
-the method persistChanges can return an object, which might contain the id given when saving this new record.  This is what will get stored in the history object.  For example it might return
+Just as before, the event passes the newPolicBlotterEntry as the value of the event.  Subscribers can replace the value object with a new object or a promise.
+
+For example, a subscriber can return a promise, which, when done, might contain the id given when saving this new record.  The result of the promise is what would get stored in the history object.  For example it might return
 
 ```JavaScript
-   [{
+   {
         caseNumber: 0102945,
-        "get()":"refs.getCaseDetails"
-    }]
+    }
 ```
 
   
