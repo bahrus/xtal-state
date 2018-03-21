@@ -206,18 +206,12 @@ For example, a subscriber can return a promise, which, when done, might contain 
     }
 ```
 
+A subscriber may also return a title string, and a function, "URLGenerator" that will generate the URL for the history change.
   
 
 xtal-state-update is ~888B (minified and gzipped).
 
 
-
-## Recording history [TODO]
-
-
-xtal-state-transcribe listens for all history api changes, and it applies a user provided filter function, which can filter out those parts of history object which pertain only to the external routing solution.  xtal-state-transcribe recognizes that most modern client-centric web applications have abandoned the location.hash portion of the URL, in favor of location.href.  This opens up the location.hash as an area we can use to indicate location where the storage of the full (or a subset of) the current history is deposited.
-
-After applying the filter, xtal-state-transcribe JSON serializes/stringifies the remaining object, and checks if the resulting string is different from before.  If it is, it sets location.hash to that value (starting with the bang symbol).
 
 ## Install the Polymer-CLI
 
