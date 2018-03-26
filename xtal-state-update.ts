@@ -15,6 +15,8 @@ export interface IXtalStateUpdateProperties {
     const bubbles = 'bubbles';
     const composed = 'composed';
     const dispatch = 'dispatch';
+    const title = 'title';
+    const url = 'url';
     const event_name = 'event-name';
     /**
      * `xtal-state-update`
@@ -26,7 +28,7 @@ export interface IXtalStateUpdateProperties {
      */
     class XtalStateUpdate extends HTMLElement implements IXtalStateUpdateProperties {
         static get properties() {
-            return [make, rewrite, 'wherePath', history,  bubbles, composed, dispatch, 'eventName'];
+            return [make, rewrite, 'wherePath', history, bubbles, composed, dispatch, 'eventName', url, title];
         }
         _make: boolean;
         get make() {
@@ -94,6 +96,21 @@ export interface IXtalStateUpdateProperties {
             this.onInputPropsChange();
         }
 
+        get title() {
+            return this.getAttribute(title);
+        }
+        set title(val) {
+            this.setAttribute(title, val);
+        }
+
+        get url() {
+            return this.getAttribute(url);
+        }
+
+        set url(val) {
+            this.setAttribute(url, val);
+        }
+
         get nsHistory() {
             if (!this._wherePath || !this._history) return this._history;
             const returnObj = {};
@@ -149,20 +166,106 @@ export interface IXtalStateUpdateProperties {
             XtalStateUpdate._lastPath = this._wherePath;
             const detail = {
                 proposedState: newState,
-                SNOFHYP: false,
+                title: this.title,
+                url: this.url,
+                abort: false,
             }
             const newEvent = new CustomEvent(this.eventName, {
                 bubbles: this._bubbles,
-                composed: this._composed
+                composed: this._composed,
+                detail: detail
             } as CustomEventInit);
             this.dispatchEvent(newEvent);
-            if(!detail.SNOFHYP) return;
+            if (detail.abort) return;
+            //GOOD GRIEF!!!!
+            
+            let titleIsReady = true;
+            let urlIsReady = true;
+            let detailIsReady = true;
+            if (detail.title && typeof detail.title === 'function') {
+                detail.title = (detail as any).title(detail);
+                if (detail.title['then'] && typeof (detail.title['then']) === 'function') {
+                    titleIsReady = false;
+                    detail.title['then'](title => {
+                        detail.title = title;
+                        if (urlIsReady && detailIsReady) {
+                            this.updateHistory(detail.proposedState, detail.title, detail.url);
+                            return;
+                        }
+                    })
+                // } else {
+                //     if (urlIsReady && detailIsReady) {
+                //         this.updateHistory(detail.proposedState, detail.title, detail.url);
+                //     }
+                // }
+                // } else {
+            //     if (urlIsReady && detailIsReady) {
+            //         this.updateHistory(detail.proposedState, detail.title, detail.url);
+            //     }
+            // }
+                }
+            }
+            if (detail.url && typeof detail.url === 'function') {
+                detail.url = (detail as any).url(detail);
+                if (detail.url['then'] && typeof (detail.url['then']) === 'function') {
+                    urlIsReady = false;
+                    detail.url['then'](url => {
+                        detail.url = url;
+                        if (titleIsReady && detailIsReady) {
+                            this.updateHistory(detail.proposedState, detail.title, detail.url);
+                            return;
+                        }
+                    })
+            //     } else {
+            //         if (titleIsReady && detailIsReady) {
+            //             this.updateHistory(detail.proposedState, detail.title, detail.url);
+            //         }
+            //     }
+            // } else {
+            //     if (titleIsReady && detailIsReady) {
+            //         this.updateHistory(detail.proposedState, detail.title, detail.url);
+            //     }
+            // }
+                }
+            }
+            if (detail.proposedState && typeof detail.proposedState === 'function') {
+                detail.proposedState = (detail as any).proposedState(detail);
+                if (detail.proposedState['then'] && typeof (detail.proposedState['then'] === 'function')) {
+                    detailIsReady = false;
+                    detail.proposedState['then'](proposedState => {
+                        detailIsReady = true;
+                        detail.proposedState = proposedState;
+                        if (titleIsReady && urlIsReady) {
+                            this.updateHistory(detail.proposedState, detail.title, detail.url);
+                            return;
+                        }
+                    })
+            //     } else {
+            //         if (titleIsReady && urlIsReady) {
+            //             this.updateHistory(detail.proposedState, detail.title, detail.url);
+            //         }
+            //     }
+            // } else {
+            //     if (titleIsReady && urlIsReady) {
+            //         this.updateHistory(detail.proposedState, detail.title, detail.url);
+            //     }
+            // }
+                }
+            }
+            if(titleIsReady && urlIsReady && detailIsReady){
+                this.updateHistory(detail.proposedState, detail.title, detail.url);
+            }
+
+        }
+
+        updateHistory(state, title: string, url: string) {
             if (this.make) {
-                window.history.pushState(detail.proposedState, '');
+                window.history.pushState(state, title ? title : '', url);
             } else if (this.rewrite) {
-                window.history.replaceState(detail.proposedState, '');
+                window.history.replaceState(state, title ? title : '', url);
             }
         }
+
         static get observedAttributes() {
             //const p = XtalStateUpdate.properties;
             return [make, rewrite, wherePath, dispatch, composed, bubbles];

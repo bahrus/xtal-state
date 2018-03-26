@@ -16,7 +16,7 @@ Chuck Bartowski is a lanky, earnest looking twenty-something with tangled, somew
 
 Chuck decides he would kill two birds with one stone, and brings along one of his customer's Windows 7 laptops that needs updating to Windows 10.  He begins the upgrade at the Hollywood Burbank airport while waiting for his flight to London.
 
-When Chuck arrives at the gravesite of Oliphant Chuckerbutty some 12 hours later, he is disappointed to see that the place was rather neglected, with no interesting markings that might lead anywhere.  Feeling like a total failure, Chuck sits down on the wet earth, burying his head in his hands.  Twenty minutes go by, and then Chuck hears someone whistling a tune that sounds eerily familiar, yet new and exciting at the same time.  The tune was clearly written by Krzysztof Penderecki, and clearly follows the mold he set with  "Threnody to the Victims of Hiroshima."  But it is something Chuck has never heard before.  Of course! This must be the rumored Dies Irae, but Chuck knew Penderecky had not yet completed the work.  Penderecky was one of the recent disappearances, who had left behind the mysterious note!
+When Chuck arrives at the gravesite of Oliphant Chuckerbutty some 12 hours later, he is disappointed to see that the place was rather neglected, with no interesting markings that might lead anywhere.  Feeling like a total failure, Chuck sits down on the wet earth, burying his head in his hands.  Twenty minutes go by, and then Chuck hears someone whistling a tune that sounds eerily familiar, yet new and exciting at the same time.  The tune was clearly written by Krzysztof Penderecki, and clearly follows the mold he set with  "Threnody to the Victims of Hiroshima."  But it is something Chuck has never heard before.  Of course! This must be the rumored "Dies Irae", but Chuck knew Penderecky had not yet completed the work.  Penderecky was one of the recent disappearances, who had left behind the mysterious note!
 
 Chuck spins around to determine the source of the melody.  It's a young lad, the cemetary's groundkeeper.
 
@@ -34,11 +34,11 @@ Whipping out his laptop, which is still undergoing the Windows 10 update, Chuck 
 
 Chuck can't wait to send Sarah the page he is on, which so clearly shows that Vít Jedlička must be involved somehow.  Getting a warning that the fourth reboot would start in 15 seconds, Chuck quickly copies the url in the address bar, and sends it to Agent Walker's secured email account, just in the nick of time before the browser shuts down for the reboot.
 
-\<xtal-state\> is a set of dependency free web components that help applications interface with the API, in a way that's conducive to building a URL like the one that Chuck sent Sarah.  It promotes being able to share complex views of an application state.
+\<xtal-state\> is a set of dependency free web components that help applications interface with the history API, in a way that's conducive to building a URL like the one that Chuck sent Sarah.  It promotes being able to share complex views of an application state.
 
 ## Some browser-based barriers
 
-The benefit of updating the window.location object (location.href and/or location.hash) as the user interacts with a web site, is that it allows the user to copy and paste the url corresponding to what they are seeing, and communicate it via email, text message etc.  Others can then open the application and zoom right to the place the user was excited to convey.  [At least, that's what I'd like to see happen, but most of the time, especially for complex business applications, this doesn't work].  And these days, many browsers support a sharing button, external to the web site, which sends the current url.  Sensible browsers, like Firefox, and Edge, include the hash tag part ("hash fragment") of the url.  Unfortunately, some browsers, like Chrome, haven't seen the light on this.  I argue this is quite problematic.  Sites like GitHub allow you to select a line number, which causes a hash location update to the url, specifying the line number.  Why does Chrome assume the user doesn't want to share that part of the URL?  That's a rather rude assumption, it seems to me.  Even inserting the "bang" after the hash doesn't help.
+The benefit of updating the window.location object (location.href and/or location.hash) as the user interacts with a web site, is that it allows the user to copy and paste the url corresponding to what they are seeing, and communicate it via email, text message etc.  Others can then open the application and zoom right to the place the user was excited to convey.  [At least, that's what I'd like to see happen, but most of the time, especially for complex business applications, this doesn't work].  And these days, many browsers support a sharing button, external to the web site, which sends the current url.  Sensible browsers, like Firefox, and Edge, include the hash tag part ("hash fragment") of the url.  Unfortunately, some browsers, like Chrome, haven't seen the light on this.  I argue this is quite problematic.  Sites like GitHub allow you to select a line number, which causes a hash location update to the url, specifying the line number.  Why does Chrome assume the user doesn't want to share that part of the URL?  That's a rather rude assumption, it seems to me.  Even inserting the "bang" after the hash doesn't help.  Bad Chrome!
 
 Because the sharing buttons are external to the website, the website doesn't get notified when the user is about to invoke this button, so whatever is in the address bar at that moment (with the exception of Chrome's rude ignoring of the bookmark) will be exactly what is sent.
 
@@ -55,9 +55,9 @@ The smallest maximum size of the history api appears to be 640k characters (iron
 
 The simplest solution to this dilemma would be to persist the history.state object to a central database with every modification, and to just add the id pointing to this object to the address bar somewhere.  The web components provided here will certainly not get in the way of doing just that, and will in fact be somewhat helpful for this approach.
 
-One example of an existing service that requires no token or account, where one could store the stringified history.state object, is [myjson.com](http://myjson.com/) (maximum size unknown.)    
+One example of an existing service that requires no token or account, where one could store the stringified history.state object, is [myjson.com](http://myjson.com/) (maximum size unknown.).  NB:  Using such a service, and blindly accepting any id without serious verification, could put a damper on your weekend. 
 
-But this strategy isn't very efficient.  It would require rapidly uploading a larger and larger object / JSON string as the user's application state grows, which could happen quite quickly.
+And this strategy isn't very efficient.  It would require rapidly uploading a larger and larger object / JSON string as the user's application state grows, which could happen quite quickly.
 
 Hopefully, having gone through all that background, what these web components are doing will make more sense.  As we will see, they don't strive to solve every problem under the sun, but rather to establish the ground work so applications can achieve what they want more easily.
 
@@ -66,7 +66,7 @@ Hopefully, having gone through all that background, what these web components ar
 
 ## Listening for history changes
 
-*xtal-state-watch* is (for now) a ~700B (minified and gzipped) js custom element that listens for all history changes, and it emits an event that local components can bind to. 
+*xtal-state-watch* was a ~700B (minified and gzipped) js custom element that still listens for all history changes, and it emits an event that local components can bind to. 
 
 For example, using a JSX library that can listen for custom events, like Preact, we can have code like:
 
@@ -84,7 +84,7 @@ With Polymer, one would instead typically use the following for declarative synt
 
 Other template frameworks follow similar patterns.
 
-The boolean attribute/property "watch" is there so neighboring elements can ignore history changes when the attribute is removed, or the property is set to false.  This might be useful, for example, if an element is present but hidden.  When watch becomes true, it will notify the neighbors of the new state of history.
+The boolean attribute/property "watch" is there so neighboring elements can ignore history changes when the attribute is removed, or the property is set to false.  This might be useful, for example, if an element is present but hidden.  When watch becomes true, it will notify the ancestral nodes (and possibly) neighbors of the new state of history.
 
 ## Departmentalizing, Part I
 
@@ -136,7 +136,7 @@ Subscribing elements can replace the value with a new value (in this example, pe
 
 *xtal-state-update* is another custom element, that views the history api as a rudimentary global state management system, including built-in time travel support via the back / forward buttons.  xtal-state-update allows you to declaratively modify the history.state object.  But in the interest of being a good neighbor to other components that may work with the history api (like routing components), the changes made to the history.state are made so as not to trample on changes made externally.  In other words, xtal-state-update strives to minimize the chances of losing history state changes made from logic external to xtal-state-update.
 
-xtal-state-update provides three properties that allow the developer to declaratively modify the global history.state object.
+xtal-state-update provides three required properties that allow the developer to declaratively modify the global history.state object.
 
 With Polymer syntax, this would look as follows:
 
@@ -149,6 +149,8 @@ With Polymer syntax, this would look as follows:
 ```
 
 When the watchedObject changes, it will be merged into the (existing) history.state object, forming a new history.state object.
+
+Two additional properties / attributes allow you to specify the title and url for the history update change.  They are named "title" and "url."
 
 ## Departmentalizing Part II
 
