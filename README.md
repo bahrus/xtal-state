@@ -207,6 +207,8 @@ xtal-state-update will pass the event with the specified name.  The detail of th
 
 Subscribers can modify the proposedState, reject doing anything by setting abort=true, or modify the title or route.
 
+If an existing router is place, some listener can replace the url with the existing routing function used to open new url's.
+
 Each of these properties can be turned into functions, that may optionally return promises.  xtal-state-update will first perform the function,and await the promise to complete if applicable before committing to the history api.
 
 
