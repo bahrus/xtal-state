@@ -99,7 +99,7 @@ The first such tweak is to specify only a certain part of the history which is o
 </xtal-state-watch>
 ``` 
 
-As we will see later, as long as you update the history.state object using the web components described in this document, then the where-path will limit which events the specific instance will respond to.  This attribute isn't all-powerful howerver.   If other external logic  decides to update the history outside the path specified , this web component will respond.  I.e. it will oversubscribe.  Solving that issue (if it is solvable?  maybe using proxies?) is a TODO item.
+As we will see later, as long as you update the history.state object using the web components described in this document, then the where-path will limit which events the specific instance will respond to.  This attribute isn't all-powerful however.   If other external logic  decides to update the history outside the path specified, this web component will respond.  I.e. it will oversubscribe.  Solving that issue (if it is solvable?  maybe using proxies?) is a TODO item.
 
 If you are using good UI components which are optimized for dealing with small changes to the model (e.g. a virtual DOM), then hopefully the consequences of this oversubscription (for now) won't be too bad.
 
@@ -121,7 +121,7 @@ We can dispatch a request that passes up the DOM Tree, providing a name for the 
 <!-- Polymer binding syntax -->
 <xtal-state-watch watch history="{{policeBlotter}}"
     where-path="MilkyWay.Earth.UnitedStates.Texas.Montgomery.CutAndShoot"  
-    dispatch event-name="getPoliceIncidentDetails"
+    dispatch event-name="getPoliceIncidentDetails" composed bubbles
 >
 </xtal-state-watch>
 ```
@@ -192,22 +192,22 @@ Suppose we have a new police blotter entry someone entered:
 <xtal-state-update make history="[[newPoliceBlotterEntry]]"  
     where-path="MilkyWay.Earth.UnitedStates.Texas.Montgomery.CutAndShoot"
     dispatch event-name="savePoliceBlotterEntry" bubbles composed
-    title="notSureWhatPurposeTitleHas" route="[[overridenRouteGenerator]]"
+    title="notSureWhatPurposeTitleHas" url="[[overridenRouteGenerator]]"
 >
 </xtal-state-update>
 ```
 
 
-xtal-state-update will pass the event with the specified name.  The detail of the event has three properties:
+xtal-state-update will pass the event with the specified name.  The detail of the event has four properties:
 
 1)  proposedState : object
-2)  SNOFHYP :  boolean
+2)  abort:  boolean
 3)  title : string
-4)  route: string
+4)  url: string
 
-Subscribers can modify the proposedState, reject doing anything by setting SNOFHYP, or modify the title or route.
+Subscribers can modify the proposedState, reject doing anything by setting abort=true, or modify the title or route.
 
-Each of these properties can be turned into functions, that may optionally be promises.  xtal-state-update will first perform the function, and await the promise to complete if applicable before committing to the history api.
+Each of these properties can be turned into functions, that may optionally return promises.  xtal-state-update will first perform the function,and await the promise to complete if applicable before committing to the history api.
 
 
 For example, a subscriber can return a promise, which, when done, might contain the id given when saving this new record.  The result of the promise is what would get stored in the history object.  For example it might return
@@ -222,7 +222,7 @@ If a function is returned for route, it will be passed the proposedState.
 
   
 
-xtal-state-update is ~888B (minified and gzipped).
+xtal-state-update was ~888B (minified and gzipped).
 
 
 
