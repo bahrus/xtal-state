@@ -8,7 +8,7 @@ A unit of the CIA, led by Agent Sarah Walker, is investigating a series of myste
 
 >Who is Soorjo Alexander William Langobard Oliphant Chuckerbutty III?
 
-Agent Walker sends recent recruit Chuck Bartowski to visit the senior Olipant Chuckerbutty's tombstone in Paddington, in search of clues.
+Agent Walker sends recent recruit Chuck Bartowski to visit the tombstone of Olipant Chuckerbutty (Senior), located in Paddington, in search of clues.
 
 Chuck Bartowski is a lanky, earnest looking twenty-something with tangled, somewhat curly dark hair.  He works at Buy More as a computer service technician, after being expelled from Standford University's CS Program. Chuck is relieved and excited to be sent away on his first solo mission.  Relieved, because he had just admitted to his feelings for Agent Walker the previous day, who stood there, stoically.
 
@@ -34,11 +34,11 @@ Whipping out his laptop, which is still undergoing the Windows 10 update, Chuck 
 
 Chuck can't wait to send Sarah the page he is on, which so clearly shows that Vít Jedlička must be involved somehow.  Getting a warning that the fourth reboot would start in 15 seconds, Chuck quickly copies the url in the address bar, and sends it to Agent Walker's secured email account, just in the nick of time before the browser shuts down for the reboot.
 
-\<xtal-state\> is a set of dependency free web components that help applications build url's like the one that Chuck sent Sarah.  It allows sharing complex views of an application state.
+\<xtal-state\> is a set of dependency free web components that help applications interface with the API, in a way that's conducive to building a URL like the one that Chuck sent Sarah.  It promotes being able to share complex views of an application state.
 
 ## Some browser-based barriers
 
-The benefit of updating the window.location object (location.href and/or location.hash) as the user interacts with a web site, is that it allows the user to copy and paste the url corresponding to what they are seeing, and communicate it via email, text message etc.  Others can then open the application and zoom right to the place the user was excited to convey.  And these days, many browsers support a sharing button, external to the web site, which sends the current url.  Sensible browsers, like Firefox, and Edge, include the hash tag part ("hash fragment") of the url.  Unfortunately, some browsers, like Chrome, haven't seen the light on this.  I argue this is quite problematic.  Sites like GitHub allow you to select a line number, which causes a hash location update to the url, specifying the line number.  Why does Chrome assume the user doesn't want to share that part of the URL?  That's a rather rude assumption, it seems to me.  Even inserting the "bang" after the hash doesn't help.
+The benefit of updating the window.location object (location.href and/or location.hash) as the user interacts with a web site, is that it allows the user to copy and paste the url corresponding to what they are seeing, and communicate it via email, text message etc.  Others can then open the application and zoom right to the place the user was excited to convey.  [At least, that's what I'd like to see happen, but most of the time, especially for complex business applications, this doesn't work].  And these days, many browsers support a sharing button, external to the web site, which sends the current url.  Sensible browsers, like Firefox, and Edge, include the hash tag part ("hash fragment") of the url.  Unfortunately, some browsers, like Chrome, haven't seen the light on this.  I argue this is quite problematic.  Sites like GitHub allow you to select a line number, which causes a hash location update to the url, specifying the line number.  Why does Chrome assume the user doesn't want to share that part of the URL?  That's a rather rude assumption, it seems to me.  Even inserting the "bang" after the hash doesn't help.
 
 Because the sharing buttons are external to the website, the website doesn't get notified when the user is about to invoke this button, so whatever is in the address bar at that moment (with the exception of Chrome's rude ignoring of the bookmark) will be exactly what is sent.
 
@@ -107,7 +107,7 @@ If you are using good UI components which are optimized for dealing with small c
 
 Suppose we want to use the history to reference a large object or a  function.  In the latter case, functions can't be stored in the history.state because it doesn't support cloning.  And the size of the history state is also limited (to 640K, Bill Gates's favorite number).  Not to mention that if we want to serialize that history to the address bar, it should be *really* small because Microsoft.
 
-xtal-state-watch supports asking containing elements for help filling in the details.  So say the following is put into history.state:
+xtal-state-watch supports asking containing elements for help filling in the details before posting the enhanced history to its peers.  So say the following is put into history.state:
 
 ```JavaScript
     {
@@ -129,6 +129,7 @@ We can dispatch a request that passes up the DOM Tree, providing a name for the 
 The event contains the value of the history object (restricted to the optional where-path).
 
 Subscribing elements can replace the value with a new value (in this example, performing a lookup on the caseNumber), or replace the value with a promise, which xtal-state-watch will wait for, before setting the history property / event for local elements.  
+
 
 
 ## Applying changes
@@ -169,7 +170,7 @@ The "rewrite" boolean attribute/property will cause the previous state change to
 
 But unlike the native history.pushState and history.replaceState methods, xtal-state-update attempts to preserve what was there already.  If the source property is of type object or array, it creates a new empty object {}, then merges the existing state into it, then does a [deep, recursive merge](https://davidwalsh.name/javascript-deep-merge) of watchedObject (in this example) into that.
 
-## Support for data extraction [TODO]
+## Support for data extraction / route information [TODO]
 
 Suppose we have a new police blotter entry someone entered:
 
@@ -186,17 +187,28 @@ Suppose we have a new police blotter entry someone entered:
     }
 ```
 
-We need to pass xtal-state-update an object which has persistChanges method, as the JavaScript above indicates:
 
 ```html
 <xtal-state-update make history="[[newPoliceBlotterEntry]]"  
     where-path="MilkyWay.Earth.UnitedStates.Texas.Montgomery.CutAndShoot"
-    dispatch event-name="savePoliceBlotterEntry"
+    dispatch event-name="savePoliceBlotterEntry" bubbles composed
+    title="notSureWhatPurposeTitleHas" route="[[overridenRouteGenerator]]"
 >
 </xtal-state-update>
 ```
 
-Just as before, the event passes the newPolicBlotterEntry as the value of the event.  Subscribers can replace the value object with a new object or a promise.
+
+xtal-state-update will pass the event with the specified name.  The detail of the event has three properties:
+
+1)  proposedState : object
+2)  SNOFHYP :  boolean
+3)  title : string
+4)  route: string
+
+Subscribers can modify the proposedState, reject doing anything by setting SNOFHYP, or modify the title or route.
+
+Each of these properties can be turned into functions, that may optionally be promises.  xtal-state-update will first perform the function, and await the promise to complete if applicable before committing to the history api.
+
 
 For example, a subscriber can return a promise, which, when done, might contain the id given when saving this new record.  The result of the promise is what would get stored in the history object.  For example it might return
 
@@ -206,7 +218,8 @@ For example, a subscriber can return a promise, which, when done, might contain 
     }
 ```
 
-A subscriber may also return a title string, and a function, "URLGenerator" that will generate the URL for the history change.
+If a function is returned for route, it will be passed the proposedState.
+
   
 
 xtal-state-update is ~888B (minified and gzipped).

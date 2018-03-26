@@ -6,6 +6,10 @@
     const rewrite = 'rewrite';
     const history = 'history';
     const wherePath = 'where-path';
+    const bubbles = 'bubbles';
+    const composed = 'composed';
+    const dispatch = 'dispatch';
+    const event_name = 'event-name';
     /**
      * `xtal-state-update`
      *  Web component wrapper around the history push/replace api
@@ -16,7 +20,7 @@
      */
     class XtalStateUpdate extends HTMLElement {
         static get properties() {
-            return [make, rewrite, wherePath, history];
+            return [make, rewrite, 'wherePath', history, bubbles, composed, dispatch, 'eventName'];
         }
         get make() {
             return this._make;
@@ -39,6 +43,37 @@
             else {
                 this.removeAttribute(rewrite);
             }
+        }
+        get bubbles() {
+            return this._bubbles;
+        }
+        set bubbles(val) {
+            if (val) {
+                this.setAttribute(bubbles, '');
+            }
+            else {
+                this.removeAttribute(bubbles);
+            }
+        }
+        get composed() {
+            return this._composed;
+        }
+        set composed(val) {
+            if (val) {
+                this.setAttribute(composed, '');
+            }
+            else {
+                this.removeAttribute(composed);
+            }
+        }
+        get dispatch() {
+            return this._dispatch;
+        }
+        get eventName() {
+            return this.getAttribute(event_name);
+        }
+        set eventName(val) {
+            this.setAttribute(event_name, val);
         }
         get history() {
             return this._history;
@@ -87,16 +122,27 @@
                     break;
             }
             XtalStateUpdate._lastPath = this._wherePath;
+            const detail = {
+                proposedState: newState,
+                SNOFHYP: false,
+            };
+            const newEvent = new CustomEvent(this.eventName, {
+                bubbles: this._bubbles,
+                composed: this._composed
+            });
+            this.dispatchEvent(newEvent);
+            if (!detail.SNOFHYP)
+                return;
             if (this.make) {
-                window.history.pushState(newState, '');
+                window.history.pushState(detail.proposedState, '');
             }
             else if (this.rewrite) {
-                window.history.replaceState(newState, '');
+                window.history.replaceState(detail.proposedState, '');
             }
         }
         static get observedAttributes() {
-            const p = XtalStateUpdate.properties;
-            return [p[0], p[1], p[2]];
+            //const p = XtalStateUpdate.properties;
+            return [make, rewrite, wherePath, dispatch, composed, bubbles];
         }
         attributeChangedCallback(name, oldValue, newValue) {
             switch (name) {
@@ -108,6 +154,15 @@
                     break;
                 case wherePath:
                     this._wherePath = newValue;
+                    break;
+                case dispatch:
+                    this._dispatch = newValue !== null;
+                    break;
+                case composed:
+                    this._composed = newValue !== null;
+                    break;
+                case bubbles:
+                    this._bubbles = newValue !== null;
                     break;
             }
             this.onInputPropsChange();
