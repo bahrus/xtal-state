@@ -130,8 +130,6 @@ The event contains the value of the history object (restricted to the optional w
 
 Subscribing elements can replace the value with a new value (in this example, performing a lookup on the caseNumber), or replace the value with a promise, which xtal-state-watch will wait for, before setting the history property / event for local elements.  
 
-
-
 ## Applying changes
 
 *xtal-state-update* is another custom element, that views the history api as a rudimentary global state management system, including built-in time travel support via the back / forward buttons.  xtal-state-update allows you to declaratively modify the history.state object.  But in the interest of being a good neighbor to other components that may work with the history api (like routing components), the changes made to the history.state are made so as not to trample on changes made externally.  In other words, xtal-state-update strives to minimize the chances of losing history state changes made from logic external to xtal-state-update.
@@ -172,7 +170,7 @@ The "rewrite" boolean attribute/property will cause the previous state change to
 
 But unlike the native history.pushState and history.replaceState methods, xtal-state-update attempts to preserve what was there already.  If the source property is of type object or array, it creates a new empty object {}, then merges the existing state into it, then does a [deep, recursive merge](https://davidwalsh.name/javascript-deep-merge) of watchedObject (in this example) into that.
 
-## Support for data extraction / route information [TODO]
+## Support for data extraction / route information [Done, but not sufficiently tested / optimized]
 
 Suppose we have a new police blotter entry someone entered:
 
