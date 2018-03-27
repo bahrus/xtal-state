@@ -220,7 +220,9 @@ Subscribers can modify these properties as needed.  For example, if a subscriber
 
 If the subscriber doesn't know the id, but knows how to generate it, it can replace the proposedState with a function.  xtal-state-update will evaluate this function, and check if the result has a property called 'then' of type function.  It will then assume that it is a promise, and evaluate the promise.  Only after the promise is completed will the resulting object be merged into the history object.
 
-If an existing router is in place, some listener can replace the url with the existing routing function used to open new url's.  The entire detail object, containing the four properties will be passed to that function.  But I can't see a use case for returning a function that evaluates to a promise here.
+If an existing router is in place, some listener can replace the url with the existing routing function used to open new url's.  The entire detail object, containing the four properties, will be passed to that function.  The routing function will only be called after the detail promise is finished (if applicable);
+
+But I can't see a use case for returning a function that evaluates to a promise here.
 
 The title property seems to not yet have any use yet, so the subscriber can replace it if so desired, but it should replace it with another string.
 
