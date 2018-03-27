@@ -38,28 +38,21 @@ Chuck can't wait to send Sarah the page he is on, which so clearly shows that VÃ
 
 ## Some browser-based barriers
 
-The benefit of updating the window.location object (location.href and/or location.hash) as the user interacts with a web site, is that it allows the user to copy and paste the url corresponding to what they are seeing, and communicate it via email, text message etc.  Others can then open the application and zoom right to the place the user was excited to convey.  [At least, that's what I'd like to see happen, but most of the time, especially for complex business applications, this doesn't work].  And these days, many browsers support a sharing button, external to the web site, which sends the current url.  Sensible browsers, like Firefox, and Edge, include the hash tag part ("hash fragment") of the url.  Unfortunately, some browsers, like Chrome, haven't seen the light on this.  I argue this is quite problematic.  Sites like GitHub allow you to select a line number, which causes a hash location update to the url, specifying the line number.  Why does Chrome assume the user doesn't want to share that part of the URL?  That's a rather rude assumption, it seems to me.  Even inserting the "bang" after the hash doesn't help.  Bad Chrome!
-
-Because the sharing buttons are external to the website, the website doesn't get notified when the user is about to invoke this button, so whatever is in the address bar at that moment (with the exception of Chrome's rude ignoring of the bookmark) will be exactly what is sent.
+The benefit of updating the window.location object (location.href and/or location.hash) as the user interacts with a web site, is that it allows the user to copy and paste the url corresponding to what they are seeing, and communicate it via email, text message etc.  Others can then open the application and zoom right to the place the user was excited to convey.  [At least, that's what I'd like to see happen, but most of the time, especially for complex business applications, this doesn't work].  And these days, many browsers support a sharing button, external to the web site, which sends the current url.  Sensible browsers, like Firefox, and Edge, include the hash tag part ("hash fragment") of the url.  Okay, I guess some neat freak commentators consider Chrome's URL castration / mutilation a [feature](https://www.engadget.com/2018/02/19/chrome-cleans-messy-urls-share-phone/), not a bug.  I think this is quite problematic.  Sites like GitHub allow you to select a line number, which causes a hash location update to the url, specifying the line number.  Why does Chrome assume the user doesn't want to share that part of the URL?  That's a rather rude assumption, it seems to me.  Even inserting the "bang" after the hash doesn't help.  Bad Chrome!  
 
 
-The [webshare api](https://developers.google.com/web/updates/2016/09/navigator-share) also rests on sending a url, and would benefit in the same way.  Search results is another example, but hash fragments need to [include the bang symbol](https://www.oho.com/blog/explained-60-seconds-hash-symbols-urls-and-seo) for them to be honored.    Aside from sharing with others, a user may want to bookmark different parts of an application, so jumping to that part of the application is more convenient.  Here, Chrome doesn't fail us, and it includes the bookmark portion of the url in the bookmark.  Thanks, Chrome!
-
-Web servers have, for security reasons, I think, needed to impose limits on the size of a url that gets sent, which is perfectly fair.  But the hash fragment doesn't get sent to the server, so in theory browsers can allow more flexibility in terms of the size of this string.  And indeed, browsers have generally been quite permissive with respect to the hash fragment.  True, using the history api, one can also update the non hash part of the url without that modification going to the server.  But unfortunately, should the user want to click on the refresh button, or send such a url to a friend, that entire string will be sent to the server, which could result in an ungraceful server error, perhaps containing text of an accusatory nature.  So if we want to encode complex state into the url, the hash fragment seems to be the most natural place to look.
-
-Unfortunately, our [friends at Microsoft](https://www.computerworld.com/article/2534312/operating-systems/the--640k--quote-won-t-go-away----but-did-gates-really-say-it-.html) have determined that [2k ought to be enough for anybody](https://stackoverflow.com/questions/16247162/max-size-of-location-hash-in-browser).
-
-For an application with a large amount of complexity, then, sharing the URL to a particular state of an application might need to be accompanied by some sort of external storage on these browsers.  
-
-The smallest maximum size of the history api appears to be 640k characters (ironically).  Here even Microsoft has been more genererous (their limit is 1 MB).  So we have a major mismatch (two orders of magnitude) between the amount of data we can store in the history api vs what can be serialized in the address bar of approximately 7% of browser used today.
-
-The simplest solution to this dilemma would be to persist the history.state object to a central database with every modification, and to just add the id pointing to this object to the address bar somewhere.  The web components provided here will certainly not get in the way of doing just that, and will in fact be somewhat helpful for this approach.
+The simplest solution to this dilemma would be to persist the history.state object to a central database with every modification, and to just add the id pointing to this object in the address bar somewhere Google hasn't started expunging yet.  The web components provided here will certainly not get in the way of doing just that, and will in fact be somewhat helpful for this approach.
 
 One example of an existing service that requires no token or account, where one could store the stringified history.state object, is [myjson.com](http://myjson.com/) (maximum size unknown.).  NB:  Using such a service, and blindly accepting any id without serious verification, could put a damper on your weekend. 
 
 And this strategy isn't very efficient.  It would require rapidly uploading a larger and larger object / JSON string as the user's application state grows, which could happen quite quickly.
 
-Hopefully, having gone through all that background, what these web components are doing will make more sense.  As we will see, they don't strive to solve every problem under the sun, but rather to establish the ground work so applications can achieve what they want more easily.
+Basically what we need is a miniature 1 kb git client running in the browser, that can commit only the minimal required change set,  at every user click, to a central repository, returning a revision number, which will go somewhere in the adress bar, until naughty advertisers figure out the same trick, at which point only the domain can be sent, no query string parameters or paths.  
+
+These web components assume the existence of such a git client in the brower, and simply focus on getting it the information it needs to commit the changes to some magical github like database and return the revision number.
+
+
+
 
 
 # \<xtal-state-watch\>
