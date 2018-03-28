@@ -36,10 +36,15 @@ Chuck can't wait to send Sarah the page he is on, which so clearly shows that VÃ
 
 \<xtal-state\> is a set of dependency free web components that help applications interface with the history API, in a way that's conducive to building a URL like the one that Chuck sent Sarah.  It promotes being able to share complex views of an application state.
 
-## Say it ain't so, Chrome!
+## Throwing out the baby with the hash marker.
 
-The benefit of updating the window.location object (location.href and/or location.hash) as the user interacts with a web site, is that it allows the user to copy and paste the url corresponding to what they are seeing, and communicate it via email, text message etc.  Others can then open the application and zoom right to the place the user was excited to convey.  [At least, that's what I'd like to see happen, but most of the time, especially for complex business applications, this doesn't work].  And these days, many browsers support a sharing button, external to the web site, which sends the current url.  Sensible browsers, like Firefox, and Edge, include the hash tag part ("hash fragment") of the url.  Okay, I guess some neat freak commentators consider Chrome's recent URL castration / mutilation initiative a [feature](https://www.engadget.com/2018/02/19/chrome-cleans-messy-urls-share-phone/), not a bug.  I think this is quite problematic.  Sites like GitHub allow you to select a line number, which causes a hash location update to the url, specifying the line number.  Why does Chrome assume the user doesn't want to share that part of the URL?  That's a rather rude assumption, it seems to me.  Bad Chrome!  
+The benefit of updating the window.location object (location.href and/or location.hash) as the user interacts with a web site, is that it allows the user to copy and paste the url corresponding to what they are seeing, and communicate it via email, text message etc.  Others can then open the application and zoom right to the place the user was excited to convey.  [At least, that's what I'd like to see happen, but most of the time, especially for complex business applications, this doesn't work].  And these days, many browsers support a sharing button, external to the web site, which sends the current url.  Sensible browsers, like Firefox, and Edge, include the hash tag part ("hash fragment") of the url.  Okay, I guess some neat freak commentators consider Chrome's recent URL castration / mutilation / amputation / lobotomy initiative a [feature](https://www.engadget.com/2018/02/19/chrome-cleans-messy-urls-share-phone/), not a bug.  I think this is quite problematic.  Sites like GitHub allow you to select a line number, which causes a hash location update to the url, specifying the line number.  Why does Chrome assume the user doesn't want to share that part of the URL?  That's a rather rude assumption, it seems to me.  Bad Chrome! 
 
+## Chrome conspires with Internet Explorer
+
+Chrome seems to be hanging out with [a new crowd](https://stackoverflow.com/questions/16247162/max-size-of-location-hash-in-browser).  
+
+## So what to do?
 
 The simplest solution to this dilemma would be to persist the history.state object to a central database with every modification, and to just add the id pointing to this object in the address bar somewhere Google hasn't started expunging yet.
 
@@ -47,12 +52,11 @@ One example of an existing service that requires no token or account, where one 
 
 And this strategy isn't very efficient.  It would require rapidly uploading a larger and larger object / JSON string as the user's application state grows, which could happen quite quickly.
 
-Basically what we need is a miniature 1 kb git client running in the browser, that can commit only the minimal required change set,  at every user click we want to preserve, to a central repository, returning a revision number, which will go somewhere in the address bar, until naughty advertisers figure out the same trick, at which point only the domain can be sent, no query string parameters or paths.  
+Basically what we need is a miniature, 1 kb git client running in the browser, that can commit only the minimal required change set,  at every user click we want to preserve, to a central repository, returning a revision number, which will go somewhere in the address bar, until naughty advertisers figure out the same trick, at which point only the domain can be sent via sharing, no query string parameters or paths.  
 
-These web components assume the existence of such a "git client" in the browser, and simply focus on getting it the information it needs to commit the changes to some magical github-like database that returns a revision number with every save, allowing the entire state to be retrieved by another user with just that token.  
+These web components assume the existence of such an all-powerful "git client" in the browser, and simply serve as a meek assistant to this (for now?) phantom incredibly amazing state management / persistence library.  They focus on getting this god-like library the information it needs to commit the changes to some magical github-like database that returns a revision number with every save, allowing the entire state to be retrieved by another user with just that token.  
 
 I.e. these components address simple pieces of the puzzle, leaving the heavier lifting to others.
-
 
 # \<xtal-state-watch\>
 

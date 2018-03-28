@@ -162,16 +162,6 @@ export interface IHistoryUpdatePacket {
             let newState = window.history.state ? Object.assign({}, window.history.state) : {};
             let history = this.nsHistory;
             //newState = this.applyObject(newState, history);
-            switch (typeof history) {
-                case 'object':
-                    this.mergeDeep(newState, history);
-                    break;
-                case 'string':
-                case 'number':
-                    newState = history;
-                    break;
-
-            }
             XtalStateUpdate._lastPath = this._wherePath;
             const detail = {
                 proposedState: newState,
@@ -188,24 +178,36 @@ export interface IHistoryUpdatePacket {
             } as CustomEventInit);
             this.dispatchEvent(newEvent);
             if (detail.abort) return;
-            
-            //let titleIsReady = true;
+                        //let titleIsReady = true;
             //let urlIsReady = true;
             //let detailIsReady = true;
-            if(detail.customUpdater){
+            if (detail.customUpdater) {
                 const update = detail.customUpdater(detail);
                 if (update.proposedState['then'] && typeof (update.proposedState['then'] === 'function')) {
-                    update['then'](newDetail =>{
+                    update['then'](newDetail => {
                         this.updateHistory(newDetail);
                         return; //do we need this?
                     })
                 }
             }
+            switch (typeof history) {
+                case 'object':
+                    this.mergeDeep(newState, history);
+                    break;
+                case 'string':
+                case 'number':
+                    newState = history;
+                    break;
+
+            }
+
+
+
             this.updateHistory(detail);
 
         }
 
-        updateHistory(detail : IHistoryUpdatePacket) {
+        updateHistory(detail: IHistoryUpdatePacket) {
             // if(typeof detail.url === 'function'){
             //     detail.url(detail);
             //     return;

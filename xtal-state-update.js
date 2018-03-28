@@ -126,15 +126,6 @@
             let newState = window.history.state ? Object.assign({}, window.history.state) : {};
             let history = this.nsHistory;
             //newState = this.applyObject(newState, history);
-            switch (typeof history) {
-                case 'object':
-                    this.mergeDeep(newState, history);
-                    break;
-                case 'string':
-                case 'number':
-                    newState = history;
-                    break;
-            }
             XtalStateUpdate._lastPath = this._wherePath;
             const detail = {
                 proposedState: newState,
@@ -163,6 +154,15 @@
                         return; //do we need this?
                     });
                 }
+            }
+            switch (typeof history) {
+                case 'object':
+                    this.mergeDeep(newState, history);
+                    break;
+                case 'string':
+                case 'number':
+                    newState = history;
+                    break;
             }
             this.updateHistory(detail);
         }
