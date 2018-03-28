@@ -142,6 +142,7 @@
                 url: this.url,
                 abort: false,
                 wherePath: this._wherePath,
+                customUpdater: null
             };
             const newEvent = new CustomEvent(this.eventName, {
                 bubbles: this._bubbles,
@@ -153,24 +154,23 @@
                 return;
             //let titleIsReady = true;
             //let urlIsReady = true;
-            let detailIsReady = true;
-            if (detail.proposedState && typeof detail.proposedState === 'function') {
-                detail.proposedState = detail.proposedState(detail);
-                if (detail.proposedState['then'] && typeof (detail.proposedState['then'] === 'function')) {
-                    detail.proposedState['then'](proposedState => {
-                        detail.proposedState = proposedState;
-                        this.updateHistory(detail);
-                        return;
+            //let detailIsReady = true;
+            if (detail.customUpdater) {
+                const update = detail.customUpdater(detail);
+                if (update.proposedState['then'] && typeof (update.proposedState['then'] === 'function')) {
+                    update['then'](newDetail => {
+                        this.updateHistory(newDetail);
+                        return; //do we need this?
                     });
                 }
             }
             this.updateHistory(detail);
         }
         updateHistory(detail) {
-            if (typeof detail.url === 'function') {
-                detail.url(detail);
-                return;
-            }
+            // if(typeof detail.url === 'function'){
+            //     detail.url(detail);
+            //     return;
+            // }
             if (this.make) {
                 window.history.pushState(detail.proposedState, detail.title ? detail.title : '', detail.url);
             }
@@ -236,24 +236,21 @@
                     target[key] = sourceVal;
                     continue;
                 }
-                if (Array.isArray(sourceVal) && Array.isArray(targetVal)) {
-                    //warning!! code below not yet tested
-                    if (targetVal.length > 0 && typeof targetVal[0].id === 'undefined')
-                        continue;
-                    for (var i = 0, ii = sourceVal.length; i < ii; i++) {
-                        const srcEl = sourceVal[i];
-                        if (typeof srcEl.id === 'undefined')
-                            continue;
-                        const targetEl = targetVal.find(function (el) { return el.id === srcEl.id; });
-                        if (targetEl) {
-                            this.mergeDeep(targetEl, srcEl);
-                        }
-                        else {
-                            targetVal.push(srcEl);
-                        }
-                    }
-                    continue;
-                }
+                // if (Array.isArray(sourceVal) && Array.isArray(targetVal)) {
+                //     //warning!! code below not yet tested
+                //     if (targetVal.length > 0 && typeof targetVal[0].id === 'undefined') continue;
+                //     for (var i = 0, ii = sourceVal.length; i < ii; i++) {
+                //         const srcEl = sourceVal[i];
+                //         if (typeof srcEl.id === 'undefined') continue;
+                //         const targetEl = targetVal.find(function (el) { return el.id === srcEl.id; });
+                //         if (targetEl) {
+                //             this.mergeDeep(targetEl, srcEl);
+                //         } else {
+                //             targetVal.push(srcEl);
+                //         }
+                //     }
+                //     continue;
+                // }
                 switch (typeof sourceVal) {
                     case 'object':
                         switch (typeof targetVal) {
@@ -261,7 +258,7 @@
                                 this.mergeDeep(targetVal, sourceVal);
                                 break;
                             default:
-                                console.log(key);
+                                //console.log(key);
                                 target[key] = sourceVal;
                                 break;
                         }
