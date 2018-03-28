@@ -42,9 +42,11 @@ The benefit of updating the window.location object (location.href and/or locatio
 
 ## Chrome conspires with Internet Explorer
 
-Chrome seems to be hanging out with [a new crowd](https://stackoverflow.com/questions/16247162/max-size-of-location-hash-in-browser).  
+Chrome seems to be hanging out with [a new crowd](https://stackoverflow.com/questions/16247162/max-size-of-location-hash-in-browser).  Should we be worried?
 
 ## So what to do?
+
+Now that we've passed our five stages of grief, let's see how we can adapt to the times.
 
 The simplest solution to this dilemma would be to persist the history.state object to a central database with every modification, and to just add the id pointing to this object in the address bar somewhere Google hasn't started expunging yet.
 
@@ -52,9 +54,11 @@ One example of an existing service that requires no token or account, where one 
 
 And this strategy isn't very efficient.  It would require rapidly uploading a larger and larger object / JSON string as the user's application state grows, which could happen quite quickly.
 
-Basically what we need is a miniature, 1 kb git client running in the browser, that can commit only the minimal required change set,  at every user click we want to preserve, to a central repository, returning a revision number, which will go somewhere in the address bar, until naughty advertisers figure out the same trick, at which point only the domain can be sent via sharing, no query string parameters or paths.  
+Basically what we need is a miniature, 1 kb git client running in the browser, that can commit only the minimal required change set,  at every user click we want to preserve, to a central repository, returning a revision number, which will go somewhere in the address bar. Until naughty advertisers figure out the same trick, at which point only the domain can be sent via sharing, no query string parameters or paths.  
 
-These web components assume the existence of such an all-powerful "git client" in the browser, and simply serve as a meek assistant to this (for now?) phantom incredibly amazing state management / persistence library.  They focus on getting this god-like library the information it needs to commit the changes to some magical github-like database that returns a revision number with every save, allowing the entire state to be retrieved by another user with just that token.  
+These web components assume the existence of such an all-powerful "git client" in the browser, and simply serve as a meek assistant to this incredibly amazing state management / persistence library.  They focus on getting this god-like library the information it needs to commit the changes to some magical github-like database that returns a revision number with every save, allowing the entire state to be retrieved by another user with just that token.  
+
+We'll refer to this phantom library as our "mini-god" henceforth.
 
 I.e. these components address simple pieces of the puzzle, leaving the heavier lifting to others.
 
@@ -103,7 +107,7 @@ If you are using good UI components which are optimized for dealing with small c
 
 Suppose we want to use the history to reference a large object or a  function.  In the latter case, functions can't be stored in the history.state because it doesn't support cloning.
 
-xtal-state-watch supports asking containing elements for help filling in the details before posting the enhanced history to its peers.  So say the following is put into history.state:
+xtal-state-watch supports asking the mini-god for help filling in the details before posting the enhanced history to its peers.  So say the following is put into history.state:
 
 ```JavaScript
     {
@@ -128,9 +132,9 @@ Subscribing elements can replace the value with a new value (in this example, pe
 
 ## Applying changes
 
-*xtal-state-update* is another custom element, that views the history api as a rudimentary global state management system, including built-in time travel support via the back / forward buttons.  xtal-state-update allows you to declaratively modify the history.state object.  But in the interest of being a good neighbor to other components that may work with the history api (like routing components), the changes made to the history.state are made so as not to trample on changes made externally.  In other words, xtal-state-update strives to minimize the chances of losing history state changes made from logic external to xtal-state-update.
+*xtal-state-update* is another custom element, that works in conjunction with the mini-god to declaratively modify the history.state object.  But in the interest of being a good neighbor to other components that may work with the history api (like routing components), the changes made to the history.state are made so as not to trample on changes made externally.  
 
-xtal-state-update provides three required properties that allow the developer to declaratively modify the global history.state object.
+xtal-state-update defines three required properties that allow the developer to declaratively modify the global history.state object.
 
 With Polymer syntax, this would look as follows:
 
@@ -158,15 +162,15 @@ To specify that the history path we want to write to is actually a sub path of t
 
 If the history state is null, or doesn't have a nested object hierarchy matching the long path specified above, xtal-state-update will first create such an object hierarchy before inserting the policeBlotter object without losing the state created elsewhere.
 
-xtal-state-update will note the path being updated.  xtal-state-watch components will ignore history updates if their where-path is not in alignment with the where-path of xtal-state-update.
+xtal-state-update will note the path being updated.  xtal-state-watch components will ignore history updates if their where-path is not in alignment with the where-path of xtal-state-update. [TODO]
 
 The "make" boolean attribute/property specifies that we want to **update** the history object based on the watchedObject changes, and mark this as a new state in the history.
 
 The "rewrite" boolean attribute/property will cause the previous state change to be skipped over when going back using the back button.  The MDN article linked above explains this much better.
 
-But unlike the native history.pushState and history.replaceState methods, xtal-state-update attempts to preserve what was there already.  If the source property is of type object or array, it creates a new empty object {}, then merges the existing state into it, then does a [deep, recursive merge](https://davidwalsh.name/javascript-deep-merge) of watchedObject (in this example) into that.
+But unlike the native history.pushState and history.replaceState methods, xtal-state-update attempts to preserve what was there already.  If the source property is of type object or array, it creates a new empty object {}, then merges the existing state into it, then does a [deep, recursive merge](https://davidwalsh.name/javascript-deep-merge) of watchedObject (in this example) into that.  At least that's the default behavior, if no "higher-ups" prefer a different approach.
 
-## Support for data extraction / route information [Done, but not sufficiently tested / optimized]
+## Support for data extraction / route information [Done, but not sufficiently tested]
 
 Suppose we have a new police blotter entry someone entered:
 
@@ -183,28 +187,32 @@ Suppose we have a new police blotter entry someone entered:
     }
 ```
 
+We'd like to save it the history, but we aren't sure what the best approach is, so we "pray" to our mini-god library:  "Tell me what to do!"  The form of the prayer is shown below:
 
 ```html
 <xtal-state-update make history="[[newPoliceBlotterEntry]]"  
     where-path="MilkyWay.Earth.UnitedStates.Texas.Montgomery.CutAndShoot"
-    dispatch event-name="savePoliceBlotterEntry" bubbles composed
-    title="notSureWhatPurposeTitleHas" url="[[overridenRouteGenerator]]"
+    dispatch event-name="OhHeavenlyBeing_HowCanISaveThisPoliceBlotterEntry?" bubbles composed
+    title="notSureWhatPurposeTitleHas" url="[[youGotMe]]"
 >
 </xtal-state-update>
 ```
 
 
-xtal-state-update will pass the event with the specified name.  The detail of the event has four properties:
+xtal-state-update will dispatch a custom event with the specified name.  The detail property of the praying event consists of 6 properties:
 
 1)  proposedState : object
 2)  abort:  boolean
 3)  title : string
 4)  url: string
-5)  where-path: string
+5)  wherePath: string
+6)  customUpdater
 
-Subscribers can, first, indicate "hey, that's my job!", and invoke their preferred router, and prevent xtal-state-update from doing anything further, by setting abort = true.
+The mini-god can, first, indicate "hey, that's my job!", and perform the holy deed.  It does this by setting abort to true.
 
-Subscribers can modify these properties as needed.  For example, if a subscriber already knows the id for this new incident, it can modify the proposedState:
+Or the mini-god can provide a custom updater function, which xtal-state-update will dutifully execute.
+
+Or the mini-god can be more hands on and modify these properties as needed, but leave it up to xtal-state-update to do the actual update.  For example, if a subscriber already knows the id for this new incident, it can modify the proposedState, as well as the new url which might contain that reference number.
 
 ```JavaScript
 {
@@ -214,14 +222,6 @@ Subscribers can modify these properties as needed.  For example, if a subscriber
         
 }
 ```
-
-If the subscriber doesn't know the id, but knows how to generate it, it can replace the proposedState with a function.  xtal-state-update will evaluate this function, and check if the result has a property called 'then' of type function.  It will then assume that it is a promise, and evaluate the promise.  Only after the promise is completed will the resulting object be merged into the history object.
-
-If an existing router is in place, some listener can replace the url with the existing routing function used to open new url's.  The entire detail object, containing the four properties, will be passed to that function.  The routing function will only be called after the detail promise is finished (if applicable);
-
-But I can't see a use case for returning a function that evaluates to a promise here.
-
-The title property seems to not yet have any use yet, so the subscriber can replace it if so desired, but it should replace it with another string.
 
 
 
