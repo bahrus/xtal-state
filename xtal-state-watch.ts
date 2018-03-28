@@ -32,6 +32,11 @@ export interface IXtalStateWatchProperties {
         })
     });
     class XtalStateWatch extends HTMLElement implements IXtalStateWatchProperties{
+        constructor(){
+            super();
+            subscribers.push(this);
+        }
+        
         get history() {
             return this.filter();
         }
@@ -104,7 +109,6 @@ export interface IXtalStateWatchProperties {
 
         connectedCallback() {
             this._upgradeProperty('watch');
-            subscribers.push(this);
         }
         disconnectedCallback(){
             this.delete(subscribers, this);

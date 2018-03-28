@@ -28,6 +28,10 @@
         });
     });
     class XtalStateWatch extends HTMLElement {
+        constructor() {
+            super();
+            subscribers.push(this);
+        }
         get history() {
             return this.filter();
         }
@@ -97,7 +101,6 @@
         }
         connectedCallback() {
             this._upgradeProperty('watch');
-            subscribers.push(this);
         }
         disconnectedCallback() {
             this.delete(subscribers, this);

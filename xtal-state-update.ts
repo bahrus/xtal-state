@@ -5,6 +5,14 @@ export interface IXtalStateUpdateProperties {
     wherePath: string;
 }
 
+export interface IHistoryUpdatePacket {
+    proposedState: any,
+    title: string,
+    url: any,
+    abort: boolean,
+    wherePath: string,
+}
+
 (function () {
     const tagName = 'xtal-state-update';
     if (customElements.get(tagName)) return;
@@ -169,7 +177,8 @@ export interface IXtalStateUpdateProperties {
                 title: this.title,
                 url: this.url,
                 abort: false,
-            }
+                wherePath: this._wherePath,
+            } as IHistoryUpdatePacket;
             const newEvent = new CustomEvent(this.eventName, {
                 bubbles: this._bubbles,
                 composed: this._composed,
@@ -181,92 +190,31 @@ export interface IXtalStateUpdateProperties {
             //let titleIsReady = true;
             //let urlIsReady = true;
             let detailIsReady = true;
-            // if (detail.title && typeof detail.title === 'function') {
-            //     detail.title = (detail as any).title(detail);
-            //     if (detail.title['then'] && typeof (detail.title['then']) === 'function') {
-            //         titleIsReady = false;
-            //         detail.title['then'](title => {
-            //             detail.title = title;
-            //             if (urlIsReady && detailIsReady) {
-            //                 this.updateHistory(detail.proposedState, detail.title, detail.url);
-            //                 return;
-            //             }
-            //         })
-            //     // } else {
-            //     //     if (urlIsReady && detailIsReady) {
-            //     //         this.updateHistory(detail.proposedState, detail.title, detail.url);
-            //     //     }
-            //     // }
-            //     // } else {
-            // //     if (urlIsReady && detailIsReady) {
-            // //         this.updateHistory(detail.proposedState, detail.title, detail.url);
-            // //     }
-            // // }
-            //     }
-            // }
-            // if (detail.url && typeof detail.url === 'function') {
-            //     detail.url = (detail as any).url(detail);
-            //     if (detail.url['then'] && typeof (detail.url['then']) === 'function') {
-            //         urlIsReady = false;
-            //         detail.url['then'](url => {
-            //             detail.url = url;
-            //             if (titleIsReady && detailIsReady) {
-            //                 this.updateHistory(detail.proposedState, detail.title, detail.url);
-            //                 return;
-            //             }
-            //         })
-            // //     } else {
-            // //         if (titleIsReady && detailIsReady) {
-            // //             this.updateHistory(detail.proposedState, detail.title, detail.url);
-            // //         }
-            // //     }
-            // // } else {
-            // //     if (titleIsReady && detailIsReady) {
-            // //         this.updateHistory(detail.proposedState, detail.title, detail.url);
-            // //     }
-            // // }
-            //     }
-            // }
+
 
             if (detail.proposedState && typeof detail.proposedState === 'function') {
                 detail.proposedState = (detail as any).proposedState(detail);
                 if (detail.proposedState['then'] && typeof (detail.proposedState['then'] === 'function')) {
-                    //detailIsReady = false;
                     detail.proposedState['then'](proposedState => {
-                        //detailIsReady = true;
                         detail.proposedState = proposedState;
-                        //if (titleIsReady && urlIsReady) {
-                            this.updateHistory(detail);
-                            return;
-                        //}
+                        this.updateHistory(detail);
+                        return;
                     })
-            //     } else {
-            //         if (titleIsReady && urlIsReady) {
-            //             this.updateHistory(detail.proposedState, detail.title, detail.url);
-            //         }
-            //     }
-            // } else {
-            //     if (titleIsReady && urlIsReady) {
-            //         this.updateHistory(detail.proposedState, detail.title, detail.url);
-            //     }
-            // }
                 }
             }
-            //if(titleIsReady && urlIsReady && detailIsReady){
-                this.updateHistory(detail);
-            //}
+            this.updateHistory(detail);
 
         }
 
-        updateHistory(detail) {
+        updateHistory(detail : IHistoryUpdatePacket) {
             if(typeof detail.url === 'function'){
                 detail.url(detail);
                 return;
             }
             if (this.make) {
-                window.history.pushState(state, title ? title : '', url);
+                window.history.pushState(detail.proposedState, detail.title ? detail.title : '', detail.url);
             } else if (this.rewrite) {
-                window.history.replaceState(state, title ? title : '', url);
+                window.history.replaceState(detail.proposedState, detail.title ? detail.title : '', detail.url);
             }
         }
 
