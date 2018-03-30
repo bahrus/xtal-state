@@ -71,6 +71,14 @@
         get dispatch() {
             return this._dispatch;
         }
+        set dispatch(val) {
+            if (val) {
+                this.setAttribute(dispatch, '');
+            }
+            else {
+                this.removeAttribute(dispatch);
+            }
+        }
         get eventName() {
             return this.getAttribute(event_name);
         }
@@ -131,7 +139,7 @@
                 proposedState: newState,
                 title: this.title,
                 url: this.url,
-                abort: false,
+                completed: false,
                 wherePath: this._wherePath,
                 customUpdater: null
             };
@@ -141,7 +149,7 @@
                 detail: detail
             });
             this.dispatchEvent(newEvent);
-            if (detail.abort)
+            if (detail.completed)
                 return;
             //let titleIsReady = true;
             //let urlIsReady = true;
@@ -151,8 +159,8 @@
                 if (update.proposedState['then'] && typeof (update.proposedState['then'] === 'function')) {
                     update['then'](newDetail => {
                         this.updateHistory(newDetail);
-                        return; //do we need this?
                     });
+                    return;
                 }
             }
             switch (typeof history) {

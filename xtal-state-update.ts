@@ -9,7 +9,7 @@ export interface IHistoryUpdatePacket {
     proposedState: any,
     title: string,
     url: string,
-    abort: boolean,
+    completed: boolean,
     wherePath: string,
     customUpdater: any,
 }
@@ -87,6 +87,13 @@ export interface IHistoryUpdatePacket {
         _dispatch: boolean;
         get dispatch() {
             return this._dispatch;
+        }
+        set dispatch(val){
+            if(val){
+                this.setAttribute(dispatch, '');
+            }else{
+                this.removeAttribute(dispatch);
+            }
         }
 
         get eventName() {
@@ -167,7 +174,7 @@ export interface IHistoryUpdatePacket {
                 proposedState: newState,
                 title: this.title,
                 url: this.url,
-                abort: false,
+                completed: false,
                 wherePath: this._wherePath,
                 customUpdater: null
             } as IHistoryUpdatePacket;
@@ -177,7 +184,7 @@ export interface IHistoryUpdatePacket {
                 detail: detail
             } as CustomEventInit);
             this.dispatchEvent(newEvent);
-            if (detail.abort) return;
+            if (detail.completed) return;
                         //let titleIsReady = true;
             //let urlIsReady = true;
             //let detailIsReady = true;
@@ -186,8 +193,8 @@ export interface IHistoryUpdatePacket {
                 if (update.proposedState['then'] && typeof (update.proposedState['then'] === 'function')) {
                     update['then'](newDetail => {
                         this.updateHistory(newDetail);
-                        return; //do we need this?
                     })
+                    return;
                 }
             }
             switch (typeof history) {

@@ -16,7 +16,7 @@ Chuck Bartowski is a lanky, earnest looking twenty-something with tangled, somew
 
 Chuck decides he would kill two birds with one stone, and brings along one of his customer's Windows 7 laptops that needs updating to Windows 10.  He begins the upgrade at the Hollywood Burbank airport while waiting for his flight to London.
 
-When Chuck arrives at the gravesite of Oliphant Chuckerbutty some 12 hours later, he is disappointed to see that the place was rather neglected, with no interesting markings that might lead anywhere.  Feeling like a total failure, Chuck sits down on the wet earth, burying his head in his hands.  Twenty minutes go by, and then Chuck hears someone whistling a tune that sounds eerily familiar, yet new and exciting at the same time.  The tune was clearly written by Krzysztof Penderecki, and clearly follows the mold he set with  "Threnody to the Victims of Hiroshima."  But it is something Chuck has never heard before.  Of course! This must be the rumored "Dies Irae", but Chuck knew Penderecky had not yet completed the work.  Penderecky was one of the recent disappearances, who had left behind the mysterious note!
+When Chuck arrives at the gravesite of Oliphant Chuckerbutty some 12 hours later, he is disappointed to see that the place was rather neglected, with no interesting markings that might lead anywhere.  Feeling like a total failure, Chuck sits down on the wet earth, burying his head in his hands.  Twenty minutes go by, and then Chuck hears someone whistling a tune that sounds eerily familiar, yet new and exciting at the same time.  The tune was clearly written by Krzysztof Penderecki, and obviously follows the mold he set with  "Threnody to the Victims of Hiroshima."  But it is something Chuck has never heard before.  Of course! This must be the rumored "Dies Irae", but Chuck knew Penderecky had not yet completed the work.  Penderecky was one of the recent disappearances, who had left behind the mysterious note!
 
 Chuck spins around to determine the source of the melody.  It's a young lad, the cemetary's groundkeeper.
 
@@ -30,7 +30,7 @@ It was then that Chuck spots the tatoo on the back of the groundkeeper's neck.  
 
 That tatoo was also spotted on Czech politician Vít Jedlička!
 
-Whipping out his laptop, which is still undergoing the Windows 10 update, Chuck opens up the MS Edge browser, and pages through the introductory tutorial.  Once that's done, he opens up a top secret web site maintained by the CIA.  The website allows Chuck to select any business he wants, and it displays a tree-like org-chart, starting from the CEO on down.  It allows Chuck to add multiple such companies on the same page, showing different org charts, so Chuck can look for patterns.  Chuck expands the nodes on each company whose CEO had disappeared -- Amazon, Whole Foods (prior to the merger), Overstock.com, Craiglist, the Dallas Mavericks... In each case Chuck is able to find Vít Jedlička, working the cigar stand closest to the CEO's office, joining a week or two before the CEO disappeared!
+Whipping out his laptop, which is still undergoing the Windows 10 update, Chuck opens up the MS Edge browser, and pages through the introductory tutorial.  Once that's done, he opens up a top secret web site maintained by the CIA.  The website allows Chuck to select any business he wants, and it displays a tree-like org-chart, starting from the CEO on down.  It allows Chuck to add multiple such companies on the same page, showing different org charts, so Chuck can look for patterns.  Chuck expands the nodes on each company whose CEO had disappeared -- Amazon, Whole Foods (prior to the merger), Overstock.com, Craigslist, the Dallas Mavericks... In each case Chuck is able to find Vít Jedlička, working the cigar stand closest to the CEO's office, joining a week or two before the CEO disappeared!
 
 Chuck can't wait to send Sarah the page he is on, which so clearly shows that Vít Jedlička must be involved somehow.  Getting a warning that the fourth reboot would start in 15 seconds, Chuck quickly copies the url in the address bar, and sends it to Agent Walker's secured email account, just in the nick of time before the browser shuts down for the reboot.
 
@@ -54,13 +54,13 @@ One example of an existing service that requires no token or account, where one 
 
 And this strategy isn't very efficient.  It would require rapidly uploading a larger and larger object / JSON string as the user's application state grows, which could happen quite quickly.
 
-Basically what we need is a miniature, 1 kb git client running in the browser, that can commit only the minimal required change set,  at every user click we want to preserve, to a central repository, returning a revision number, which will go somewhere in the address bar. Until naughty advertisers figure out the same trick, at which point only the domain can be sent via sharing, no query string parameters or paths.  
+Basically what we need is a miniature, 1 kb git client running in the browser, combined, perhaps with some smart middle-ware sitting on the server, that can commit only the minimal required change set,  at every user click we want to preserve, to a central repository.  It would return a revision number, which would go somewhere in the address bar. Until naughty advertisers figure out the same trick, at which point only the domain can be sent via sharing, no query string parameters or paths.  
 
-These web components assume the existence of such an all-powerful "git client" in the browser, and simply serve as a meek assistant to this incredibly amazing state management / persistence library.  They focus on getting this god-like library the information it needs to commit the changes to some magical github-like database that returns a revision number with every save, allowing the entire state to be retrieved by another user with just that token.  
-
-We'll refer to this phantom library as our "mini-god" henceforth.
+These web components assume the existence of such a tiny but incredibly powerful "git client", and simply serve as a meek assistant.  The web components focus on getting this  library the information it needs.  The assumption is that such a library would want to follow a file/directory paradigm, where 1)  changes are identified based on a path to that resource, and 2)  Multiple actors can manipulate the same resource, and we want to merge those changes together.
 
 I.e. these components address simple pieces of the puzzle, leaving the heavier lifting to others.
+
+Being that no such library exists (to my knowledge), and I don't want to keep rewording the functionality of this non-existent fantasy library, I want to give it a name.  I'm going to refer it as "git's gulch."
 
 # \<xtal-state-watch\>
 
@@ -84,7 +84,7 @@ With Polymer, one would instead typically use the following for declarative synt
 
 Other template frameworks follow similar patterns.
 
-The boolean attribute/property "watch" is there so neighboring elements can ignore history changes when the attribute is removed, or the property is set to false.  This might be useful, for example, if an element is present but hidden.  When watch becomes true, it will notify the ancestral nodes (and possibly) neighbors of the new state of history.
+The boolean attribute/property "watch" is there so neighboring elements can ignore history changes when the attribute is removed, or the property is set to false.  This might be useful, for example, if an element is present but hidden.  When watch becomes true, it will notify the ancestral nodes (and possibly neighbors) of the new state of history.
 
 ## Departmentalizing, Part I
 
@@ -99,15 +99,15 @@ The first such tweak is to specify only a certain part of the history which is o
 </xtal-state-watch>
 ``` 
 
-As we will see later, as long as you update the history.state object using the web components described in this document, then the where-path will limit which events the specific instance will respond to.[TODO]  This attribute isn't all-powerful however.   If other external logic  decides to update the history outside the path specified, this web component will respond.  I.e. it will oversubscribe.  Solving that issue (if it is solvable?  maybe using proxies?) is a TODO item.
+As we will see later, as long as you update the history.state object using the web components described in this document, then the where-path will limit which events the specific instance will respond to.[TODO]  This attribute isn't all-powerful however.   If other external logic  decides to update the history outside the path specified, this web component will respond.  I.e. it will oversubscribe.  Solving that issue (if it is solvable?  maybe using proxies?) is another TODO item.
 
 If you are using good UI components which are optimized for dealing with small changes to the model (e.g. a virtual DOM), then hopefully the consequences of this oversubscription (for now) won't be too bad.
 
-## Data Injection [TODO]
+## Data Injection [Preliminary implementation]
 
 Suppose we want to use the history to reference a large object or a  function.  In the latter case, functions can't be stored in the history.state because it doesn't support cloning.
 
-xtal-state-watch supports asking the mini-god for help filling in the details before posting the enhanced history to its peers.  So say the following is put into history.state:
+xtal-state-watch supports asking the git's gulch for help filling in the details before posting the enhanced history to its peers.  So say the following is put into history.state:
 
 ```JavaScript
     {
@@ -126,13 +126,13 @@ We can dispatch a request that passes this minimal object up the DOM Tree, provi
 </xtal-state-watch>
 ```
 
-The event contains the value of the history object (restricted to the optional where-path).
+The event contains the value of the history object, restricted to the optional where-path.
 
-Subscribing elements can replace the value with a new value (in this example, performing a lookup on the caseNumber), or replace the value with a promise, which xtal-state-watch will wait for, before setting the history property / event for local elements.  
+Subscribing elements can replace the value with a new value (in this example, performing a lookup on the caseNumber), or replace the value with a promise, which xtal-state-watch will wait for, before setting the history property / event for local elements.  The actual history.state will not be modified by xtal-state-watch.
 
 ## Applying changes
 
-*xtal-state-update* is another custom element, that works in conjunction with the mini-god to declaratively modify the history.state object.  But in the interest of being a good neighbor to other components that may work with the history api (like routing components), the changes made to the history.state are made so as not to trample on changes made externally.  
+*xtal-state-update* is another custom element, that could work in conjunction with git's gulch to declaratively modify the history.state object.  But in the interest of being a good neighbor to other components that may work with the history api (like routing components), the changes made to the history.state are made so as not to trample on changes made externally.  
 
 xtal-state-update defines three required properties that allow the developer to declaratively modify the global history.state object.
 
@@ -160,7 +160,7 @@ To specify that the history path we want to write to is actually a sub path of t
 </xtal-state-update>
 ```
 
-If the history state is null, or doesn't have a nested object hierarchy matching the long path specified above, xtal-state-update will first create such an object hierarchy before inserting the policeBlotter object without losing the state created elsewhere.
+If the history state is null, or doesn't have a nested object hierarchy matching the long path specified above, xtal-state-update will first create such an object hierarchy before inserting the policeBlotter object, without losing the state created elsewhere.
 
 xtal-state-update will note the path being updated.  xtal-state-watch components will ignore history updates if their where-path is not in alignment with the where-path of xtal-state-update. [TODO]
 
@@ -170,7 +170,7 @@ The "rewrite" boolean attribute/property will cause the previous state change to
 
 But unlike the native history.pushState and history.replaceState methods, xtal-state-update attempts to preserve what was there already.  If the source property is of type object or array, it creates a new empty object {}, then merges the existing state into it, then does a [deep, recursive merge](https://davidwalsh.name/javascript-deep-merge) of watchedObject (in this example) into that.  At least that's the default behavior, if no "higher-ups" prefer a different approach.
 
-## Support for data extraction / route information [Done, but not sufficiently tested]
+## Support for data extraction / route information [Preliminary implementation]
 
 Suppose we have a new police blotter entry someone entered:
 
@@ -187,7 +187,7 @@ Suppose we have a new police blotter entry someone entered:
     }
 ```
 
-We'd like to save it the history, but we aren't sure what the best approach is, so we "pray" to our mini-god library:  "Tell me what to do!"  The form of the prayer is shown below:
+We'd like to save it the history, but we aren't sure what the best approach is, so we "pray" to our higher-ups:  "Tell me what to do, if you have a better idea!"  The form of the prayer is shown below:
 
 ```html
 <xtal-state-update make history="[[newPoliceBlotterEntry]]"  
@@ -202,22 +202,22 @@ We'd like to save it the history, but we aren't sure what the best approach is, 
 xtal-state-update will dispatch a custom event with the specified name.  The detail property of the praying event consists of 6 properties:
 
 1)  proposedState : object
-2)  abort:  boolean
+2)  completed:  boolean
 3)  title : string
 4)  url: string
 5)  wherePath: string
 6)  customUpdater
 
-The mini-god can, first, indicate "hey, that's my job!", and perform the holy deed.  It does this by setting abort to true.
+The higher-ups in the DOM hierarchy can, first, indicate "hey, that's my job!", and perform the holy deed.  It does this by setting completed to true.
 
-Or the mini-god can provide a custom updater function, which xtal-state-update will dutifully execute.
+Or the elders can provide a customUpdater function, which xtal-state-update will dutifully execute, passing it the detail property.  After executing it, xtal-state-update checks if the result is a promise, and if so, waits for the promise to be fulfilled, before updating the history based on the modified detail property.
 
-Or the mini-god can be more hands on and modify these properties as needed, but leave it up to xtal-state-update to do the actual update.  For example, if a subscriber already knows the id for this new incident, it can modify the proposedState, as well as the new url which might contain that reference number.
+Or the celestial DOM element / event listeners can be more hands on and modify these properties as needed, but leave it up to xtal-state-update to do the actual update.  For example, if a subscriber already knows the id for this new incident, it can modify the proposedState, as well as the new url which might contain that reference number.  For example, the proposed state could become:
 
 ```JavaScript
 {
     proposedState: {
-        caseNumber: 0102945,
+        caseNumber: '0102945A',
     } 
         
 }
