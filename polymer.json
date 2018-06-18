@@ -1,11 +1,11 @@
 {
   "sources":[
-    "xtal-state-update.js",
-    "xtal-state-watch.js"
+    "xtal-state-commit.js"
   ],
+  "npm": true,
   "lint": {
     "rules": [
-      "polymer-2"
+      "polymer-3"
     ]
   },
   "builds":[

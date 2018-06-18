@@ -6,40 +6,17 @@
 
     <title>xtal-state demo</title>
 
-    <script src="../../webcomponentsjs/webcomponents-lite.js"></script>
-    <!-- <script async src="https://cdn.jsdelivr.net/npm/xtal-json-merge@0.1.1/build/ES6/json-merge.js"></script>
-    <script async src="https://cdn.jsdelivr.net/npm/xtal-json-editor/build/ES6/xtal-json-editor.js"></script> -->
-    <script async src="../xtal-state-watch.js"></script>
-    <script async src="../xtal-state-update.js"></script>
-    <link rel="import" href="../../iron-demo-helpers/demo-pages-shared-styles.html">
-    <link rel="import" href="../../iron-demo-helpers/demo-snippet.html">
-    <link rel="import" href="../../polymer/lib/elements/dom-bind.html">
+    <script src="../node_modules/@webcomponents/webcomponentsjs/webcomponents-loader.js"></script>
+    <script type="module" async src="https://unpkg.com/p-d.p-u@0.0.10/p-d.js?module"></script>
+    <script type="module" src="../xtal-state-commit.js"></script>
 
-    <custom-style>
-      <style is="custom-style" include="demo-pages-shared-styles">
-      </style>
-    </custom-style>
   </head>
   <body>
     <div class="vertical-section-container centered">
       <h3>Basic xtal-state demo</h3>
-      <demo-snippet>
-        <template>
-          <dom-bind>
-            <template>
-                Type text in the text box.  Note how the text is echoed below based on the history object.  Then click the back button.
-                  
-                  <input type="text" value="{{characters::input}}">
-                  <xtal-state-update  make history="[[characters]]" where-path="MilkyWay.Earth.UnitedStates.Texas.Montgomery.CutAndShoot"></xtal-state-update>
-
-                  <xtal-state-watch watch history="{{currentHistory}}" where-path="MilkyWay.Earth.UnitedStates.Texas.Montgomery.CutAndShoot"></xtal-state-watch>
-                  <div>[[currentHistory]]</div>
-                  
-            </template>
-          </dom-bind>
-          
-        </template>
-      </demo-snippet>
+      <a href="#test" data-test="hello">Test 1</a>
+      <p-d on="click" to="{history:target.dataset.test}"></p-d>
+      <xtal-state-commit make></xtal-state-commit>
     </div>
   </body>
 </html>

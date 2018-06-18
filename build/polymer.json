@@ -2,12 +2,11 @@
   "entrypoint": "index.html",
   "fragments": [],
   "sources": [
-    "xtal-state-update.js",
-    "xtal-state-watch.js",
+    "xtal-state-commit.js",
     "index.html"
   ],
   "extraDependencies": [
-    "bower_components\\webcomponentsjs\\*.js"
+    "bower_components/webcomponentsjs/*.js"
   ],
   "builds": [
     {
@@ -27,7 +26,10 @@
   ],
   "lint": {
     "rules": [
-      "polymer-2"
+      "polymer-3"
     ]
-  }
+  },
+  "npm": true,
+  "componentDir": "node_modules/",
+  "moduleResolution": "node"
 }
