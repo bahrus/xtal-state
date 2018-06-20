@@ -46,12 +46,12 @@ export class XtalStateCommit extends XtallatX(HTMLElement){
             this.removeAttribute(rewrite);
         }
     }
-    _history: any;
-    get history() {
-        return this._history;
+    namespaceHistory(history: any) {
+        return history;
     }
+    _namespacedHistoryUpdate: any;
     set history(newVal) {
-        this._history = newVal;
+        this._namespacedHistoryUpdate = this.namespaceHistory(newVal);
         this.onPropsChange();
     }
     _title: string
@@ -97,14 +97,16 @@ export class XtalStateCommit extends XtallatX(HTMLElement){
         this._connected = true;
         this.onPropsChange();
     }
-
+    preProcess(stateUpdate: IHistoryUpdatePacket){}
     onPropsChange(){
-        if(this._disabled || !this._connected || (!this._make && !this._rewrite) || !this._history) return;
-        this.updateHistory({
-            proposedState: this._history,
+        if(this._disabled || !this._connected || (!this._make && !this._rewrite) || !this._namespacedHistoryUpdate) return;
+        const stateUpdate = {
+            proposedState: this._namespacedHistoryUpdate,
             url: this._url,
             title: this._title,
-        });
+        } as IHistoryUpdatePacket;
+        this.preProcess(stateUpdate);
+        if(!stateUpdate.completed) this.updateHistory(stateUpdate);
     }
 
     updateHistory(detail: IHistoryUpdatePacket) {

@@ -37,11 +37,11 @@ export class XtalStateCommit extends XtallatX(HTMLElement) {
             this.removeAttribute(rewrite);
         }
     }
-    get history() {
-        return this._history;
+    namespaceHistory(history) {
+        return history;
     }
     set history(newVal) {
-        this._history = newVal;
+        this._namespacedHistoryUpdate = this.namespaceHistory(newVal);
         this.onPropsChange();
     }
     get title() {
@@ -79,14 +79,18 @@ export class XtalStateCommit extends XtallatX(HTMLElement) {
         this._connected = true;
         this.onPropsChange();
     }
+    preProcess(stateUpdate) { }
     onPropsChange() {
-        if (this._disabled || !this._connected || (!this._make && !this._rewrite) || !this._history)
+        if (this._disabled || !this._connected || (!this._make && !this._rewrite) || !this._namespacedHistoryUpdate)
             return;
-        this.updateHistory({
-            proposedState: this._history,
+        const stateUpdate = {
+            proposedState: this._namespacedHistoryUpdate,
             url: this._url,
             title: this._title,
-        });
+        };
+        this.preProcess(stateUpdate);
+        if (!stateUpdate.completed)
+            this.updateHistory(stateUpdate);
     }
     updateHistory(detail) {
         const method = this.make ? 'push' : 'replace';
