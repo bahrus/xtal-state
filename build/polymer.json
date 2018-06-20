@@ -3,6 +3,8 @@
   "fragments": [],
   "sources": [
     "xtal-state-commit.js",
+    "xtal-state-update.js",
+    "xtal-state-watch.js",
     "index.html"
   ],
   "extraDependencies": [

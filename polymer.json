@@ -1,6 +1,8 @@
 {
   "sources":[
-    "xtal-state-commit.js"
+    "xtal-state-commit.js",
+    "xtal-state-update.js",
+    "xtal-state-watch.js"
   ],
   "npm": true,
   "lint": {
