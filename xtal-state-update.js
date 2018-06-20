@@ -90,7 +90,7 @@ export class XtalStateUpdate extends XtalStateCommit {
         }
     }
 }
-if (!customElements.get(XtalStateCommit.is)) {
-    customElements.define(XtalStateCommit.is, XtalStateCommit);
+if (!customElements.get(XtalStateUpdate.is)) {
+    customElements.define(XtalStateUpdate.is, XtalStateUpdate);
 }
 //# sourceMappingURL=xtal-state-update.js.map
