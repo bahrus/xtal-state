@@ -1,5 +1,5 @@
 import { XtallatX } from 'xtal-latx/xtal-latx.js';
-const wherePath = 'where-path';
+const wherePath1 = 'where-path';
 const watch = 'watch';
 const subscribers = [];
 export class XtalStateWatch extends XtallatX(HTMLElement) {
@@ -9,7 +9,7 @@ export class XtalStateWatch extends XtallatX(HTMLElement) {
         subscribers.push(this);
     }
     static get observedAttributes() {
-        return super.observedAttributes.concat([watch, wherePath]);
+        return super.observedAttributes.concat([watch, wherePath1]);
     }
     attributeChangedCallback(name, oldValue, newValue) {
         super.attributeChangedCallback(name, oldValue, newValue);
@@ -18,7 +18,7 @@ export class XtalStateWatch extends XtallatX(HTMLElement) {
                 this._watch = newValue !== null;
                 //this.notify();
                 break;
-            case wherePath:
+            case wherePath1:
                 this._wherePath = newValue;
                 //this.notify();
                 break;
@@ -47,7 +47,7 @@ export class XtalStateWatch extends XtallatX(HTMLElement) {
     }
     get wherePath() { return this._wherePath; }
     set wherePath(val) {
-        this.setAttribute(wherePath, val);
+        this.setAttribute(wherePath1, val);
     }
     filter() {
         if (!this._wherePath)

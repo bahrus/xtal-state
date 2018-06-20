@@ -1,21 +1,21 @@
 import { XtalStateCommit, IHistoryUpdatePacket } from './xtal-state-commit.js';
 
-const wherePath = 'where-path';;
+const wherePath2 = 'where-path';;
 export class XtalStateUpdate extends XtalStateCommit {
     static get is() { return 'xtal-state-update'; }
     static _lastPath: string
     _wherePath: string;
     get wherePath() { return this._wherePath; }
     set wherePath(val) {
-        this.setAttribute(wherePath, val);
+        this.setAttribute(wherePath2, val);
     }
 
     static get observedAttributes() {
-        return super.observedAttributes.concat([wherePath]);
+        return super.observedAttributes.concat([wherePath2]);
     }
     attributeChangedCallback(name: string, oldVal: string, newVal: string) {
         switch (name) {
-            case wherePath:
+            case wherePath2:
                 this._wherePath = newVal;
                 break;
         }
