@@ -10,9 +10,9 @@ xtal-state-update.js extends xtal-state-commit, with the following features:
 
 1)  The ability to *merge* changes to the existing history.state object, if it exists, so that other pieces of code that modify history.state won't be lost.
 2)  The ability to specify a "path" within the history.state object, where the change should be made.
-3)  An event-based validation step that allows users of the component to asynchronously persist state changes to a remote database, and keep what is actually stored in the history.state relatively small.
+3)  An event-based validation / data extraction step that allows users of the component to asynchronously persist state changes to a remote database, and keep what is actually stored in the history.state relatively small.
 
-xtate-state-watch watches for all changes to history.state, and, optionally, can filter that object for a subsection that local components might be interested in.  It fires an event 'filtered-history-changed' when it the state is change. 
+xtate-state-watch watches for all changes to history.state, and, optionally, can filter that object for a subsection that local components might be interested in.  It fires an event 'derived-history-changed' when it the state is change. It also provides an event-based data injection step, so that the sparse history.state object can be (asynchronously) "hydrated" with detail information before firing the "filtered-history-changed' event.
 
 All three files are combined into a single IIFE class script file, xtal-state.js, which totals 2kb minified and gzipped.  
 

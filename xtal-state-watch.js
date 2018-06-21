@@ -29,7 +29,7 @@ export class XtalStateWatch extends XtallatX(HTMLElement) {
         this._connected = true;
         this.notify();
     }
-    get filteredHistory() {
+    get derivedHistory() {
         return this.filter();
     }
     set history(newVal) {
@@ -89,12 +89,12 @@ export class XtalStateWatch extends XtallatX(HTMLElement) {
             const result = returnDetail.customInjector(historyNotificationPacket);
             if (typeof result['then'] === 'function') {
                 result['then'](() => {
-                    this.de('filtered-history', { value: returnDetail.detailedHistoryObject || returnDetail.rawHistoryObject });
+                    this.de('derived-history', { value: returnDetail.detailedHistoryObject || returnDetail.rawHistoryObject });
                 });
                 return;
             }
         }
-        this.de('filtered-history', { value: returnDetail.detailedHistoryObject || returnDetail.rawHistoryObject });
+        this.de('derived-history', { value: returnDetail.detailedHistoryObject || returnDetail.rawHistoryObject });
     }
 }
 if (!customElements.get(XtalStateWatch.is))
