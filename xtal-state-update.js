@@ -77,7 +77,7 @@ export class XtalStateUpdate extends XtalStateCommit {
                 stateUpdate.completed = true;
                 const update = stateUpdate.customUpdater(stateUpdate);
                 if (update.proposedState['then'] && typeof (update.proposedState['then'] === 'function')) {
-                    update['then'](newDetail => {
+                    update['then']((newDetail) => {
                         this.updateHistory(newDetail);
                     });
                     return;

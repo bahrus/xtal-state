@@ -7,7 +7,7 @@ export interface IHistoryWatchPacket{
     rawHistoryObject: any,
     detailedHistoryObject: any
     wherePath: string,
-    customInjector: (hwp: IHistoryWatchPacket) => IHistoryWatchPacket,
+    customInjector: ((hwp: IHistoryWatchPacket) => IHistoryWatchPacket) | null,
     isInvalid: boolean
 }
 
@@ -21,7 +21,7 @@ export class XtalStateWatch extends XtallatX(HTMLElement) {
         return super.observedAttributes.concat( [watch, wherePath1]);
     }
 
-    attributeChangedCallback(name, oldValue, newValue) {
+    attributeChangedCallback(name: string, oldValue: string, newValue: string) {
         super.attributeChangedCallback(name, oldValue, newValue);
         switch (name) {
             case watch:
@@ -35,7 +35,7 @@ export class XtalStateWatch extends XtallatX(HTMLElement) {
         }
         this.notify();
     }
-    _connected: boolean;
+    _connected!: boolean;
     connectedCallback(){
         this._connected = true;
         this.notify();
@@ -43,7 +43,7 @@ export class XtalStateWatch extends XtallatX(HTMLElement) {
     get derivedHistory() {
         return this.filter();
     }
-    _history;
+    _history!: any;
     get history(){
         return this._history;
     }
@@ -51,7 +51,7 @@ export class XtalStateWatch extends XtallatX(HTMLElement) {
         this._history = newVal;
         if(this.watch) this.notify();
     }
-    _watch: boolean;
+    _watch!: boolean;
     get watch(){return this._watch;}
     set watch(newVal){
         if(newVal) {
@@ -60,7 +60,7 @@ export class XtalStateWatch extends XtallatX(HTMLElement) {
             this.removeAttribute(watch);
         }
     }
-    _wherePath: string;
+    _wherePath!: string;
     get wherePath(){return this._wherePath;}
     set wherePath(val){
         this.setAttribute(wherePath1, val);
@@ -95,8 +95,8 @@ export class XtalStateWatch extends XtallatX(HTMLElement) {
         if(returnDetail.isInvalid) return;
         if(returnDetail.customInjector){
             const result = returnDetail.customInjector(historyNotificationPacket);
-            if(typeof result['then'] === 'function'){
-                result['then'](() =>{
+            if(typeof (<any>result)['then'] === 'function'){
+                (<any>result)['then'](() =>{
                     this.de('derived-history', {value: returnDetail.detailedHistoryObject || returnDetail.rawHistoryObject});
                 })
                 return;

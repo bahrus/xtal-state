@@ -4,7 +4,7 @@ const wherePath2 = 'where-path';;
 export class XtalStateUpdate extends XtalStateCommit {
     static get is() { return 'xtal-state-update'; }
     static _lastPath: string
-    _wherePath: string;
+    _wherePath!: string;
     get wherePath() { return this._wherePath; }
     set wherePath(val) {
         this.setAttribute(wherePath2, val);
@@ -25,7 +25,7 @@ export class XtalStateUpdate extends XtalStateCommit {
 
     namespaceHistory(history: any) {
         if (!this._wherePath) return history;
-        const returnObj = {};
+        const returnObj: {[key: string]: any} = {};
         let currPath = returnObj;
         const tokens = this._wherePath.split('.');
         const len = tokens.length - 1;
@@ -38,7 +38,7 @@ export class XtalStateUpdate extends XtalStateCommit {
         return returnObj;
     }
 
-    mergeDeep(target, source) {
+    mergeDeep(target : any, source: any) {
         if (typeof target !== 'object') return;
         if (typeof source !== 'object') return;
         for (const key in source) {
@@ -79,9 +79,9 @@ export class XtalStateUpdate extends XtalStateCommit {
                 stateUpdate.completed = true;
                 const update = stateUpdate.customUpdater(stateUpdate);
                 if (update.proposedState['then'] && typeof (update.proposedState['then'] === 'function')) {
-                    update['then'](newDetail => {
+                    update['then']((newDetail: any) => {
                         this.updateHistory(newDetail);
-                    })
+                    });
                     return;
                 }
             }else{

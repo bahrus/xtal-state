@@ -24,7 +24,7 @@ const url = 'url';
 export class XtalStateCommit extends XtallatX(HTMLElement){
     static get is(){return 'xtal-state-commit';}
 
-    _make: boolean;
+    _make!: boolean;
     get make() {
         return this._make;
     }
@@ -35,7 +35,7 @@ export class XtalStateCommit extends XtallatX(HTMLElement){
             this.removeAttribute(make);
         }
     }
-    _rewrite: boolean;
+    _rewrite!: boolean;
     get rewrite() {
         return this._rewrite;
     }
@@ -50,18 +50,18 @@ export class XtalStateCommit extends XtallatX(HTMLElement){
         return history;
     }
     _namespacedHistoryUpdate: any;
-    set history(newVal) {
+    set history(newVal: any) {
         this._namespacedHistoryUpdate = this.namespaceHistory(newVal);
         this.onPropsChange();
     }
-    _title: string
+    _title!: string
     get title() {
         return this._title;
     }
     set title(val) {
         this.setAttribute(title, val);
     }
-    _url;
+    _url!: string;
     get url() {
         return this._url;
     }
@@ -91,7 +91,7 @@ export class XtalStateCommit extends XtallatX(HTMLElement){
         this.onPropsChange();
     }
 
-    _connected: boolean;
+    _connected!: boolean;
     connectedCallback() {
         this._upgradeProperties(XtalStateCommit.observedAttributes.concat([history$]));
         this._connected = true;
@@ -111,7 +111,7 @@ export class XtalStateCommit extends XtallatX(HTMLElement){
 
     updateHistory(detail: IHistoryUpdatePacket) {
         const method = this.make ? 'push' : 'replace';
-        window.history[method + 'State'](detail.proposedState, detail.title ? detail.title : '', detail.url);
+        (<any>window).history[method + 'State'](detail.proposedState, detail.title ? detail.title : '', detail.url);
     }
 }
 if(!customElements.get(XtalStateCommit.is)) customElements.define(XtalStateCommit.is, XtalStateCommit);
