@@ -4,7 +4,8 @@
 		"module":"es6",
 		"sourceMap": true,
 		"experimentalDecorators": true,
-		"newLine": "LF"
+		"newLine": "LF",
+		"strict": false,
 	},
 	"exclude":[
 		"build",

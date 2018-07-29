@@ -43,7 +43,12 @@ export class XtalStateWatch extends XtallatX(HTMLElement) {
     get derivedHistory() {
         return this.filter();
     }
+    _history;
+    get history(){
+        return this._history;
+    }
     set history(newVal) {
+        this._history = newVal;
         if(this.watch) this.notify();
     }
     _watch: boolean;
@@ -86,12 +91,6 @@ export class XtalStateWatch extends XtallatX(HTMLElement) {
             value: historyNotificationPacket
         }
         this.de('raw-history', dataInjectionEvent);
-        // const dataInjectionEvent = new CustomEvent('pre-history-post', {
-        //     detail: historyNotificationPacket,
-        //     bubbles: true,
-        //     composed: false,
-        // } as CustomEventInit);
-        // this.dispatchEvent(dataInjectionEvent);
         const returnDetail = dataInjectionEvent.value as IHistoryWatchPacket;
         if(returnDetail.isInvalid) return;
         if(returnDetail.customInjector){

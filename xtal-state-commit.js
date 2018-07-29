@@ -1,7 +1,7 @@
 import { XtallatX } from 'xtal-latx/xtal-latx.js';
 const make = 'make';
 const rewrite = 'rewrite';
-const history = 'history';
+const history$ = 'history';
 //const wherePath = 'where-path';
 const title = 'title';
 const url = 'url';
@@ -75,7 +75,7 @@ export class XtalStateCommit extends XtallatX(HTMLElement) {
         this.onPropsChange();
     }
     connectedCallback() {
-        this._upgradeProperties(XtalStateCommit.observedAttributes.concat([history]));
+        this._upgradeProperties(XtalStateCommit.observedAttributes.concat([history$]));
         this._connected = true;
         this.onPropsChange();
     }

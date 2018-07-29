@@ -4,6 +4,10 @@
     const disabled = 'disabled';
 function XtallatX(superClass) {
     return class extends superClass {
+        constructor() {
+            super(...arguments);
+            this._evCount = {};
+        }
         static get observedAttributes() {
             return [disabled];
         }
@@ -11,12 +15,25 @@ function XtallatX(superClass) {
             return this._disabled;
         }
         set disabled(val) {
+            this.attr(disabled, val, '');
+        }
+        attr(name, val, trueVal) {
             if (val) {
-                this.setAttribute(disabled, '');
+                this.setAttribute(name, trueVal || val);
             }
             else {
-                this.removeAttribute(disabled);
+                this.removeAttribute(name);
             }
+        }
+        incAttr(name) {
+            const ec = this._evCount;
+            if (name in ec) {
+                ec[name]++;
+            }
+            else {
+                ec[name] = 0;
+            }
+            this.attr(name, ec[name].toString());
         }
         attributeChangedCallback(name, oldVal, newVal) {
             switch (name) {
@@ -26,12 +43,14 @@ function XtallatX(superClass) {
             }
         }
         de(name, detail) {
-            const newEvent = new CustomEvent(name + '-changed', {
+            const eventName = name + '-changed';
+            const newEvent = new CustomEvent(eventName, {
                 detail: detail,
                 bubbles: true,
                 composed: false,
             });
             this.dispatchEvent(newEvent);
+            this.incAttr(eventName);
             return newEvent;
         }
         _upgradeProperties(props) {
@@ -48,7 +67,7 @@ function XtallatX(superClass) {
 //# sourceMappingURL=xtal-latx.js.map
 const make = 'make';
 const rewrite = 'rewrite';
-const history = 'history';
+const history$ = 'history';
 //const wherePath = 'where-path';
 const title = 'title';
 const url = 'url';
@@ -122,7 +141,7 @@ class XtalStateCommit extends XtallatX(HTMLElement) {
         this.onPropsChange();
     }
     connectedCallback() {
-        this._upgradeProperties(XtalStateCommit.observedAttributes.concat([history]));
+        this._upgradeProperties(XtalStateCommit.observedAttributes.concat([history$]));
         this._connected = true;
         this.onPropsChange();
     }
@@ -272,10 +291,14 @@ class XtalStateWatch extends XtallatX(HTMLElement) {
         this._connected = true;
         this.notify();
     }
-    get filteredHistory() {
+    get derivedHistory() {
         return this.filter();
     }
+    get history() {
+        return this._history;
+    }
     set history(newVal) {
+        this._history = newVal;
         if (this.watch)
             this.notify();
     }
@@ -319,12 +342,6 @@ class XtalStateWatch extends XtallatX(HTMLElement) {
             value: historyNotificationPacket
         };
         this.de('raw-history', dataInjectionEvent);
-        // const dataInjectionEvent = new CustomEvent('pre-history-post', {
-        //     detail: historyNotificationPacket,
-        //     bubbles: true,
-        //     composed: false,
-        // } as CustomEventInit);
-        // this.dispatchEvent(dataInjectionEvent);
         const returnDetail = dataInjectionEvent.value;
         if (returnDetail.isInvalid)
             return;
@@ -332,12 +349,12 @@ class XtalStateWatch extends XtallatX(HTMLElement) {
             const result = returnDetail.customInjector(historyNotificationPacket);
             if (typeof result['then'] === 'function') {
                 result['then'](() => {
-                    this.de('filtered-history', { value: returnDetail.detailedHistoryObject || returnDetail.rawHistoryObject });
+                    this.de('derived-history', { value: returnDetail.detailedHistoryObject || returnDetail.rawHistoryObject });
                 });
                 return;
             }
         }
-        this.de('filtered-history', { value: returnDetail.detailedHistoryObject || returnDetail.rawHistoryObject });
+        this.de('derived-history', { value: returnDetail.detailedHistoryObject || returnDetail.rawHistoryObject });
     }
 }
 if (!customElements.get(XtalStateWatch.is))
