@@ -71,6 +71,14 @@ const history$ = 'history';
 //const wherePath = 'where-path';
 const title = 'title';
 const url = 'url';
+const debounce = (fn, time) => {
+    let timeout;
+    return function () {
+        const functionCall = () => fn.apply(this, arguments);
+        clearTimeout(timeout);
+        timeout = setTimeout(functionCall, time);
+    };
+};
 /**
  * `xtal-state-commit`
  * Web component wrapper around the history api
@@ -142,6 +150,9 @@ class XtalStateCommit extends XtallatX(HTMLElement) {
     }
     connectedCallback() {
         this._upgradeProperties(XtalStateCommit.observedAttributes.concat([history$]));
+        this._debouncer = debounce((stateUpdate) => {
+            this.updateHistory(stateUpdate);
+        }, 50);
         this._connected = true;
         this.onPropsChange();
     }
@@ -155,8 +166,9 @@ class XtalStateCommit extends XtallatX(HTMLElement) {
             title: this._title,
         };
         this.preProcess(stateUpdate);
-        if (!stateUpdate.completed)
-            this.updateHistory(stateUpdate);
+        if (!stateUpdate.completed) {
+            this._debouncer(stateUpdate);
+        }
     }
     updateHistory(detail) {
         const method = this.make ? 'push' : 'replace';
@@ -167,7 +179,6 @@ if (!customElements.get(XtalStateCommit.is))
     customElements.define(XtalStateCommit.is, XtalStateCommit);
 //# sourceMappingURL=xtal-state-commit.js.map
 const wherePath2 = 'where-path';
-;
 class XtalStateUpdate extends XtalStateCommit {
     static get is() { return 'xtal-state-update'; }
     get wherePath() { return this._wherePath; }
@@ -244,8 +255,8 @@ class XtalStateUpdate extends XtalStateCommit {
                 stateUpdate.completed = true;
                 const update = stateUpdate.customUpdater(stateUpdate);
                 if (update.proposedState['then'] && typeof (update.proposedState['then'] === 'function')) {
-                    update['then'](newDetail => {
-                        this.updateHistory(newDetail);
+                    update['then']((newDetail) => {
+                        this._debouncer(newDetail);
                     });
                     return;
                 }

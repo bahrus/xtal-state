@@ -1,6 +1,5 @@
 import { XtalStateCommit } from './xtal-state-commit.js';
 const wherePath2 = 'where-path';
-;
 export class XtalStateUpdate extends XtalStateCommit {
     static get is() { return 'xtal-state-update'; }
     get wherePath() { return this._wherePath; }
@@ -78,7 +77,7 @@ export class XtalStateUpdate extends XtalStateCommit {
                 const update = stateUpdate.customUpdater(stateUpdate);
                 if (update.proposedState['then'] && typeof (update.proposedState['then'] === 'function')) {
                     update['then']((newDetail) => {
-                        this.updateHistory(newDetail);
+                        this._debouncer(newDetail);
                     });
                     return;
                 }

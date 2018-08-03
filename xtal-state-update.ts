@@ -1,6 +1,6 @@
-import { XtalStateCommit, IHistoryUpdatePacket } from './xtal-state-commit.js';
+import { XtalStateCommit, IHistoryUpdatePacket} from './xtal-state-commit.js';
 
-const wherePath2 = 'where-path';;
+const wherePath2 = 'where-path';
 export class XtalStateUpdate extends XtalStateCommit {
     static get is() { return 'xtal-state-update'; }
     static _lastPath: string
@@ -68,6 +68,7 @@ export class XtalStateUpdate extends XtalStateCommit {
         }
         return target;
     }
+    
     preProcess(stateUpdate: IHistoryUpdatePacket) {
         stateUpdate.wherePath = this._wherePath;
         XtalStateUpdate._lastPath = this._wherePath;
@@ -80,7 +81,7 @@ export class XtalStateUpdate extends XtalStateCommit {
                 const update = stateUpdate.customUpdater(stateUpdate);
                 if (update.proposedState['then'] && typeof (update.proposedState['then'] === 'function')) {
                     update['then']((newDetail: any) => {
-                        this.updateHistory(newDetail);
+                        this._debouncer(newDetail);
                     });
                     return;
                 }
@@ -91,9 +92,6 @@ export class XtalStateUpdate extends XtalStateCommit {
         }
 
     }
-    
-
-
 }
 if (!customElements.get(XtalStateUpdate.is)) {
     customElements.define(XtalStateUpdate.is, XtalStateUpdate);

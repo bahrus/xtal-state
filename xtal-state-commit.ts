@@ -1,4 +1,4 @@
-import {XtallatX} from 'xtal-latx/xtal-latx.js';
+import { XtallatX } from 'xtal-latx/xtal-latx.js';
 export interface IHistoryUpdatePacket {
     proposedState: any,
     title: string,
@@ -13,6 +13,17 @@ const history$ = 'history';
 //const wherePath = 'where-path';
 const title = 'title';
 const url = 'url';
+
+export const debounce = (fn: (args: any) => void, time: number) => {
+    let timeout: any;
+
+    return function () {
+        const functionCall = () => fn.apply(this, arguments);
+
+        clearTimeout(timeout);
+        timeout = setTimeout(functionCall, time);
+    }
+}
 /**
  * `xtal-state-commit`
  * Web component wrapper around the history api
@@ -21,8 +32,8 @@ const url = 'url';
  * @polymer
  * @demo demo/index.html
  */
-export class XtalStateCommit extends XtallatX(HTMLElement){
-    static get is(){return 'xtal-state-commit';}
+export class XtalStateCommit extends XtallatX(HTMLElement) {
+    static get is() { return 'xtal-state-commit'; }
 
     _make!: boolean;
     get make() {
@@ -72,7 +83,7 @@ export class XtalStateCommit extends XtallatX(HTMLElement){
 
     static get observedAttributes() {
         //const p = XtalStateUpdate.properties;
-        return super.observedAttributes.concat( [make, rewrite, title, url]);
+        return super.observedAttributes.concat([make, rewrite, title, url]);
     }
 
     attributeChangedCallback(name: string, oldValue: string, newValue: string) {
@@ -86,27 +97,33 @@ export class XtalStateCommit extends XtallatX(HTMLElement){
             case title:
                 this['_' + name] = newValue;
                 break;
-            
+
         }
         this.onPropsChange();
     }
-
+    _debouncer;
     _connected!: boolean;
     connectedCallback() {
         this._upgradeProperties(XtalStateCommit.observedAttributes.concat([history$]));
+        this._debouncer = debounce((stateUpdate) => {
+            this.updateHistory(stateUpdate);
+        }, 50);
         this._connected = true;
         this.onPropsChange();
     }
-    preProcess(stateUpdate: IHistoryUpdatePacket){}
-    onPropsChange(){
-        if(this._disabled || !this._connected || (!this._make && !this._rewrite) || !this._namespacedHistoryUpdate) return;
+    preProcess(stateUpdate: IHistoryUpdatePacket) { }
+    onPropsChange() {
+        if (this._disabled || !this._connected || (!this._make && !this._rewrite) || !this._namespacedHistoryUpdate) return;
         const stateUpdate = {
             proposedState: this._namespacedHistoryUpdate,
             url: this._url,
             title: this._title,
         } as IHistoryUpdatePacket;
         this.preProcess(stateUpdate);
-        if(!stateUpdate.completed) this.updateHistory(stateUpdate);
+        if (!stateUpdate.completed) {
+            this._debouncer(stateUpdate);
+            
+        }
     }
 
     updateHistory(detail: IHistoryUpdatePacket) {
@@ -114,4 +131,4 @@ export class XtalStateCommit extends XtallatX(HTMLElement){
         (<any>window).history[method + 'State'](detail.proposedState, detail.title ? detail.title : '', detail.url);
     }
 }
-if(!customElements.get(XtalStateCommit.is)) customElements.define(XtalStateCommit.is, XtalStateCommit);
+if (!customElements.get(XtalStateCommit.is)) customElements.define(XtalStateCommit.is, XtalStateCommit);

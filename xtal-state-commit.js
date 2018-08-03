@@ -5,6 +5,14 @@ const history$ = 'history';
 //const wherePath = 'where-path';
 const title = 'title';
 const url = 'url';
+export const debounce = (fn, time) => {
+    let timeout;
+    return function () {
+        const functionCall = () => fn.apply(this, arguments);
+        clearTimeout(timeout);
+        timeout = setTimeout(functionCall, time);
+    };
+};
 /**
  * `xtal-state-commit`
  * Web component wrapper around the history api
@@ -76,6 +84,9 @@ export class XtalStateCommit extends XtallatX(HTMLElement) {
     }
     connectedCallback() {
         this._upgradeProperties(XtalStateCommit.observedAttributes.concat([history$]));
+        this._debouncer = debounce((stateUpdate) => {
+            this.updateHistory(stateUpdate);
+        }, 50);
         this._connected = true;
         this.onPropsChange();
     }
@@ -89,8 +100,9 @@ export class XtalStateCommit extends XtallatX(HTMLElement) {
             title: this._title,
         };
         this.preProcess(stateUpdate);
-        if (!stateUpdate.completed)
-            this.updateHistory(stateUpdate);
+        if (!stateUpdate.completed) {
+            this._debouncer(stateUpdate);
+        }
     }
     updateHistory(detail) {
         const method = this.make ? 'push' : 'replace';
