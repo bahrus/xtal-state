@@ -20,7 +20,9 @@ xtate-state-watch watches for all changes to history.state, and, optionally, can
 
 All three files are combined into a single IIFE class script file, xtal-state.js, which totals 2kb minified and gzipped.  
 
+## Initializing state;
 
+xtal-state-transcribe is another web component that helps with parsing and generating the mapping between the address bar url and the history.state object.  It relies on the regular expression [named capture group enhancements](https://github.com/tc39/proposal-regexp-named-groups) that are part of ES 2018.  As such, this web component is compatible with exactly 0% browsers today.
 
 ## Install the Polymer-CLI
 
