@@ -43,16 +43,14 @@ Syntax:
 ```
 
 
-## Transcribing state to/from the address bar [TODO]
+## Transcribing state to/from the address bar
 
 ### Parsing
 
-xtal-state-transcribe is another web component that helps with parsing and generating the mapping between the address bar url and the history.state object.  It relies on the regular expression [named capture group enhancements](https://github.com/tc39/proposal-regexp-named-groups) that are part of ES 2018.  Only Chrome supports this feature currently.
+xtal-state-parse is another web component that helps with parsing and generating the mapping between the address bar url and the history.state object.  It relies on the regular expression [named capture group enhancements](https://github.com/tc39/proposal-regexp-named-groups) that are part of ES 2018.  Only Chrome supports this feature currently.
 
 
 [XregExp](http://xregexp.com/) is a library that inspired this spec, and that can provide a kind of polyfill for browsers that don't support named capture groups yet. The code checks if this alternative library is present.  If not, it uses the native regexp native function. [TODO]
-
-
 
 Syntax:
 
