@@ -23,7 +23,7 @@
       <p-d on="derived-history-changed" to="{innerHTML}"></p-d>
       <div></div>
 
-      <xtal-state-parse with-url-pattern="http://(?<domain>[a-z0-9\.\:]*)/demo/(?<page>[a-z0-9-\.]*)"></xtal-state-parse>
+      <xtal-state-parse parse="location.href" with-url-pattern="http://(?<domain>[a-z0-9\.\:]*)/demo/(?<page>[a-z0-9-\.]*)"></xtal-state-parse>
     </div>
   </body>
 </html>

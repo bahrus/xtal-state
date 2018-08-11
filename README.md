@@ -55,7 +55,7 @@ xtal-state-parse is another web component that helps with parsing and generating
 Syntax:
 
 ```html
-<xtal-state-parse parse="href" with-url-pattern="https://(?<domain>[a-z\.]*)/factory-mind/(?<article>[a-z0-9-]*)" ></xtal-state-parse>
+<xtal-state-parse parse="location.href" with-url-pattern="https://(?<domain>[a-z\.]*)/factory-mind/(?<article>[a-z0-9-]*)" ></xtal-state-parse>
 
 ```
 

@@ -1,9 +1,11 @@
 import { XtallatX } from 'xtal-latx/xtal-latx.js';
+
 const with_url_pattern = 'with-url-pattern';
+const parse = 'parse';
 
 export class XtalStateParse extends XtallatX(HTMLElement){
     static get is(){return 'xtal-state-parse';}
-    static get observedAttributes(){return super.observedAttributes.concat([with_url_pattern])}
+    static get observedAttributes(){return super.observedAttributes.concat([with_url_pattern, parse])}
 
     attributeChangedCallback(name: string, oldVal: string, newVal: string){
         super.attributeChangedCallback(name, oldVal, newVal);
@@ -11,15 +13,27 @@ export class XtalStateParse extends XtallatX(HTMLElement){
             case with_url_pattern:
                 this._withURLPattern = newVal;
                 break;
+            case parse:
+                this['_' + name] = newVal;
+                break;
         }
         this.onPropsChange();
     }
+
     _withURLPattern: string;
     get withURLPattern(){
         return this._withURLPattern;
     }
     set withURLPattern(val){
         this.attr(with_url_pattern, val);
+    }
+
+    _parse: string;
+    get parse(){
+        return this._parse;
+    }
+    set parse(val){
+        this.attr(parse, val);
     }
 
     _isConnected: boolean;
@@ -30,9 +44,13 @@ export class XtalStateParse extends XtallatX(HTMLElement){
     }
 
     onPropsChange(){
-        if(!this._isConnected || this._disabled || !this._withURLPattern || history.state) return;
+        if(!this._isConnected || this._disabled || !this._withURLPattern || history.state || !this._parse) return;
         const reg = new RegExp(this._withURLPattern);
-        const parsed = reg.exec(location.href);
+        let thingToParse = self;
+        this._parse.split('.').forEach(token =>{
+            if(thingToParse) thingToParse = thingToParse[token];
+        })
+        const parsed = reg.exec(<any>thingToParse as string);
         if(!parsed) return;
         history.replaceState(parsed['groups'], 'Init', location.pathname);
     }
