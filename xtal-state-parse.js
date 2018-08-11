@@ -1,11 +1,11 @@
-import { XtallatX } from 'xtal-latx/xtal-latx.js';
+//import { XtallatX } from 'xtal-latx/xtal-latx.js';
+import { XtalStateUpdate } from './xtal-state-update.js';
 const with_url_pattern = 'with-url-pattern';
 const parse = 'parse';
-export class XtalStateParse extends XtallatX(HTMLElement) {
+export class XtalStateParse extends XtalStateUpdate {
     static get is() { return 'xtal-state-parse'; }
     static get observedAttributes() { return super.observedAttributes.concat([with_url_pattern, parse]); }
     attributeChangedCallback(name, oldVal, newVal) {
-        super.attributeChangedCallback(name, oldVal, newVal);
         switch (name) {
             case with_url_pattern:
                 this._withURLPattern = newVal;
@@ -13,8 +13,11 @@ export class XtalStateParse extends XtallatX(HTMLElement) {
             case parse:
                 this['_' + name] = newVal;
                 break;
+            default:
+                super.attributeChangedCallback(name, oldVal, newVal);
+                return;
         }
-        this.onPropsChange();
+        this.onParsePropsChange();
     }
     get withURLPattern() {
         return this._withURLPattern;
@@ -29,12 +32,15 @@ export class XtalStateParse extends XtallatX(HTMLElement) {
         this.attr(parse, val);
     }
     connectedCallback() {
-        this._upgradeProperties(['disabled', 'withURLPattern']);
-        this._isConnected = true;
-        this.onPropsChange();
+        this._upgradeProperties(['withURLPattern', parse]);
+        this._title = "Init";
+        this._url = location.pathname;
+        this._rewrite = true;
+        super.connectedCallback();
+        this.onParsePropsChange();
     }
-    onPropsChange() {
-        if (!this._isConnected || this._disabled || !this._withURLPattern || history.state || !this._parse)
+    onParsePropsChange() {
+        if (!this._connected || this._disabled || !this._withURLPattern || history.state || !this._parse)
             return;
         const reg = new RegExp(this._withURLPattern);
         let thingToParse = self;
@@ -45,7 +51,8 @@ export class XtalStateParse extends XtallatX(HTMLElement) {
         const parsed = reg.exec(thingToParse);
         if (!parsed)
             return;
-        history.replaceState(parsed['groups'], 'Init', location.pathname);
+        this.history = parsed['groups'];
+        //history.replaceState(parsed['groups'], 'Init', location.pathname);
     }
 }
 customElements.define(XtalStateParse.is, XtalStateParse);
