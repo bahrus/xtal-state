@@ -10,6 +10,7 @@
     <script type="module" async src="https://unpkg.com/p-d.p-u@0.0.52/p-d.js?module"></script>
     <script type="module" src="../xtal-state-commit.js"></script>
     <script type="module" src="../xtal-state-watch.js"></script>
+    <script type="module" src="../xtal-state-parse.js"></script>
   </head>
   <body>
     <div class="vertical-section-container centered">
@@ -21,6 +22,8 @@
       <xtal-state-watch watch></xtal-state-watch>
       <p-d on="derived-history-changed" to="{innerHTML}"></p-d>
       <div></div>
+
+      <xtal-state-parse with-url-pattern="http://(?<domain>[a-z0-9\.\:]*)/demo/(?<page>[a-z0-9-\.]*)"></xtal-state-parse>
     </div>
   </body>
 </html>
