@@ -77,6 +77,8 @@ export class XtalStateCommit extends XtallatX(HTMLElement) {
         return this._url;
     }
 
+    url
+
     set url(val) {
         this.setAttribute(url, val);
     }

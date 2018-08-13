@@ -13,7 +13,7 @@ re = new RegExp('https://(?<domain>[a-z\.]*)/factory-mind/')
 
 re = new RegExp('https://(?<domain>[a-z\.]*)/factory-mind/(?<article>[a-z]*)')
 
-re = new RegExp('https://(?<domain>[a-z\.]*)/factory-mind/(?<article>[a-z-]*)')
+re = new RegExp('https://(?<domain>[a-z\.]*)/factory-mind/(?<article>[a-z0-9-]*)')
 
 re = new RegExp('http://(?<domain>[a-z\.]*)/factory-mind/(?<article>[a-z0-9-]*)')
 
