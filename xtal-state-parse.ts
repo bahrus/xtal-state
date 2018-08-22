@@ -1,6 +1,5 @@
-//import { XtallatX } from 'xtal-latx/xtal-latx.js';
 import {XtalStateUpdate} from './xtal-state-update.js';
-
+import {define} from 'xtal-latx/define.js';
 const with_url_pattern = 'with-url-pattern';
 const parse = 'parse';
 
@@ -66,5 +65,4 @@ export class XtalStateParse extends XtalStateUpdate{
         return parsed['groups'];
     }
 }
-
-customElements.define(XtalStateParse.is, XtalStateParse);
+define(XtalStateParse);

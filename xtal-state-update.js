@@ -1,4 +1,5 @@
 import { XtalStateCommit } from './xtal-state-commit.js';
+import { define } from 'xtal-latx/define.js';
 const wherePath2 = 'where-path';
 export class XtalStateUpdate extends XtalStateCommit {
     static get is() { return 'xtal-state-update'; }
@@ -89,7 +90,5 @@ export class XtalStateUpdate extends XtalStateCommit {
         }
     }
 }
-if (!customElements.get(XtalStateUpdate.is)) {
-    customElements.define(XtalStateUpdate.is, XtalStateUpdate);
-}
+define(XtalStateUpdate);
 //# sourceMappingURL=xtal-state-update.js.map

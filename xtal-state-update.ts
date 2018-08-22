@@ -1,4 +1,5 @@
 import { XtalStateCommit, IHistoryUpdatePacket} from './xtal-state-commit.js';
+import {define} from 'xtal-latx/define.js';
 
 const wherePath2 = 'where-path';
 export class XtalStateUpdate extends XtalStateCommit {
@@ -93,6 +94,4 @@ export class XtalStateUpdate extends XtalStateCommit {
 
     }
 }
-if (!customElements.get(XtalStateUpdate.is)) {
-    customElements.define(XtalStateUpdate.is, XtalStateUpdate);
-}
+define(XtalStateUpdate);

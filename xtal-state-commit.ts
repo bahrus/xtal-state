@@ -1,4 +1,5 @@
 import { XtallatX } from 'xtal-latx/xtal-latx.js';
+import {define} from 'xtal-latx/define.js';
 export interface IHistoryUpdatePacket {
     proposedState: any,
     title: string,
@@ -61,6 +62,9 @@ export class XtalStateCommit extends XtallatX(HTMLElement) {
         return history;
     }
     _namespacedHistoryUpdate: any;
+    get history(){
+        return history.state;
+    }
     set history(newVal: any) {
         this._namespacedHistoryUpdate = this.namespaceHistory(newVal);
         this.onPropsChange();
@@ -76,8 +80,6 @@ export class XtalStateCommit extends XtallatX(HTMLElement) {
     get url() {
         return this._url;
     }
-
-    url
 
     set url(val) {
         this.setAttribute(url, val);
@@ -133,4 +135,4 @@ export class XtalStateCommit extends XtallatX(HTMLElement) {
         (<any>window).history[method + 'State'](detail.proposedState, detail.title ? detail.title : '', detail.url);
     }
 }
-if (!customElements.get(XtalStateCommit.is)) customElements.define(XtalStateCommit.is, XtalStateCommit);
+define(XtalStateCommit);

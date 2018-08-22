@@ -84,15 +84,15 @@ then the syntax above will initialize history.state to:
 
 If the url-pattern does not match the location.href (or whatever path is specified by the parse attribute/property, no changes to the history.state object are made.
 
-The regular expression named group capture supports only populating an object with a flat list of fields -- no nested object support.  For quite complex applications requiring nested objects going into history.state, you will need to utilize the underlying support for nested objects using the where-path attribute.  
+The regular expression named group capture supports only populating an object with a flat list of fields -- no nested object support.  For quite complex applications requiring nested objects going into history.state, you will need to utilize the underlying support for nested objects using the where-path attribute [untested].  
 
-### Writing to the location object [TODO]
+### Writing to the location object [Big-time TODO]
 
 ```html
-<xtal-state-serialize destination="location.pathName" between="/view/" and="/" from="MilkyWay.Earth.UnitedStates.Texas.Montgomery.CutAndShoot" replace-with-pattern=""></xtal-state-serialize>
+<xtal-state-serialize destination="location.pathName" between="/view/" and="/" from="MilkyWay.Earth.UnitedStates.Texas.Montgomery.CutAndShoot" replace-with-pattern="TBD"></xtal-state-serialize>
 ```
 
-watches for history changes.  It does the following:
+watches for (namespaced) history changes.  It does the following:
 
 1)  Serializes the history.state object according to the following rules:
   a)  The optional from parameter specifies a sub property selector to a section of history.state.

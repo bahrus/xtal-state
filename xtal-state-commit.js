@@ -1,4 +1,5 @@
 import { XtallatX } from 'xtal-latx/xtal-latx.js';
+import { define } from 'xtal-latx/define.js';
 const make = 'make';
 const rewrite = 'rewrite';
 const history$ = 'history';
@@ -47,6 +48,9 @@ export class XtalStateCommit extends XtallatX(HTMLElement) {
     }
     namespaceHistory(history) {
         return history;
+    }
+    get history() {
+        return history.state;
     }
     set history(newVal) {
         this._namespacedHistoryUpdate = this.namespaceHistory(newVal);
@@ -109,6 +113,5 @@ export class XtalStateCommit extends XtallatX(HTMLElement) {
         window.history[method + 'State'](detail.proposedState, detail.title ? detail.title : '', detail.url);
     }
 }
-if (!customElements.get(XtalStateCommit.is))
-    customElements.define(XtalStateCommit.is, XtalStateCommit);
+define(XtalStateCommit);
 //# sourceMappingURL=xtal-state-commit.js.map
