@@ -40,8 +40,7 @@ export class XtalStateParse extends XtalStateUpdate {
         this.onParsePropsChange();
     }
     onParsePropsChange() {
-        if (!this._connected || this._disabled || !this._withURLPattern || !this._parse)
-            return;
+        //if(!this._connected || this._disabled || !this._withURLPattern || !this._parse) return;
         this.history = XtalStateParse.parseAddressBar(this._parse, this._withURLPattern);
         //history.replaceState(parsed['groups'], 'Init', location.pathname);
     }

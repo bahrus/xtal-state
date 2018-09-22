@@ -32,7 +32,7 @@ export class XtalStateUpdate extends XtalStateCommit {
         const len = tokens.length - 1;
         let count = 0;
         tokens.forEach(path => {
-            currPath[path] = count === len ? this._namespacedHistoryUpdate : {};
+            //currPath[path] = count === len ? this._namespacedHistoryUpdate : {};
             currPath = currPath[path];
             count++;
         });
@@ -88,7 +88,7 @@ export class XtalStateUpdate extends XtalStateCommit {
                 }
             }else{
                 let newState = window.history.state ? Object.assign({}, window.history.state) : {};
-                this.mergeDeep(newState, this._namespacedHistoryUpdate);
+                //this.mergeDeep(newState, this._namespacedHistoryUpdate);
             }
         }
 

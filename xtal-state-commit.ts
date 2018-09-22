@@ -1,5 +1,8 @@
-import { XtallatX } from 'xtal-latx/xtal-latx.js';
+//import { XtallatX } from 'xtal-latx/xtal-latx.js';
+import {XtalStateBase} from './xtal-state-base.js';
+
 import {define} from 'xtal-latx/define.js';
+import {debounce} from 'xtal-latx/debounce.js';
 export interface IHistoryUpdatePacket {
     proposedState: any,
     title: string,
@@ -15,16 +18,7 @@ const history$ = 'history';
 const title = 'title';
 const url = 'url';
 
-export const debounce = (fn: (args: any) => void, time: number) => {
-    let timeout: any;
 
-    return function () {
-        const functionCall = () => fn.apply(this, arguments);
-
-        clearTimeout(timeout);
-        timeout = setTimeout(functionCall, time);
-    }
-}
 /**
  * `xtal-state-commit`
  * Web component wrapper around the history api
@@ -33,7 +27,7 @@ export const debounce = (fn: (args: any) => void, time: number) => {
  * @polymer
  * @demo demo/index.html
  */
-export class XtalStateCommit extends XtallatX(HTMLElement) {
+export class XtalStateCommit extends XtalStateBase {
     static get is() { return 'xtal-state-commit'; }
 
     _make!: boolean;
@@ -58,18 +52,15 @@ export class XtalStateCommit extends XtallatX(HTMLElement) {
             this.removeAttribute(rewrite);
         }
     }
-    namespaceHistory(history: any) {
-        return history;
-    }
-    _namespacedHistoryUpdate: any;
+    _history: any;
     get history(){
-        return history.state;
+        return this._window.history.state;
     }
     set history(newVal: any) {
-        this._namespacedHistoryUpdate = this.namespaceHistory(newVal);
+        this._history = newVal;
         this.onPropsChange();
     }
-    _title!: string
+    _title = '';
     get title() {
         return this._title;
     }
@@ -91,7 +82,7 @@ export class XtalStateCommit extends XtallatX(HTMLElement) {
     }
 
     attributeChangedCallback(name: string, oldValue: string, newValue: string) {
-        super.attributeChangedCallback(name, oldValue, newValue);
+        
         switch (name) {
             case rewrite:
             case make:
@@ -103,36 +94,30 @@ export class XtalStateCommit extends XtallatX(HTMLElement) {
                 break;
 
         }
-        this.onPropsChange();
+        super.attributeChangedCallback(name, oldValue, newValue);
+        //this.onPropsChange();
     }
     _debouncer;
-    _connected!: boolean;
+    //_connected!: boolean;
     connectedCallback() {
         this._upgradeProperties(XtalStateCommit.observedAttributes.concat([history$]));
-        this._debouncer = debounce((stateUpdate) => {
-            this.updateHistory(stateUpdate);
+        this._debouncer = debounce(() => {
+            this.updateHistory();
         }, 50);
-        this._connected = true;
-        this.onPropsChange();
+        //this._connected = true;
+        super.connectedCallback();
     }
     preProcess(stateUpdate: IHistoryUpdatePacket) { }
     onPropsChange() {
-        if (this._disabled || !this._connected || (!this._make && !this._rewrite) || !this._namespacedHistoryUpdate) return;
-        const stateUpdate = {
-            proposedState: this._namespacedHistoryUpdate,
-            url: this._url,
-            title: this._title,
-        } as IHistoryUpdatePacket;
-        this.preProcess(stateUpdate);
-        if (!stateUpdate.completed) {
-            this._debouncer(stateUpdate);
-            
-        }
+        if(super.onPropsChange()) return true;
+        if (!this._make && !this._rewrite) return true;
+        this._debouncer();
     }
 
-    updateHistory(detail: IHistoryUpdatePacket) {
+    updateHistory() {
         const method = this.make ? 'push' : 'replace';
-        (<any>window).history[method + 'State'](detail.proposedState, detail.title ? detail.title : '', detail.url);
+        let url = this._url ? this._url : this._window.location; 
+        this._window.history[method + 'State'](this._history, this._title, url);
     }
 }
 define(XtalStateCommit);
