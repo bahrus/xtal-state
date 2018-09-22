@@ -1,43 +1,9 @@
-import { XtalStateCommit, IHistoryUpdatePacket} from './xtal-state-commit.js';
+import { XtalStateCommit} from './xtal-state-commit.js';
 import {define} from 'xtal-latx/define.js';
 
-const wherePath2 = 'where-path';
 export class XtalStateUpdate extends XtalStateCommit {
     static get is() { return 'xtal-state-update'; }
-    static _lastPath: string
-    _wherePath!: string;
-    get wherePath() { return this._wherePath; }
-    set wherePath(val) {
-        this.setAttribute(wherePath2, val);
-    }
 
-    static get observedAttributes() {
-        return super.observedAttributes.concat([wherePath2]);
-    }
-    attributeChangedCallback(name: string, oldVal: string, newVal: string) {
-        switch (name) {
-            case wherePath2:
-                this._wherePath = newVal;
-                break;
-        }
-        super.attributeChangedCallback(name, oldVal, newVal);
-        this.onPropsChange();
-    }
-
-    namespaceHistory(history: any) {
-        if (!this._wherePath) return history;
-        const returnObj: {[key: string]: any} = {};
-        let currPath = returnObj;
-        const tokens = this._wherePath.split('.');
-        const len = tokens.length - 1;
-        let count = 0;
-        tokens.forEach(path => {
-            //currPath[path] = count === len ? this._namespacedHistoryUpdate : {};
-            currPath = currPath[path];
-            count++;
-        });
-        return returnObj;
-    }
 
     mergeDeep(target : any, source: any) {
         if (typeof target !== 'object') return;
@@ -70,28 +36,10 @@ export class XtalStateUpdate extends XtalStateCommit {
         return target;
     }
     
-    preProcess(stateUpdate: IHistoryUpdatePacket) {
-        stateUpdate.wherePath = this._wherePath;
-        XtalStateUpdate._lastPath = this._wherePath;
-        this.de('pre-history-merge', {
-            value: stateUpdate
-        });
-        if (!stateUpdate.completed) {
-            if (stateUpdate.customUpdater) {
-                stateUpdate.completed = true;
-                const update = stateUpdate.customUpdater(stateUpdate);
-                if (update.proposedState['then'] && typeof (update.proposedState['then'] === 'function')) {
-                    update['then']((newDetail: any) => {
-                        this._debouncer(newDetail);
-                    });
-                    return;
-                }
-            }else{
-                let newState = window.history.state ? Object.assign({}, window.history.state) : {};
-                //this.mergeDeep(newState, this._namespacedHistoryUpdate);
-            }
-        }
-
+    mergedHistory(){
+        if(this._window.history.state === null) return this._history;
+        const retObj = Object.assign({}, this._window.history.state);
+        return this.mergeDeep(retObj, this._history);
     }
 }
 define(XtalStateUpdate);

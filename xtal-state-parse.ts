@@ -1,14 +1,14 @@
-import {XtalStateUpdate} from './xtal-state-update.js';
+import {XtalStateBase} from './xtal-state-base.js';
 import {define} from 'xtal-latx/define.js';
 const with_url_pattern = 'with-url-pattern';
 const parse = 'parse';
 
-export class XtalStateParse extends XtalStateUpdate{
+export class XtalStateParse extends XtalStateBase{
     static get is(){return 'xtal-state-parse';}
     static get observedAttributes(){return super.observedAttributes.concat([with_url_pattern, parse])}
 
     attributeChangedCallback(name: string, oldVal: string, newVal: string){
-        
+        super.attributeChangedCallback(name, oldVal, newVal);
         switch(name){
             case with_url_pattern:
                 this._withURLPattern = newVal;
@@ -41,17 +41,12 @@ export class XtalStateParse extends XtalStateUpdate{
 
     connectedCallback(){
         this._upgradeProperties(['withURLPattern', parse]);
-        this._title = "Init";
-        this._url = location.pathname + location.search;
-        this._rewrite = true;
         super.connectedCallback();
         this.onParsePropsChange();
     }
 
     onParsePropsChange(){
-        //if(!this._connected || this._disabled || !this._withURLPattern || !this._parse) return;
-        this.history = XtalStateParse.parseAddressBar(this._parse, this._withURLPattern);
-        //history.replaceState(parsed['groups'], 'Init', location.pathname);
+        this._window.history.replaceState(XtalStateParse.parseAddressBar(this._parse, this._withURLPattern), '', this._window.location.href);
     }
 
     static parseAddressBar(parsePath: string, urlPattern: string){

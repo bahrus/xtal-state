@@ -1,7 +1,27 @@
 
     //@ts-check
     (function () {
-    const disabled = 'disabled';
+    function define(custEl) {
+    let tagName = custEl.is;
+    if (customElements.get(tagName)) {
+        console.warn('Already registered ' + tagName);
+        return;
+    }
+    customElements.define(tagName, custEl);
+}
+const debounce = (fn, time) => {
+    let timeout;
+    return function () {
+        const functionCall = () => fn.apply(this, arguments);
+        clearTimeout(timeout);
+        timeout = setTimeout(functionCall, time);
+    };
+};
+const disabled = 'disabled';
+/**
+ * Base class for many xtal- components
+ * @param superClass
+ */
 function XtallatX(superClass) {
     return class extends superClass {
         constructor() {
@@ -11,20 +31,39 @@ function XtallatX(superClass) {
         static get observedAttributes() {
             return [disabled];
         }
+        /**
+         * Any component that emits events should not do so if it is disabled.
+         * Note that this is not enforced, but the disabled property is made available.
+         * Users of this mix-in should ensure not to call "de" if this property is set to true.
+         */
         get disabled() {
             return this._disabled;
         }
         set disabled(val) {
             this.attr(disabled, val, '');
         }
+        /**
+         * Set attribute value.
+         * @param name
+         * @param val
+         * @param trueVal String to set attribute if true.
+         */
         attr(name, val, trueVal) {
-            if (val) {
-                this.setAttribute(name, trueVal || val);
-            }
-            else {
-                this.removeAttribute(name);
-            }
+            const v = val ? 'set' : 'remove'; //verb
+            this[v + 'Attribute'](name, trueVal || val);
         }
+        /**
+         * Turn number into string with even and odd values easy to query via css.
+         * @param n
+         */
+        to$(n) {
+            const mod = n % 2;
+            return (n - mod) / 2 + '-' + mod;
+        }
+        /**
+         * Increment event count
+         * @param name
+         */
         incAttr(name) {
             const ec = this._evCount;
             if (name in ec) {
@@ -33,7 +72,7 @@ function XtallatX(superClass) {
             else {
                 ec[name] = 0;
             }
-            this.attr(name, ec[name].toString());
+            this.attr('data-' + name, this.to$(ec[name]));
         }
         attributeChangedCallback(name, oldVal, newVal) {
             switch (name) {
@@ -42,8 +81,14 @@ function XtallatX(superClass) {
                     break;
             }
         }
-        de(name, detail) {
-            const eventName = name + '-changed';
+        /**
+         * Dispatch Custom Event
+         * @param name Name of event to dispatch ("-changed" will be appended if asIs is false)
+         * @param detail Information to be passed with the event
+         * @param asIs If true, don't append event name with '-changed'
+         */
+        de(name, detail, asIs) {
+            const eventName = name + (asIs ? '' : '-changed');
             const newEvent = new CustomEvent(eventName, {
                 detail: detail,
                 bubbles: true,
@@ -53,6 +98,10 @@ function XtallatX(superClass) {
             this.incAttr(eventName);
             return newEvent;
         }
+        /**
+         * Needed for asynchronous loading
+         * @param props Array of property names to "upgrade", without losing value set while element was Unknown
+         */
         _upgradeProperties(props) {
             props.forEach(prop => {
                 if (this.hasOwnProperty(prop)) {
@@ -64,21 +113,83 @@ function XtallatX(superClass) {
         }
     };
 }
-//# sourceMappingURL=xtal-latx.js.map
+const level = 'level';
+class XtalStateBase extends XtallatX(HTMLElement) {
+    constructor() {
+        super(...arguments);
+        this._level = 'global';
+    }
+    get level() {
+        return this._level;
+    }
+    set level(val) {
+        this.attr(level, val);
+    }
+    static get observedAttributes() {
+        return super.observedAttributes.concat([level]);
+    }
+    get window() {
+        return this._window;
+    }
+    attributeChangedCallback(name, oldVal, newVal) {
+        super.attributeChangedCallback(name, oldVal, newVal);
+        switch (name) {
+            case level:
+                this._level = newVal;
+                break;
+        }
+        this.onPropsChange();
+    }
+    connectedCallback() {
+        this._upgradeProperties(['disabled', level]);
+        this._conn = true;
+        this.onPropsChange();
+    }
+    getWinObj(par) {
+        let ifr = par.querySelector('iframe[xtal-state]');
+        if (ifr === null) {
+            ifr = document.createElement('iframe');
+            //ifr.src = 'about:blank';
+            ifr.setAttribute('xtal-state', '');
+            ifr.src = 'blank.html';
+            ifr.style.display = 'none';
+            par.appendChild(ifr);
+        }
+        return ifr.contentWindow;
+    }
+    onPropsChange() {
+        if (!this._conn || this._disabled)
+            return true;
+        if (!this._window) {
+            switch (this._level) {
+                case "global":
+                    this._window = self;
+                    break;
+                case "local":
+                    this._window = this.getWinObj(this.parentElement);
+                    break;
+                case "shadow":
+                    this._window = this.getWinObj(getHost(this));
+                    break;
+            }
+        }
+    }
+}
+//import { XtallatX } from 'xtal-latx/xtal-latx.js';
+// export interface IHistoryUpdatePacket {
+//     proposedState: any,
+//     title: string,
+//     url: string,
+//     completed?: boolean,
+//     wherePath?: string,
+//     customUpdater?: any,
+// }
 const make = 'make';
 const rewrite = 'rewrite';
 const history$ = 'history';
 //const wherePath = 'where-path';
 const title = 'title';
 const url = 'url';
-const debounce = (fn, time) => {
-    let timeout;
-    return function () {
-        const functionCall = () => fn.apply(this, arguments);
-        clearTimeout(timeout);
-        timeout = setTimeout(functionCall, time);
-    };
-};
 /**
  * `xtal-state-commit`
  * Web component wrapper around the history api
@@ -87,7 +198,11 @@ const debounce = (fn, time) => {
  * @polymer
  * @demo demo/index.html
  */
-class XtalStateCommit extends XtallatX(HTMLElement) {
+class XtalStateCommit extends XtalStateBase {
+    constructor() {
+        super(...arguments);
+        this._title = '';
+    }
     static get is() { return 'xtal-state-commit'; }
     get make() {
         return this._make;
@@ -111,11 +226,11 @@ class XtalStateCommit extends XtallatX(HTMLElement) {
             this.removeAttribute(rewrite);
         }
     }
-    namespaceHistory(history) {
-        return history;
+    get history() {
+        return this._window.history.state;
     }
     set history(newVal) {
-        this._namespacedHistoryUpdate = this.namespaceHistory(newVal);
+        this._history = newVal;
         this.onPropsChange();
     }
     get title() {
@@ -135,7 +250,6 @@ class XtalStateCommit extends XtallatX(HTMLElement) {
         return super.observedAttributes.concat([make, rewrite, title, url]);
     }
     attributeChangedCallback(name, oldValue, newValue) {
-        super.attributeChangedCallback(name, oldValue, newValue);
         switch (name) {
             case rewrite:
             case make:
@@ -146,72 +260,37 @@ class XtalStateCommit extends XtallatX(HTMLElement) {
                 this['_' + name] = newValue;
                 break;
         }
-        this.onPropsChange();
+        super.attributeChangedCallback(name, oldValue, newValue);
+        //this.onPropsChange();
     }
+    //_connected!: boolean;
     connectedCallback() {
         this._upgradeProperties(XtalStateCommit.observedAttributes.concat([history$]));
-        this._debouncer = debounce((stateUpdate) => {
-            this.updateHistory(stateUpdate);
+        this._debouncer = debounce(() => {
+            this.updateHistory();
         }, 50);
-        this._connected = true;
-        this.onPropsChange();
+        //this._connected = true;
+        super.connectedCallback();
     }
-    preProcess(stateUpdate) { }
     onPropsChange() {
-        if (this._disabled || !this._connected || (!this._make && !this._rewrite) || !this._namespacedHistoryUpdate)
-            return;
-        const stateUpdate = {
-            proposedState: this._namespacedHistoryUpdate,
-            url: this._url,
-            title: this._title,
-        };
-        this.preProcess(stateUpdate);
-        if (!stateUpdate.completed) {
-            this._debouncer(stateUpdate);
-        }
+        if (super.onPropsChange())
+            return true;
+        if (!this._make && !this._rewrite)
+            return true;
+        this._debouncer();
     }
-    updateHistory(detail) {
+    mergedHistory() {
+        return this._history;
+    }
+    updateHistory() {
         const method = this.make ? 'push' : 'replace';
-        window.history[method + 'State'](detail.proposedState, detail.title ? detail.title : '', detail.url);
+        let url = this._url ? this._url : this._window.location;
+        this._window.history[method + 'State'](this.mergedHistory(), this._title, url);
     }
 }
-if (!customElements.get(XtalStateCommit.is))
-    customElements.define(XtalStateCommit.is, XtalStateCommit);
-//# sourceMappingURL=xtal-state-commit.js.map
-const wherePath2 = 'where-path';
+define(XtalStateCommit);
 class XtalStateUpdate extends XtalStateCommit {
     static get is() { return 'xtal-state-update'; }
-    get wherePath() { return this._wherePath; }
-    set wherePath(val) {
-        this.setAttribute(wherePath2, val);
-    }
-    static get observedAttributes() {
-        return super.observedAttributes.concat([wherePath2]);
-    }
-    attributeChangedCallback(name, oldVal, newVal) {
-        switch (name) {
-            case wherePath2:
-                this._wherePath = newVal;
-                break;
-        }
-        super.attributeChangedCallback(name, oldVal, newVal);
-        this.onPropsChange();
-    }
-    namespaceHistory(history) {
-        if (!this._wherePath)
-            return history;
-        const returnObj = {};
-        let currPath = returnObj;
-        const tokens = this._wherePath.split('.');
-        const len = tokens.length - 1;
-        let count = 0;
-        tokens.forEach(path => {
-            currPath[path] = count === len ? this._namespacedHistoryUpdate : {};
-            currPath = currPath[path];
-            count++;
-        });
-        return returnObj;
-    }
     mergeDeep(target, source) {
         if (typeof target !== 'object')
             return;
@@ -244,153 +323,140 @@ class XtalStateUpdate extends XtalStateCommit {
         }
         return target;
     }
-    preProcess(stateUpdate) {
-        stateUpdate.wherePath = this._wherePath;
-        XtalStateUpdate._lastPath = this._wherePath;
-        this.de('pre-history-merge', {
-            value: stateUpdate
-        });
-        if (!stateUpdate.completed) {
-            if (stateUpdate.customUpdater) {
-                stateUpdate.completed = true;
-                const update = stateUpdate.customUpdater(stateUpdate);
-                if (update.proposedState['then'] && typeof (update.proposedState['then'] === 'function')) {
-                    update['then']((newDetail) => {
-                        this._debouncer(newDetail);
-                    });
-                    return;
-                }
-            }
-            else {
-                let newState = window.history.state ? Object.assign({}, window.history.state) : {};
-                this.mergeDeep(newState, this._namespacedHistoryUpdate);
-            }
-        }
+    mergedHistory() {
+        if (this._window.history.state === null)
+            return this._history;
+        const retObj = Object.assign({}, this._window.history.state);
+        return this.mergeDeep(retObj, this._history);
     }
 }
-if (!customElements.get(XtalStateUpdate.is)) {
-    customElements.define(XtalStateUpdate.is, XtalStateUpdate);
-}
-//# sourceMappingURL=xtal-state-update.js.map
-const wherePath1 = 'where-path';
+define(XtalStateUpdate);
 const watch = 'watch';
-const subscribers = [];
-class XtalStateWatch extends XtallatX(HTMLElement) {
+const xtal_subscribers = 'xtal-subscribers';
+class XtalStateWatch extends XtalStateBase {
     static get is() { return 'xtal-state-watch'; }
     constructor() {
         super();
-        subscribers.push(this);
     }
     static get observedAttributes() {
-        return super.observedAttributes.concat([watch, wherePath1]);
+        return super.observedAttributes.concat([watch]);
     }
     attributeChangedCallback(name, oldValue, newValue) {
         super.attributeChangedCallback(name, oldValue, newValue);
         switch (name) {
             case watch:
                 this._watch = newValue !== null;
-                //this.notify();
-                break;
-            case wherePath1:
-                this._wherePath = newValue;
-                //this.notify();
                 break;
         }
         this.notify();
     }
     connectedCallback() {
+        //this._connected = true;
+        super.connectedCallback();
+        const win = this._window;
+        if (!win[xtal_subscribers]) {
+            win[xtal_subscribers] = [];
+            const originalPushState = win.history.pushState;
+            const boundPushState = originalPushState.bind(win.history);
+            win.history.pushState = function (newState, title, URL) {
+                boundPushState(newState, title, URL);
+                win[xtal_subscribers].forEach(subscriber => {
+                    subscriber.history = newState;
+                });
+            };
+            const originalReplaceState = win.history.replaceState;
+            const boundReplaceState = originalReplaceState.bind(history);
+            history.replaceState = function (newState, title, URL) {
+                boundReplaceState(newState, title, URL);
+                win[xtal_subscribers].forEach(subscriber => {
+                    subscriber.history = newState;
+                });
+            };
+            win.addEventListener('popstate', e => {
+                win[xtal_subscribers].forEach(subscriber => {
+                    subscriber.history = history.state;
+                });
+            });
+        }
+        this._window[xtal_subscribers].push(this);
         this._connected = true;
         this.notify();
-    }
-    get derivedHistory() {
-        return this.filter();
     }
     get history() {
         return this._history;
     }
     set history(newVal) {
         this._history = newVal;
-        if (this.watch)
+        if (this._watch)
             this.notify();
     }
     get watch() { return this._watch; }
     set watch(newVal) {
-        if (newVal) {
-            this.setAttribute(watch, '');
-        }
-        else {
-            this.removeAttribute(watch);
-        }
-    }
-    get wherePath() { return this._wherePath; }
-    set wherePath(val) {
-        this.setAttribute(wherePath1, val);
-    }
-    filter() {
-        if (!this._wherePath)
-            return window.history.state;
-        let obj = window.history.state;
-        const paths = this._wherePath.split('.');
-        let idx = 0;
-        const len = paths.length;
-        while (obj && idx < len) {
-            obj = obj[paths[idx++]];
-        }
-        return obj;
+        this.attr(watch, newVal, '');
     }
     notify() {
         if (!this._watch || this._disabled || !this._connected)
             return;
-        const newVal = this.filter();
-        const historyNotificationPacket = {
-            rawHistoryObject: newVal,
-            detailedHistoryObject: null,
-            wherePath: this._wherePath,
-            customInjector: null,
-            isInvalid: false
-        };
-        const dataInjectionEvent = {
-            value: historyNotificationPacket
-        };
-        this.de('raw-history', dataInjectionEvent);
-        const returnDetail = dataInjectionEvent.value;
-        if (returnDetail.isInvalid)
-            return;
-        if (returnDetail.customInjector) {
-            const result = returnDetail.customInjector(historyNotificationPacket);
-            if (typeof result['then'] === 'function') {
-                result['then'](() => {
-                    this.de('derived-history', { value: returnDetail.detailedHistoryObject || returnDetail.rawHistoryObject });
-                });
-                return;
-            }
-        }
-        this.de('derived-history', { value: returnDetail.detailedHistoryObject || returnDetail.rawHistoryObject });
+        this.de('history', {
+            value: this._window.history.state
+        });
     }
 }
-if (!customElements.get(XtalStateWatch.is))
-    customElements.define(XtalStateWatch.is, XtalStateWatch);
-const originalPushState = history.pushState;
-const boundPushState = originalPushState.bind(history);
-history.pushState = function (newState, title, URL) {
-    boundPushState(newState, title, URL);
-    subscribers.forEach(subscriber => {
-        subscriber.history = newState;
-    });
-};
-const originalReplaceState = history.replaceState;
-const boundReplaceState = originalReplaceState.bind(history);
-history.replaceState = function (newState, title, URL) {
-    boundReplaceState(newState, title, URL);
-    subscribers.forEach(subscriber => {
-        subscriber.history = newState;
-    });
-};
-window.addEventListener('popstate', e => {
-    subscribers.forEach(subscriber => {
-        subscriber.history = history.state;
-    });
-});
-//# sourceMappingURL=xtal-state-watch.js.map
+define(XtalStateWatch);
+//if(!customElements.get(XtalStateWatch.is)) customElements.define(XtalStateWatch.is, XtalStateWatch);
+const with_url_pattern = 'with-url-pattern';
+const parse = 'parse';
+class XtalStateParse extends XtalStateBase {
+    static get is() { return 'xtal-state-parse'; }
+    static get observedAttributes() { return super.observedAttributes.concat([with_url_pattern, parse]); }
+    attributeChangedCallback(name, oldVal, newVal) {
+        super.attributeChangedCallback(name, oldVal, newVal);
+        switch (name) {
+            case with_url_pattern:
+                this._withURLPattern = newVal;
+                break;
+            case parse:
+                this['_' + name] = newVal;
+                break;
+            default:
+                super.attributeChangedCallback(name, oldVal, newVal);
+                return;
+        }
+        this.onParsePropsChange();
+    }
+    get withURLPattern() {
+        return this._withURLPattern;
+    }
+    set withURLPattern(val) {
+        this.attr(with_url_pattern, val);
+    }
+    get parse() {
+        return this._parse;
+    }
+    set parse(val) {
+        this.attr(parse, val);
+    }
+    connectedCallback() {
+        this._upgradeProperties(['withURLPattern', parse]);
+        super.connectedCallback();
+        this.onParsePropsChange();
+    }
+    onParsePropsChange() {
+        this._window.history.replaceState(XtalStateParse.parseAddressBar(this._parse, this._withURLPattern), '', this._window.location.href);
+    }
+    static parseAddressBar(parsePath, urlPattern) {
+        const reg = new RegExp(urlPattern);
+        let thingToParse = self;
+        parsePath.split('.').forEach(token => {
+            if (thingToParse)
+                thingToParse = thingToParse[token];
+        });
+        const parsed = reg.exec(thingToParse);
+        if (!parsed)
+            return;
+        return parsed['groups'];
+    }
+}
+define(XtalStateParse);
     })();  
         

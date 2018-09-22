@@ -3,14 +3,14 @@ import {XtalStateBase} from './xtal-state-base.js';
 
 import {define} from 'xtal-latx/define.js';
 import {debounce} from 'xtal-latx/debounce.js';
-export interface IHistoryUpdatePacket {
-    proposedState: any,
-    title: string,
-    url: string,
-    completed?: boolean,
-    wherePath?: string,
-    customUpdater?: any,
-}
+// export interface IHistoryUpdatePacket {
+//     proposedState: any,
+//     title: string,
+//     url: string,
+//     completed?: boolean,
+//     wherePath?: string,
+//     customUpdater?: any,
+// }
 const make = 'make';
 const rewrite = 'rewrite';
 const history$ = 'history';
@@ -107,17 +107,18 @@ export class XtalStateCommit extends XtalStateBase {
         //this._connected = true;
         super.connectedCallback();
     }
-    preProcess(stateUpdate: IHistoryUpdatePacket) { }
     onPropsChange() {
         if(super.onPropsChange()) return true;
         if (!this._make && !this._rewrite) return true;
         this._debouncer();
     }
-
+    mergedHistory(){
+        return this._history;
+    }
     updateHistory() {
         const method = this.make ? 'push' : 'replace';
         let url = this._url ? this._url : this._window.location; 
-        this._window.history[method + 'State'](this._history, this._title, url);
+        this._window.history[method + 'State'](this.mergedHistory(), this._title, url);
     }
 }
 define(XtalStateCommit);
