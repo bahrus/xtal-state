@@ -64,7 +64,9 @@ Basically what we need is a miniature, 1 kb git client running in the browser, c
 
 ## Problem Statement II -- Building https://UFP.gov
 
-*Guinan, president-elect of the United Federation of Planets, wants to make good on her promise to modernize the UFP website.*   
+*In the year 2412, Guinan, president-elect of the United Federation of Planets, wants to make good on her promise to modernize the UFP website.  The last known browser running IE11 was destroyed when the planet Psi 2000 imploded, so Guinan thought it was time to finally take full advantage of what the platform had to offer in terms of scope isolation.  The current vesion of the the website mashed together websites from each outpost - 5,173,000 in total.  Each website was built using the most popular framework of the day when the outpost was established, and due to framework lock-in, never migrated to anything newer.  Some of those frameworks, in fact, were conceived when the Beastie Boys' "Sabotage" was No. 1 in the Earthling charts.  The mashing together was done via iframes.  So the idea was to switch out iframes for loosely coupled web components.*
+
+*Doing her due diligence, Guinan visited alternate timelines where parallel Guinan's had tried the same thing. Guinan found one timeline where a mass inter-galactic civil-war had broken out.  The cause?  One of the web components had code that would update the window.history.state object.  This inadvertenly caused another outposts's web component to initiate war with the Ramulans.*   
 
 
 This npm package contains three ES6 Modules:  xtal-state-commit.js, xtal-state-update.js, and xtal-state-watch.js, which define custom elements with the given file name.
