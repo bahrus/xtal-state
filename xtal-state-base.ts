@@ -32,15 +32,29 @@ export class XtalStateBase extends XtallatX(HTMLElement){
         this.onPropsChange();
 
     }
+    _notReady!: boolean;
     getWinObj(par: HTMLElement | DocumentFragment) : Window{
         let ifr = par.querySelector('iframe[xtal-state]') as HTMLIFrameElement;
         if(ifr === null){
             ifr = document.createElement('iframe');
             //ifr.src = 'about:blank';
             ifr.setAttribute('xtal-state', '');
+            this._notReady = true;
+            ifr.addEventListener('load', () =>{
+                this._notReady = false;
+                ifr.setAttribute('loaded', '');
+            })
             ifr.src = 'blank.html';
             ifr.style.display = 'none';
             par.appendChild(ifr);
+        }else{
+            if(!ifr.hasAttribute('loaded')){
+                this._notReady = true;
+                ifr.addEventListener('load', () =>{
+                    this._notReady = false;
+                    //ifr.setAttribute('loaded', '');
+                })
+            }
         }
         return ifr.contentWindow;
     }
@@ -59,5 +73,6 @@ export class XtalStateBase extends XtallatX(HTMLElement){
                     break;
             }
         }
+        if(this._notReady) return true;
     }
 }

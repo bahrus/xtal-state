@@ -151,9 +151,23 @@ class XtalStateBase extends XtallatX(HTMLElement) {
             ifr = document.createElement('iframe');
             //ifr.src = 'about:blank';
             ifr.setAttribute('xtal-state', '');
+            this._notReady = true;
+            ifr.addEventListener('load', () => {
+                this._notReady = false;
+                ifr.setAttribute('loaded', '');
+            });
             ifr.src = 'blank.html';
             ifr.style.display = 'none';
             par.appendChild(ifr);
+        }
+        else {
+            if (!ifr.hasAttribute('loaded')) {
+                this._notReady = true;
+                ifr.addEventListener('load', () => {
+                    this._notReady = false;
+                    //ifr.setAttribute('loaded', '');
+                });
+            }
         }
         return ifr.contentWindow;
     }
@@ -173,6 +187,8 @@ class XtalStateBase extends XtallatX(HTMLElement) {
                     break;
             }
         }
+        if (this._notReady)
+            return true;
     }
 }
 //import { XtallatX } from 'xtal-latx/xtal-latx.js';
@@ -273,8 +289,15 @@ class XtalStateCommit extends XtalStateBase {
         super.connectedCallback();
     }
     onPropsChange() {
-        if (super.onPropsChange())
+        if (super.onPropsChange()) {
+            if (this._notReady) {
+                setTimeout(() => {
+                    this.onPropsChange();
+                }, 50);
+                return;
+            }
             return true;
+        }
         if (!this._make && !this._rewrite)
             return true;
         this._debouncer();
@@ -286,6 +309,9 @@ class XtalStateCommit extends XtalStateBase {
         const method = this.make ? 'push' : 'replace';
         let url = this._url ? this._url : this._window.location;
         this._window.history[method + 'State'](this.mergedHistory(), this._title, url);
+        this.de('history', {
+            value: this.history
+        });
     }
 }
 define(XtalStateCommit);
@@ -350,9 +376,13 @@ class XtalStateWatch extends XtalStateBase {
         }
         this.notify();
     }
-    connectedCallback() {
-        //this._connected = true;
-        super.connectedCallback();
+    addSubscribers() {
+        if (this._notReady) {
+            setTimeout(() => {
+                this.addSubscribers();
+            }, 50);
+            return;
+        }
         const win = this._window;
         if (!win[xtal_subscribers]) {
             win[xtal_subscribers] = [];
@@ -365,8 +395,8 @@ class XtalStateWatch extends XtalStateBase {
                 });
             };
             const originalReplaceState = win.history.replaceState;
-            const boundReplaceState = originalReplaceState.bind(history);
-            history.replaceState = function (newState, title, URL) {
+            const boundReplaceState = originalReplaceState.bind(win.history);
+            win.history.replaceState = function (newState, title, URL) {
                 boundReplaceState(newState, title, URL);
                 win[xtal_subscribers].forEach(subscriber => {
                     subscriber.history = newState;
@@ -381,6 +411,11 @@ class XtalStateWatch extends XtalStateBase {
         this._window[xtal_subscribers].push(this);
         this._connected = true;
         this.notify();
+    }
+    connectedCallback() {
+        //this._connected = true;
+        super.connectedCallback();
+        this.addSubscribers();
     }
     get history() {
         return this._history;

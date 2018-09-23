@@ -19,9 +19,13 @@ export class XtalStateWatch extends XtalStateBase {
         }
         this.notify();
     }
-    connectedCallback() {
-        //this._connected = true;
-        super.connectedCallback();
+    addSubscribers() {
+        if (this._notReady) {
+            setTimeout(() => {
+                this.addSubscribers();
+            }, 50);
+            return;
+        }
         const win = this._window;
         if (!win[xtal_subscribers]) {
             win[xtal_subscribers] = [];
@@ -34,8 +38,8 @@ export class XtalStateWatch extends XtalStateBase {
                 });
             };
             const originalReplaceState = win.history.replaceState;
-            const boundReplaceState = originalReplaceState.bind(history);
-            history.replaceState = function (newState, title, URL) {
+            const boundReplaceState = originalReplaceState.bind(win.history);
+            win.history.replaceState = function (newState, title, URL) {
                 boundReplaceState(newState, title, URL);
                 win[xtal_subscribers].forEach(subscriber => {
                     subscriber.history = newState;
@@ -50,6 +54,11 @@ export class XtalStateWatch extends XtalStateBase {
         this._window[xtal_subscribers].push(this);
         this._connected = true;
         this.notify();
+    }
+    connectedCallback() {
+        //this._connected = true;
+        super.connectedCallback();
+        this.addSubscribers();
     }
     get history() {
         return this._history;

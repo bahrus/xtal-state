@@ -99,8 +99,15 @@ export class XtalStateCommit extends XtalStateBase {
         super.connectedCallback();
     }
     onPropsChange() {
-        if (super.onPropsChange())
+        if (super.onPropsChange()) {
+            if (this._notReady) {
+                setTimeout(() => {
+                    this.onPropsChange();
+                }, 50);
+                return;
+            }
             return true;
+        }
         if (!this._make && !this._rewrite)
             return true;
         this._debouncer();
@@ -112,6 +119,9 @@ export class XtalStateCommit extends XtalStateBase {
         const method = this.make ? 'push' : 'replace';
         let url = this._url ? this._url : this._window.location;
         this._window.history[method + 'State'](this.mergedHistory(), this._title, url);
+        this.de('history', {
+            value: this.history
+        });
     }
 }
 define(XtalStateCommit);
