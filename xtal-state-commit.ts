@@ -124,11 +124,14 @@ export class XtalStateCommit extends XtalStateBase {
         return this._history;
     }
     updateHistory() {
+        const hist = this.mergedHistory();
+        if(hist === null || hist === undefined) return;
+        if(this.make && !this.url) return;
         const method = this.make ? 'push' : 'replace';
         let url = this._url ? this._url : this._window.location; 
-        this._window.history[method + 'State'](this.mergedHistory(), this._title, url);
+        this._window.history[method + 'State'](hist, this._title, url);
         this.de('history',{
-            value: this.history
+            value: hist
         })
     }
 }

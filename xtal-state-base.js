@@ -28,6 +28,7 @@ export class XtalStateBase extends XtallatX(HTMLElement) {
         this.onPropsChange();
     }
     connectedCallback() {
+        this.style.display = 'none';
         this._upgradeProperties(['disabled', level]);
         this._conn = true;
         this.onPropsChange();
