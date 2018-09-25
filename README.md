@@ -34,7 +34,7 @@ At the other extreme, consider the following two problem statements.
 
 *"Where did you learn that piece you're whistling?  I haven't seen any recordings of it yet!" Chuck demands.*
 
-*Startled at first, the lad quickly regains his composure. *
+*Startled at first, the lad quickly regains his composure.*
 
 *"Who is Soorjo Alexander William Langobard Oliphant Chuckerbutty III?" he asks, playfully, and turns around and walks away.*
 
@@ -68,7 +68,7 @@ Basically what we need is a miniature, 1 kb git client running in the browser, c
 
 ## Problem Statement III -- Building https://UFP.gov
 
-*In the year 2412, Guinan, president-elect of the United Federation of Planets, wants to make good on her promise to modernize the UFP website.  The last known browser running IE11 was destroyed when the planet Psi 2000 imploded, so Guinan thought it was time to finally take full advantage of what the platform had to offer in terms of scope isolation.  The current version of the website mashed together websites from each outpost - 5,173,000 in total.  Each website was built using the most popular framework of the day when the outpost was established, and due to framework lock-in, never migrated to anything newer.  Some of those frameworks, in fact, were conceived when the Beastie Boys' "Sabotage" was topping the Earthling charts.  Finding qualified developers required finding Time Singularities and bringing in [ancient talent](https://motherboard.vice.com/en_us/article/pgapzy/heavens-gate-web-designers-higher-source-suicide-cult).  The mashing together was done via iframes.  So the idea was to switch out iframes for loosely coupled web components.*
+*In the year 2412, Guinan, president-elect of the United Federation of Planets, wants to make good on her promise to modernize the UFP website.  The last known browser running IE11 was destroyed when the planet Psi 2000 imploded, so Guinan thought it was time to finally take full advantage of what the platform had to offer in terms of scope isolation.  The current version of the website mashes together websites from each outpost - 5,173,000 in total.  Each website was built using the most popular framework of the day when the outpost was established, and due to framework lock-in, never migrated to anything newer.  Some of those frameworks, in fact, were conceived when the Beastie Boys' "Sabotage" was topping the Earthling charts.  Finding qualified developers requires finding Time Singularities and bringing in [ancient talent](https://motherboard.vice.com/en_us/article/pgapzy/heavens-gate-web-designers-higher-source-suicide-cult).  The mashing together is done via iframes.  So the idea is to switch out iframes for loosely coupled web components.*
 
 *Doing her due diligence, Guinan visited alternate timelines where parallel Guinan's had tried the same thing. Guinan found one timeline where a mass inter-galactic civil-war had broken out.  The cause?  One of the web components had code that would update the window.history.state object.  This inadvertenly caused another outposts's web component to initiate war with the Romulans.*   
 
@@ -110,7 +110,7 @@ Syntax:
 
 
 
-## Transcribing state tfrom the address bar
+## Transcribing state from the address bar
 
 ### Parsing
 
