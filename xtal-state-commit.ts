@@ -1,5 +1,5 @@
-//import { XtallatX } from 'xtal-latx/xtal-latx.js';
 import {XtalStateBase} from './xtal-state-base.js';
+import {WithPath} from 'xtal-latx/with-path.js';
 
 import {define} from 'xtal-latx/define.js';
 import {debounce} from 'xtal-latx/debounce.js';
@@ -18,7 +18,6 @@ const history$ = 'history';
 const title = 'title';
 const url = 'url';
 
-
 /**
  * `xtal-state-commit`
  * Web component wrapper around the history api
@@ -27,7 +26,7 @@ const url = 'url';
  * @polymer
  * @demo demo/index.html
  */
-export class XtalStateCommit extends XtalStateBase {
+export class XtalStateCommit extends WithPath(XtalStateBase) {
     static get is() { return 'xtal-state-commit'; }
 
     _make!: boolean;
@@ -78,7 +77,7 @@ export class XtalStateCommit extends XtalStateBase {
 
     static get observedAttributes() {
         //const p = XtalStateUpdate.properties;
-        return super.observedAttributes.concat([make, rewrite, title, url]);
+        return super.observedAttributes.concat([make, rewrite, title, url, 'with-path']);
     }
 
     attributeChangedCallback(name: string, oldValue: string, newValue: string) {
@@ -92,6 +91,9 @@ export class XtalStateCommit extends XtalStateBase {
             case title:
                 this['_' + name] = newValue;
                 break;
+            case 'with-path':
+                this._withPath = newValue;
+                break; 
 
         }
         super.attributeChangedCallback(name, oldValue, newValue);
@@ -121,7 +123,7 @@ export class XtalStateCommit extends XtalStateBase {
         this._debouncer();
     }
     mergedHistory(){
-        return this._history;
+        return this.wrap(this._history);
     }
     updateHistory() {
         const hist = this.mergedHistory();

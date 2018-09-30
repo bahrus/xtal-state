@@ -113,6 +113,49 @@ function XtallatX(superClass) {
         }
     };
 }
+const with_path = 'with-path';
+/**
+ * Custom Element mixin that allows a property to be namespaced
+ * @param superClass
+ */
+function WithPath(superClass) {
+    return class extends superClass {
+        /**
+        * @type {string}
+        * object inside a new empty object, with key equal to this value.
+        * E.g. if the incoming object is {foo: 'hello', bar: 'world'}
+        * and with-path = 'myPath'
+        * then the source object which be merged into is:
+        * {myPath: {foo: 'hello', bar: 'world'}}
+        */
+        get withPath() {
+            return this._withPath;
+        }
+        set withPath(val) {
+            this.setAttribute(with_path, val);
+        }
+        wrap(obj) {
+            if (this._withPath) {
+                let mergedObj = {};
+                const retObj = mergedObj;
+                const splitPath = this._withPath.split('.');
+                const lenMinus1 = splitPath.length - 1;
+                splitPath.forEach((pathToken, idx) => {
+                    if (idx === lenMinus1) {
+                        mergedObj[pathToken] = obj;
+                    }
+                    else {
+                        mergedObj = mergedObj[pathToken] = {};
+                    }
+                });
+                return retObj;
+            }
+            else {
+                return obj;
+            }
+        }
+    };
+}
 const level = 'level';
 class XtalStateBase extends XtallatX(HTMLElement) {
     constructor() {
@@ -192,7 +235,6 @@ class XtalStateBase extends XtallatX(HTMLElement) {
             return true;
     }
 }
-//import { XtallatX } from 'xtal-latx/xtal-latx.js';
 // export interface IHistoryUpdatePacket {
 //     proposedState: any,
 //     title: string,
@@ -215,7 +257,7 @@ const url = 'url';
  * @polymer
  * @demo demo/index.html
  */
-class XtalStateCommit extends XtalStateBase {
+class XtalStateCommit extends WithPath(XtalStateBase) {
     constructor() {
         super(...arguments);
         this._title = '';
@@ -264,7 +306,7 @@ class XtalStateCommit extends XtalStateBase {
     }
     static get observedAttributes() {
         //const p = XtalStateUpdate.properties;
-        return super.observedAttributes.concat([make, rewrite, title, url]);
+        return super.observedAttributes.concat([make, rewrite, title, url, 'with-path']);
     }
     attributeChangedCallback(name, oldValue, newValue) {
         switch (name) {
@@ -275,6 +317,9 @@ class XtalStateCommit extends XtalStateBase {
             case url:
             case title:
                 this['_' + name] = newValue;
+                break;
+            case 'with-path':
+                this._withPath = newValue;
                 break;
         }
         super.attributeChangedCallback(name, oldValue, newValue);
@@ -304,7 +349,7 @@ class XtalStateCommit extends XtalStateBase {
         this._debouncer();
     }
     mergedHistory() {
-        return this._history;
+        return this.wrap(this._history);
     }
     updateHistory() {
         const hist = this.mergedHistory();
@@ -357,9 +402,9 @@ class XtalStateUpdate extends XtalStateCommit {
     }
     mergedHistory() {
         if (this._window.history.state === null)
-            return this._history;
+            return this.wrap(this._history);
         const retObj = Object.assign({}, this._window.history.state);
-        return this.mergeDeep(retObj, this._history);
+        return this.mergeDeep(retObj, this.wrap(this._history));
     }
 }
 define(XtalStateUpdate);

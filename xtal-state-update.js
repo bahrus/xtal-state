@@ -36,9 +36,9 @@ export class XtalStateUpdate extends XtalStateCommit {
     }
     mergedHistory() {
         if (this._window.history.state === null)
-            return this._history;
+            return this.wrap(this._history);
         const retObj = Object.assign({}, this._window.history.state);
-        return this.mergeDeep(retObj, this._history);
+        return this.mergeDeep(retObj, this.wrap(this._history));
     }
 }
 define(XtalStateUpdate);

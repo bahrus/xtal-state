@@ -82,7 +82,7 @@ As with all the other web components discussed here, you can specify the "level"
 ```html
 <!--Polymer Notation -->
 <div>
-    <xtal-state-commit make history="[[newHistory]]" url="/tribble" level="local"></xtal-state-commit>
+    <xtal-state-commit make history="[[newHistory]]" url="/tribble" level="local" with-path="myPath"></xtal-state-commit>
 </div>
 ```
 

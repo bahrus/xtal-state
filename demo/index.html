@@ -17,7 +17,7 @@
       <h3>Basic xtal-state demo</h3>
       <a data-test="hello">Test 1</a>
       <p-d on="click" if="a" to="{history:target.dataset.test}"></p-d>
-      <xtal-state-commit make url="/testing" level="local"></xtal-state-commit>
+      <xtal-state-commit make url="/testing" level="local" with-path="abcd"></xtal-state-commit>
 
       <xtal-state-watch watch level="local"></xtal-state-watch>
       <p-d on="history-changed" to="{innerHTML}"></p-d>
