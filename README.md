@@ -86,7 +86,7 @@ As with all the other web components discussed here, you can specify the "level"
 </div>
 ```
 
-Note the attribute "level."  Possible values are "local", "shadow" and "global".  Since this is local, this will only affect the "history" of elements contained within the parent div tag.
+Note the attribute "level."  Possible values are "local", "shadow" and "global".  Since this is local, this will only affect the "history" of elements contained within the parent div tag.  If level is not one of these three values, it will assume this is a CSS "matches" expression, and it will only affect the history of elements contained within the ancestor tag matching the css selector.
 
 ## Observing history.state
 
