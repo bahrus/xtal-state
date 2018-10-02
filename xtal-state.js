@@ -215,6 +215,14 @@ class XtalStateBase extends XtallatX(HTMLElement) {
         }
         return ifr.contentWindow;
     }
+    getMchPar() {
+        let test = this.parentElement;
+        while (test) {
+            if (test.matches(this.level))
+                return test;
+            test = test.parentElement;
+        }
+    }
     onPropsChange() {
         if (!this._conn || this._disabled)
             return true;
@@ -229,6 +237,8 @@ class XtalStateBase extends XtallatX(HTMLElement) {
                 case "shadow":
                     this._window = this.getWinObj(getHost(this));
                     break;
+                default:
+                    this._window = this.getWinObj(this.getMchPar());
             }
         }
         if (this._notReady)
