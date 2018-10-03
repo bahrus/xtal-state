@@ -123,6 +123,7 @@ export class XtalStateCommit extends WithPath(XtalStateBase) {
         this._debouncer();
     }
     mergedHistory(){
+        if(this._history === undefined) return undefined;
         return this.wrap(this._history);
     }
     updateHistory() {
