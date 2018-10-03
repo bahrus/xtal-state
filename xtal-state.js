@@ -413,8 +413,11 @@ class XtalStateUpdate extends XtalStateCommit {
         return target;
     }
     mergedHistory() {
+        const sm = super.mergedHistory();
+        if (sm === undefined)
+            return undefined;
         if (this._window.history.state === null)
-            return this.wrap(this._history);
+            return sm;
         const retObj = Object.assign({}, this._window.history.state);
         return this.mergeDeep(retObj, this.wrap(this._history));
     }
@@ -493,10 +496,10 @@ class XtalStateWatch extends XtalStateBase {
         this.attr(watch, newVal, '');
     }
     notify() {
-        if (!this._watch || this._disabled || !this._connected)
+        if (!this._watch || this._disabled || !this._connected || this._history === undefined)
             return;
         this.de('history', {
-            value: this._window.history.state
+            value: this._history
         });
     }
 }

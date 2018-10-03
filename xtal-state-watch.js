@@ -73,10 +73,10 @@ export class XtalStateWatch extends XtalStateBase {
         this.attr(watch, newVal, '');
     }
     notify() {
-        if (!this._watch || this._disabled || !this._connected)
+        if (!this._watch || this._disabled || !this._connected || this._history === undefined)
             return;
         this.de('history', {
-            value: this._window.history.state
+            value: this._history
         });
     }
 }
