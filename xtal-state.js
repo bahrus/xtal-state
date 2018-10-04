@@ -476,7 +476,8 @@ class XtalStateWatch extends XtalStateBase {
         }
         this._window[xtal_subscribers].push(this);
         this._connected = true;
-        this.notify();
+        this.history = this._window.history.state;
+        //this.notify();
     }
     connectedCallback() {
         //this._connected = true;
@@ -499,7 +500,7 @@ class XtalStateWatch extends XtalStateBase {
         if (!this._watch || this._disabled || !this._connected || this._history === undefined)
             return;
         this.de('history', {
-            value: this._history
+            value: this._history,
         });
     }
 }
