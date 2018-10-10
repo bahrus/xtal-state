@@ -145,6 +145,18 @@ If the url-pattern does not match the location.href (or whatever path is specifi
 
 All four files are combined into a single IIFE class script file, xtal-state.js, which totals ~2.3 kb minified and gzipped.  
 
+## Programmatic API
+
+To partake in usage of the state management without using web components, you can get the window object containing the history.state:
+
+```JavaScript
+import {getWinCtx} from 'xtal-state/xtal-state-base.js';
+
+...
+const win = getWinCtx(el, level);
+console.log(win.history.state);
+```
+
 ## Install the Polymer-CLI
 
 First, make sure you have the [Polymer CLI](https://www.npmjs.com/package/polymer-cli) and npm (packaged with [Node.js](https://nodejs.org)) installed. Run `npm install` to install your element's dependencies, then run `polymer serve` to serve your element locally.
