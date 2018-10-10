@@ -1,6 +1,59 @@
 import { XtallatX } from 'xtal-latx/xtal-latx.js';
 import {getHost} from 'xtal-latx/getHost.js';
 const level = 'level';
+/**
+ * 
+ * @param par Parent or document fragment which should mantain regional state
+ * @param _t XtalStateBase element
+ */
+function  getIFrmWin(par: HTMLElement | DocumentFragment, callBack?: (ifrm: HTMLIFrameElement) => void) : Window{
+    let ifr = par.querySelector('iframe[xtal-state]') as HTMLIFrameElement;
+    if(ifr === null){
+        ifr = document.createElement('iframe');
+        //ifr.src = 'about:blank';
+        ifr.setAttribute('xtal-state', '');
+        ifr.addEventListener('load', () =>{
+            ifr.setAttribute('loaded', '');
+            if(callBack !== null) callBack(ifr);
+        })
+        ifr.src = 'blank.html';
+        ifr.style.display = 'none';
+        par.appendChild(ifr);
+    }else{
+        if(!ifr.hasAttribute('loaded')){
+            ifr.addEventListener('load', () =>{
+                if(callBack !== null) callBack(ifr);
+            })
+        }else{
+            if(callBack !== null) callBack(ifr);
+        }
+    }
+    return ifr.contentWindow;
+}
+function getMchPar(el: HTMLElement, level: string){
+    let test = el.parentElement;
+    while(test){
+        if(test.matches(level)) return test;
+        test = test.parentElement;
+    }
+}
+export function getWinCtx(el: HTMLElement, level: string){
+    return new Promise((resolve, reject) => {
+        switch(level){
+            case "global":
+                resolve(self);
+                break;
+            case "local":
+                getIFrmWin(el.parentElement, ifrm => resolve(ifrm.contentWindow));
+                break;
+            case "shadow":
+                this._window = getIFrmWin(getHost(this), ifrm => resolve(ifrm.contentWindow));
+                break;
+            default:
+                this._window = getIFrmWin(getMchPar(el, level), ifrm => resolve(ifrm.contentWindow));
+        }
+    });
+}
 export class XtalStateBase extends XtallatX(HTMLElement){
     private _level = 'global';
     get level(){
@@ -34,54 +87,22 @@ export class XtalStateBase extends XtallatX(HTMLElement){
 
     }
     _notReady!: boolean;
-    getWinObj(par: HTMLElement | DocumentFragment) : Window{
-        let ifr = par.querySelector('iframe[xtal-state]') as HTMLIFrameElement;
-        if(ifr === null){
-            ifr = document.createElement('iframe');
-            //ifr.src = 'about:blank';
-            ifr.setAttribute('xtal-state', '');
-            this._notReady = true;
-            ifr.addEventListener('load', () =>{
-                this._notReady = false;
-                ifr.setAttribute('loaded', '');
-            })
-            ifr.src = 'blank.html';
-            ifr.style.display = 'none';
-            par.appendChild(ifr);
-        }else{
-            if(!ifr.hasAttribute('loaded')){
-                this._notReady = true;
-                ifr.addEventListener('load', () =>{
-                    this._notReady = false;
-                    //ifr.setAttribute('loaded', '');
-                })
-            }
-        }
-        return ifr.contentWindow;
-    }
-    getMchPar(){
-        let test = this.parentElement;
-        while(test){
-            if(test.matches(this.level)) return test;
-            test = test.parentElement;
-        }
-    }
+
+    // getMchPar(){
+    //     let test = this.parentElement;
+    //     while(test){
+    //         if(test.matches(this.level)) return test;
+    //         test = test.parentElement;
+    //     }
+    // }
     onPropsChange(){
         if(!this._conn || this._disabled) return true;
         if(!this._window){
-            switch(this._level){
-                case "global":
-                    this._window = self;
-                    break;
-                case "local":
-                    this._window = this.getWinObj(this.parentElement);
-                    break;
-                case "shadow":
-                    this._window = this.getWinObj(getHost(this));
-                    break;
-                default:
-                    this._window = this.getWinObj(this.getMchPar());
-            }
+            this._notReady = true;
+            getWinCtx(this, this._level).then((win: Window) =>{
+                this._window = win;
+                this._notReady = false;
+            })
         }
         if(this._notReady) return true;
     }

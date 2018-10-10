@@ -87,5 +87,4 @@ export class XtalStateWatch extends XtalStateBase {
     }
 }
 define(XtalStateWatch);
-//if(!customElements.get(XtalStateWatch.is)) customElements.define(XtalStateWatch.is, XtalStateWatch);
 

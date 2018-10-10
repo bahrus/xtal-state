@@ -82,5 +82,4 @@ export class XtalStateWatch extends XtalStateBase {
     }
 }
 define(XtalStateWatch);
-//if(!customElements.get(XtalStateWatch.is)) customElements.define(XtalStateWatch.is, XtalStateWatch);
 //# sourceMappingURL=xtal-state-watch.js.map
