@@ -167,6 +167,8 @@ const win = getWinCtx(el, level);
 console.log(win.history.state);
 ```
 
+where "el" is a DOM element, and "level" has the same meaning as described above.  Unless level is "global", "el" will be used as the reference point to apply the "level" to.
+
 ## Install the Polymer-CLI
 
 First, make sure you have the [Polymer CLI](https://www.npmjs.com/package/polymer-cli) and npm (packaged with [Node.js](https://nodejs.org)) installed. Run `npm install` to install your element's dependencies, then run `polymer serve` to serve your element locally.
