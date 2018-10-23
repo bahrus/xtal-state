@@ -52,8 +52,13 @@ export class XtalStateParse extends XtalStateBase{
             }, 50);
             return;
         }
+        if(this._window.history.state !== null){
+            return;
+        }
         const state = XtalStateParse.parseAddressBar(this._parse, this._withURLPattern);
-        if(state === null) return;
+        if(state === null) {
+            this.de('no-match', {}, true);
+        }
         this._window.history.replaceState(state, '', this._window.location.href);
     }
 
