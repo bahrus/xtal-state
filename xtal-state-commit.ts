@@ -1,5 +1,5 @@
 import {XtalStateBase} from './xtal-state-base.js';
-import {WithPath} from 'xtal-latx/with-path.js';
+import {WithPath, with_path} from 'xtal-latx/with-path.js';
 
 import {define} from 'xtal-latx/define.js';
 import {debounce} from 'xtal-latx/debounce.js';
@@ -17,6 +17,9 @@ const history$ = 'history';
 //const wherePath = 'where-path';
 const title = 'title';
 const url = 'url';
+const url_search = 'url-search';
+const replace_url_value = 'replace-url-value';
+
 
 /**
  * `xtal-state-commit`
@@ -30,28 +33,29 @@ export class XtalStateCommit extends WithPath(XtalStateBase) {
     static get is() { return 'xtal-state-commit'; }
 
     _make!: boolean;
+    /**
+     * PushState in history
+     */
     get make() {
         return this._make;
     }
-    set make(newVal) {
-        if (newVal !== null) {
-            this.setAttribute(make, '');
-        } else {
-            this.removeAttribute(make);
-        }
+    set make(val: boolean) {
+        this.attr(make, val, '');
     }
     _rewrite!: boolean;
+    /**
+     * ReplaceState in history
+     */
     get rewrite() {
         return this._rewrite;
     }
-    set rewrite(newVal) {
-        if (newVal) {
-            this.setAttribute(rewrite, '');
-        } else {
-            this.removeAttribute(rewrite);
-        }
+    set rewrite(val: boolean) {
+        this.attr(rewrite, val, '');
     }
     _history: any;
+    /**
+     * Window Context History Object
+     */
     get history(){
         return this._window.history.state;
     }
@@ -60,49 +64,81 @@ export class XtalStateCommit extends WithPath(XtalStateBase) {
         this.onPropsChange();
     }
     _title = '';
+    /**
+     * Title to use when calling push/replace state
+     */
     get title() {
         return this._title;
     }
     set title(val) {
-        this.setAttribute(title, val);
+        this.attr(title, val);
     }
     _url!: string;
+    /**
+     * URL to use when calling push/replace state
+     */
     get url() {
         return this._url;
     }
-
     set url(val) {
-        this.setAttribute(url, val);
+        this.attr(url, val);
+    }
+
+    _urlSearch!: string;
+    /**
+     * Regular expression to search url for.
+     */
+    get urlSearch(){
+        return this._urlSearch;
+    }
+    set urlSearch(val){
+        this.attr(url_search, val);
+    }
+
+    _replaceUrlValue!: string;
+    /**
+     * Replace URL expression, coupled with urlSearch
+     */
+    get replaceUrlValue(){
+        return this._replaceUrlValue;
+    }
+    set replaceUrlValue(val: string){
+        this.attr(replace_url_value, val);
     }
 
     static get observedAttributes() {
-        //const p = XtalStateUpdate.properties;
-        return super.observedAttributes.concat([make, rewrite, title, url, 'with-path']);
+        return super.observedAttributes.concat([make, rewrite, title, url, with_path, url_search, replace_url_value]);
     }
 
-    attributeChangedCallback(name: string, oldValue: string, newValue: string) {
+    attributeChangedCallback(n: string, ov: string, nv: string) {
         
-        switch (name) {
+        switch (n) {
             case rewrite:
             case make:
-                this['_' + name] = newValue !== null;
+                this['_' + n] = nv !== null;
                 break;
             case url:
             case title:
-                this['_' + name] = newValue;
+                this['_' + n] = nv;
                 break;
-            case 'with-path':
-                this._withPath = newValue;
+            case with_path:
+                this._withPath = nv;
+                break;
+            case url_search:
+                this._urlSearch = nv;
+                break;
+            case replace_url_value:
+                this._replaceUrlValue = nv;
                 break; 
 
         }
-        super.attributeChangedCallback(name, oldValue, newValue);
+        super.attributeChangedCallback(n, ov, nv);
         //this.onPropsChange();
     }
     _debouncer;
     //_connected!: boolean;
     connectedCallback() {
-        this._upgradeProperties(XtalStateCommit.observedAttributes.concat([history$]));
+        this._upgradeProperties([make, rewrite, title, url, 'withPath', 'urlSearch', 'replaceUrlValue'].concat([history$]));
         this._debouncer = debounce(() => {
             this.updateHistory();
         }, 50);
@@ -131,7 +167,11 @@ export class XtalStateCommit extends WithPath(XtalStateBase) {
         if(hist === null || hist === undefined) return;
         if(this.make && !this.url) return;
         const method = this.make ? 'push' : 'replace';
-        let url = this._url ? this._url : this._window.location; 
+        let url = this._url ? this._url : this._window.location.href; 
+        if(this._replaceUrlValue && this._urlSearch){
+            const reg = new RegExp(this._urlSearch);
+            url = url.replace(reg, this._replaceUrlValue);
+        }
         this._window.history[method + 'State'](hist, this._title, url);
         this.de('history',{
             value: hist

@@ -28,7 +28,7 @@ At the other extreme, consider the following two problem statements.
 
 *Chuck decides he would make the best use of his time for the long trip, and brings along one of his customer's Windows 7 laptops that needs updating to Windows 10.  He begins the upgrade at the Hollywood Burbank airport while waiting for his flight to London.*
 
-*When Chuck arrives at the gravesite of Oliphant Chuckerbutty some 12 hours later, he is disappointed to see that the place was rather neglected, with no interesting markings that might lead anywhere.  Feeling like a total failure, Chuck sits down on the wet earth, burying his head in his hands.  Twenty minutes go by, and then Chuck hears someone whistling a tune that sounds eerily familiar, yet new and exciting at the same time.  The tune was clearly written by Krzysztof Penderecki, and obviously follows the mold he set with  "Threnody to the Victims of Hiroshima."  But it is something Chuck has never heard before.  Of course! This must be the rumored "Dies Irae", but Chuck knew Penderecky had not yet completed the work.  Penderecky was one of the recent disappearances, who had left behind the mysterious note!*
+*When Chuck arrives at the gravesite of Oliphant Chuckerbutty some 12 hours later, he is disappointed to see that the place was rather neglected, with no interesting markings that might lead anywhere.  Feeling like a total failure, Chuck sits down on the wet earth, burying his head in his hands.  Twenty minutes go by, and then Chuck hears someone whistling a tune that sounds eerily familiar, yet new and exciting at the same time.  The tune was clearly written by Krzysztof Penderecki, and obviously follows the mold he set with "Threnody to the Victims of Hiroshima."  But it is something Chuck has never heard before.  Of course! This must be the rumored "Dies Irae", but Chuck knew Penderecki had not yet completed the work.  Penderecki was one of the recent disappearances, who had left behind the mysterious note!*
 
 *Chuck spins around to determine the source of the melody.  It's a young lad, the cemetary's groundkeeper.*
 
@@ -88,6 +88,17 @@ As with all the other web components discussed here, you can specify the "level"
 
 Note the attribute "level."  Possible values are "local", "shadow" and "global".  Since this is local, this will only affect the "history" of elements contained within the parent div tag.  If level is not one of these three values, it will assume this is a CSS "matches" expression, and it will only affect the history of elements contained within the ancestor tag matching the css selector.
 
+The value of url can be hardcoded, as shown above, or set programmatically.  A third option [untested] it to allow reformatting of the url based on a regular expression, using the ES2018 replace and named capture groups:
+
+```html
+<!--Polymer Notation -->
+<xtal-state-commit make history="[[newHistory]]" url="[[myBindingToYYYY-MM-DD-formattedDate]]" 
+    url-search="(?<year>[0-9]{4})-(?<month>[0-9]{2})-(?<day>[0-9]{2})" 
+    replace-url-value="?date=$<month>/$<day>/$<year>"
+    level="local" with-path="myPath">
+</xtal-state-commit>
+```
+
 ## Observing history.state
 
 xtal-state-watch watches for all history state changes.  Like xtal-state-commit, you can specify the level as "local", "shadow" or "global".
@@ -105,9 +116,6 @@ Syntax:
 <xtal-state-update rewrite history="[[watchedObject]]" title="myTitle" url="/myURL" level="global"></xtal-state-update>
 
 ```
-
-
-
 
 
 ## Transcribing state from the address bar
