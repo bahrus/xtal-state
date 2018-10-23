@@ -46,7 +46,15 @@ export class XtalStateParse extends XtalStateBase{
     }
 
     onParsePropsChange(){
-        this._window.history.replaceState(XtalStateParse.parseAddressBar(this._parse, this._withURLPattern), '', this._window.location.href);
+        if(!this._window){
+            setTimeout(() =>{
+                this.onParsePropsChange();
+            }, 50);
+            return;
+        }
+        const state = XtalStateParse.parseAddressBar(this._parse, this._withURLPattern);
+        if(state === null) return;
+        this._window.history.replaceState(state, '', this._window.location.href);
     }
 
     static parseAddressBar(parsePath: string, urlPattern: string){
@@ -56,7 +64,7 @@ export class XtalStateParse extends XtalStateBase{
             if(thingToParse) thingToParse = thingToParse[token];
         })
         const parsed = reg.exec(<any>thingToParse as string);
-        if(!parsed) return;
+        if(!parsed) return null;
         return parsed['groups'];
     }
 }
