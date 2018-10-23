@@ -18,6 +18,15 @@ const title = 'title';
 const url = 'url';
 const url_search = 'url-search';
 const replace_url_value = 'replace-url-value';
+function compare(lhs, rhs) {
+    if (!lhs && !rhs)
+        return true;
+    if (!lhs && rhs)
+        return false;
+    if (lhs && !rhs)
+        return false;
+    return JSON.stringify(lhs) === JSON.stringify(rhs);
+}
 /**
  * `xtal-state-commit`
  * Web component wrapper around the history api
@@ -162,6 +171,9 @@ export class XtalStateCommit extends WithPath(XtalStateBase) {
             const reg = new RegExp(this._urlSearch);
             url = url.replace(reg, this._replaceUrlValue);
         }
+        const bH = this._window.history;
+        if (compare(bH.state, hist))
+            return;
         this._window.history[method + 'State'](hist, this._title, url);
         this.de('history', {
             value: hist
