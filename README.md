@@ -153,7 +153,7 @@ then the syntax above will initialize history.state to:
 
 If the url-pattern does not match the location.href (or whatever path is specified by the parse attribute/property, no changes to the history.state object are made.
 
-All four files are combined into a single IIFE class script file, xtal-state.js, which totals ~2.3 kb minified and gzipped.  
+All four files are combined into a single IIFE class script file, xtal-state.js, which totals ~2.8 kb minified and gzipped.  
 
 ## Programmatic API
 
