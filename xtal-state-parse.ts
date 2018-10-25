@@ -2,10 +2,11 @@ import {XtalStateBase} from './xtal-state-base.js';
 import {define} from 'xtal-latx/define.js';
 const with_url_pattern = 'with-url-pattern';
 const parse = 'parse';
+const init_history_if_null = 'init-history-if-null';
 
 export class XtalStateParse extends XtalStateBase{
     static get is(){return 'xtal-state-parse';}
-    static get observedAttributes(){return super.observedAttributes.concat([with_url_pattern, parse])}
+    static get observedAttributes(){return super.observedAttributes.concat([with_url_pattern, parse, init_history_if_null])}
 
     attributeChangedCallback(name: string, oldVal: string, newVal: string){
         super.attributeChangedCallback(name, oldVal, newVal);
@@ -39,27 +40,45 @@ export class XtalStateParse extends XtalStateBase{
         this.attr(parse, val);
     }
 
+    _initHistoryIfNull: boolean;
+    get initHistoryIfNull(){
+        return this._initHistoryIfNull;
+    }
+    set initHistoryIfNull(nv){
+        this.attr(init_history_if_null, nv, '');
+    }
+
     connectedCallback(){
-        this._upgradeProperties(['withURLPattern', parse]);
+        this._upgradeProperties(['withURLPattern', parse, 'initHistoryIfNull']);
         super.connectedCallback();
         this.onParsePropsChange();
     }
-
+    onPropsChange() : boolean{
+        if(this._initHistoryIfNull) return false;
+        return super.onPropsChange();
+    }
+    _value: any;
     onParsePropsChange(){
-        if(!this._window){
+        if(!this._window && this._initHistoryIfNull){
             setTimeout(() =>{
                 this.onParsePropsChange();
             }, 50);
             return;
         }
-        if(this._window.history.state !== null){
+        if(this._initHistoryIfNull && this._window.history.state !== null){
             return;
         }
-        const state = XtalStateParse.parseAddressBar(this._parse, this._withURLPattern);
-        if(state === null) {
+        const value = XtalStateParse.parseAddressBar(this._parse, this._withURLPattern);
+        if(value === null) {
             this.de('no-match', {}, true);
+            return;
+        }else{
+            this._value = value;
+            this.de('value', {
+                value: value
+            });
         }
-        this._window.history.replaceState(state, '', this._window.location.href);
+        if(this._initHistoryIfNull) this._window.history.replaceState(value, '', this._window.location.href);
     }
 
     static parseAddressBar(parsePath: string, urlPattern: string){

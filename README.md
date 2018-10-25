@@ -77,20 +77,21 @@ Basically what we need is a miniature, 1 kb git client running in the browser, c
 
 ## Updating history.state
 
-xtal-state-commit is a lightweight custom element that simply posts (overwrites) the history.state object.
+xtal-state-commit is a lightweight custom element that inserts to the history.state object with a specified path.
 
 As with all the other web components discussed here, you can specify the "level" at which the history.state object should be modified:
 
 ```html
 <!--Polymer Notation -->
 <div>
-    <xtal-state-commit make history="[[newHistory]]" url="/tribble" level="local" with-path="myPath"></xtal-state-commit>
+    <xtal-state-commit make level="local" history="[[newHistory]]" 
+        with-path="myPath" url="/tribble"></xtal-state-commit>
 </div>
 ```
 
-Note the attribute "level."  Possible values are "local", "shadow" and "global".  Since this is local, this will only affect the "history" of elements contained within the parent div tag.  If level is not one of these three values, it will assume this is a CSS "matches" expression, and it will only affect the history of elements contained within the ancestor tag matching the css selector.
+Note the attribute "level."  Possible reserved values are "local", "shadow" and "global".  Since this is local, this will only affect the "history" of elements contained within the parent div tag.  If level is not one of these three values, it will assume this is a CSS "matches" expression, and it will only affect the history of elements contained within the ancestor tag matching the css selector.
 
-The value of url can be hardcoded, as shown above, or set programmatically.  A third option [untested] it to allow reformatting of the url based on a regular expression, using the ES2018 replace and named capture groups:
+The value of url can be hardcoded, as shown above, or set programmatically.  A third option is to allow reformatting of the url based on a regular expression, using the ES2018 replace and named capture groups:
 
 ```html
 <!--Polymer Notation -->
@@ -107,7 +108,7 @@ xtal-state-watch watches for all history state changes.  Like xtal-state-commit,
 
 ## Merging history.state
 
-xtal-state-update extends xtal-state-commit, but adds the ability to *merge* changes to the existing history.state object, if it exists, so that other pieces of code that modify history.state won't be lost.
+xtal-state-update extends xtal-state-commit, but adds the ability to *merge* changes to the existing history.state object, even with the same path, if it exists, so that other pieces of code that modify history.state will be even less likely to be lost.
 
 Syntax:
 
@@ -151,7 +152,7 @@ then the syntax above will initialize history.state to:
 }
 ```
 
-If the url-pattern does not match the location.href (or whatever path is specified by the parse attribute/property, no changes to the history.state object are made.
+If attribute "init-history-if-null" is set, then if the url-pattern matches the location.href (or whatever path is specified by the parse attribute/property)  the (contextual) history.state object is set to the parsed object.  Otherwise / in addition, xtal-state-parse will emit event "value-changed" after parsing.
 
 All four files are combined into a single IIFE class script file, xtal-state.js, which totals ~2.8 kb minified and gzipped.  
 
