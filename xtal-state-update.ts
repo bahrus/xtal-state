@@ -1,6 +1,8 @@
 import { XtalStateCommit} from './xtal-state-commit.js';
 import {define} from 'xtal-latx/define.js';
 
+
+
 export class XtalStateUpdate extends XtalStateCommit {
     static get is() { return 'xtal-state-update'; }
 
@@ -43,5 +45,7 @@ export class XtalStateUpdate extends XtalStateCommit {
         const retObj = Object.assign({}, this._window.history.state);
         return this.mergeDeep(retObj, this.wrap( this._history));
     }
+
+
 }
 define(XtalStateUpdate);

@@ -20,12 +20,12 @@ const url = 'url';
 const url_search = 'url-search';
 const replace_url_value = 'replace-url-value';
 
-function compare(lhs: any, rhs: any){
-    if(!lhs && !rhs) return true;
-    if(!lhs && rhs) return false;
-    if(lhs && !rhs) return false;
-    return JSON.stringify(lhs) === JSON.stringify(rhs);
-}
+// function compare(lhs: any, rhs: any){
+//     if(!lhs && !rhs) return true;
+//     if(!lhs && rhs) return false;
+//     if(lhs && !rhs) return false;
+//     return JSON.stringify(lhs) === JSON.stringify(rhs);
+// }
 /**
  * `xtal-state-commit`
  * Web component wrapper around the history api
@@ -167,22 +167,33 @@ export class XtalStateCommit extends WithPath(XtalStateBase) {
         if(this._history === undefined) return undefined;
         return this.wrap(this._history);
     }
+    value: any;
     updateHistory() {
         const hist = this.mergedHistory();
         if(hist === null || hist === undefined) return;
-        if(this.make && !this.url) return;
+       
         const method = this.make ? 'push' : 'replace';
-        let url = this._url ? this._url : this._window.location.href; 
+        
+        const bH = this._window.history;
+        //if(compare(bH.state, hist)) return;
+        this.value = hist;
+        
+        this.de('history',{
+            value: hist
+        })
+        if(this.make && !this.url) return;
+        let url = this._url;
+        if(!url){
+            if(!this._replaceUrlValue){
+                url = this._window.location.href;
+            }
+        }
+        if(!url) return; 
         if(this._replaceUrlValue && this._urlSearch){
             const reg = new RegExp(this._urlSearch);
             url = url.replace(reg, this._replaceUrlValue);
         }
-        const bH = this._window.history;
-        if(compare(bH.state, hist)) return;
         this._window.history[method + 'State'](hist, this._title, url);
-        this.de('history',{
-            value: hist
-        })
     }
 }
 define(XtalStateCommit);
