@@ -104,7 +104,7 @@ The value of url can be hardcoded, as shown above, or set programmatically.  A t
 
 ## Observing history.state
 
-xtal-state-watch watches for all history state changes.  Like xtal-state-commit, you can specify the level as "local", "shadow" or "global".
+xtal-state-watch watches for all history state changes.  Like xtal-state-commit, you can specify the level as "local", "shadow" or "global".  When history changes, it emits an event "history-changed".  xtal-state-watch also supports an attribute / property:  "once."  If this is set, it will only emit the first non trivial history object, and then stop listening for history change events.  This can be useful for initializing an object based on the last history object (received by Agent Walker, e.g.).
 
 ## Merging history.state
 
@@ -125,7 +125,16 @@ Syntax:
 
 ### Parsing
 
-xtal-state-parse is another web component that helps with parsing the address bar url and populating history.state object when the page loads.  
+xtal-state-parse is another web component that helps with parsing the address bar url and populating history.state object when the page loads. 
+
+There are two distinctly different scenarios for how this could work.  For now xtal-state-parse (at least one instance thereof) assumes you are adopting one or the other scenario:
+
+a)  Scenerio Routing 101:  The critical pieces of information that need to go into history.state are all encoded in the address bar.
+b)  Scenario Bartowski:  The address bar simply contains an id somewhere, which we need, but it doesn't need to go into history.state.  Rather, that id is used to query some remote data store, and *that* object is what is to go into history.state.
+
+In the Routing 101 scenario, xtal-state-parse will initialize history.state, only if history.state starts out null.  (xtal-state-parse extends xtal-state-update with its merging capabilities).  In the Bartowski scenario, the id will simply emit an event with the decoded id (really, the parsed object, which may contain more information than a single id), and will let other components take it from there, leaving history untouched.
+
+To let xtal-state-update know which scenario is desired, for scenario a), set attribute:  "init_history_if_null".  If that attribute isn't presense, it will join team Bartowski.
 
 xtal-state-parse relies on the regular expression [named capture group enhancements](https://github.com/tc39/proposal-regexp-named-groups) that are part of [ES 2018](http://2ality.com/2017/05/regexp-named-capture-groups.html).  Only Chrome supports this feature currently.
 

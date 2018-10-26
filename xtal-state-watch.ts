@@ -2,6 +2,15 @@ import {XtalStateBase} from './xtal-state-base.js';
 import {define} from 'xtal-latx/define.js';
 const watch = 'watch';
 const xtal_subscribers = 'xtal-subscribers';
+const once = 'once';
+
+function remove(array, element) {
+    const index = array.indexOf(element);
+
+    if (index !== -1) {
+        array.splice(index, 1);
+    }
+}
 
 export class XtalStateWatch extends XtalStateBase {
     static get is(){return 'xtal-state-watch';}
@@ -9,14 +18,15 @@ export class XtalStateWatch extends XtalStateBase {
         super();
     }
     static get observedAttributes() {
-        return super.observedAttributes.concat( [watch]);
+        return super.observedAttributes.concat( [watch, once]);
     }
 
     attributeChangedCallback(name: string, oldValue: string, newValue: string) {
         super.attributeChangedCallback(name, oldValue, newValue);
         switch (name) {
+            case once:
             case watch:
-                this._watch = newValue !== null;
+                this['_' + name] = newValue !== null;
                 break;
         }
         this.notify();
@@ -61,8 +71,19 @@ export class XtalStateWatch extends XtalStateBase {
     }
     connectedCallback(){
         //this._connected = true;
+        this._upgradeProperties([watch, once]);
         super.connectedCallback();
         this.addSubscribers();
+    }
+    disconnect(){
+        if(this._window){
+            const subs = this._window[xtal_subscribers] as any[];
+            if(subs) remove(subs, this);
+        }
+    }
+    disconnectedCallback(){
+        this.disconnect();
+
     }
     _history!: any;
     get history(){
@@ -74,16 +95,23 @@ export class XtalStateWatch extends XtalStateBase {
     }
     _watch!: boolean;
     get watch(){return this._watch;}
-    set watch(newVal){
-        this.attr(watch, newVal, '');
+    set watch(nv){
+        this.attr(watch, nv, '');
     }
     
+    _once!: boolean;
+    get once(){return this._once;}
+    set once(nv){
+        this.attr(once, nv, '');
+    }
 
     notify(){
         if(!this._watch || this._disabled || !this._connected || this._history === undefined) return;
+        if(this._once && Object.keys(this._history).length === 0) return;
         this.de('history', {
             value:this._history,
         });
+        if(this._history && this._once) this.disconnect();
     }
 }
 define(XtalStateWatch);
