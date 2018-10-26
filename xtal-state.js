@@ -636,6 +636,8 @@ class XtalStateParse extends XtalStateBase {
         this.attr('no-match', val.toString());
     }
     onParsePropsChange() {
+        if (this._disabled)
+            return;
         if (!this._window && this._initHistoryIfNull) {
             setTimeout(() => {
                 this.onParsePropsChange();
