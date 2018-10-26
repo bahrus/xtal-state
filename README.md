@@ -77,7 +77,7 @@ Basically what we need is a miniature, 1 kb git client running in the browser, c
 
 ## Updating history.state
 
-xtal-state-commit is a lightweight custom element that inserts to the history.state object with a specified path.
+xtal-state-commit is a lightweight custom element that inserts its "history" property into the history.state object with an optional specified path.
 
 As with all the other web components discussed here, you can specify the "level" at which the history.state object should be modified:
 
@@ -89,7 +89,7 @@ As with all the other web components discussed here, you can specify the "level"
 </div>
 ```
 
-Note the attribute "level."  Possible reserved values are "local", "shadow" and "global".  Since this is local, this will only affect the "history" of elements contained within the parent div tag.  If level is not one of these three values, it will assume this is a CSS "matches" expression, and it will only affect the history of elements contained within the ancestor tag matching the css selector.
+Note the attribute "level."  Possible reserved values are "local", "shadow" and "global".  Since this is local, this will only affect the "history" of elements contained within the parent div tag.  If "level" is not one of these three values, it will assume this is a CSS "matches" expression, and it will only affect the history of elements contained within the ancestor tag matching the css selector.
 
 The value of url can be hardcoded, as shown above, or set programmatically.  A third option is to allow reformatting of the url based on a regular expression, using the ES2018 replace and named capture groups:
 
@@ -108,7 +108,7 @@ xtal-state-watch watches for all history state changes.  Like xtal-state-commit,
 
 ## Merging history.state
 
-xtal-state-update extends xtal-state-commit, but adds the ability to *merge* changes to the existing history.state object, even with the same path, if it exists, so that other pieces of code that modify history.state will be even less likely to be lost.
+xtal-state-update extends xtal-state-commit, but adds the ability to *merge* changes to the existing history.state object, even with the same path, if it exists, so that other history updates done by other pieces of code will be even less likely to be lost.
 
 Syntax:
 

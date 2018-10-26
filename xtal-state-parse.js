@@ -49,6 +49,13 @@ export class XtalStateParse extends XtalStateBase {
             return false;
         return super.onPropsChange();
     }
+    get noMatch() {
+        return this._noMatch;
+    }
+    set noMatch(val) {
+        this._noMatch = val;
+        this.attr('no-match', val.toString());
+    }
     onParsePropsChange() {
         if (!this._window && this._initHistoryIfNull) {
             setTimeout(() => {
@@ -61,11 +68,14 @@ export class XtalStateParse extends XtalStateBase {
         }
         const value = XtalStateParse.parseAddressBar(this._parse, this._withURLPattern);
         if (value === null) {
-            this.de('no-match', {}, true);
+            this.noMatch = true;
+            this.de('no-match', {
+                value: true,
+            });
             return;
         }
         else {
-            this._value = value;
+            this.value = value;
             this.de('value', {
                 value: value
             });
