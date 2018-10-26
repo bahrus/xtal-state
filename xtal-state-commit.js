@@ -138,6 +138,8 @@ export class XtalStateCommit extends WithPath(XtalStateBase) {
         super.connectedCallback();
     }
     onPropsChange() {
+        if (this._disabled)
+            return;
         if (super.onPropsChange()) {
             if (this._notReady) {
                 setTimeout(() => {
@@ -164,9 +166,11 @@ export class XtalStateCommit extends WithPath(XtalStateBase) {
         const bH = this._window.history;
         //if(compare(bH.state, hist)) return;
         this.value = hist;
+        this._disabled = true;
         this.de('history', {
             value: hist
         });
+        this._disabled = false;
         if (this.make && !this.url)
             return;
         let url = this._url;
