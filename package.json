@@ -1,7 +1,7 @@
 {
   "name": "xtal-state",
   "description": "Web component wrapper around the history api",
-  "version": "0.0.30",
+  "version": "0.0.31",
   "main": "xtal-state.js",
   "repository": "https://github.com/bahrus/xtal-state",
   "author": "bahrus <anderson.bruce.b@gmail.com>",
