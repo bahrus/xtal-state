@@ -129,19 +129,16 @@ xtal-state-parse is another web component that helps with parsing the address ba
 
 There are two distinctly different scenarios for how this could work.  For now xtal-state-parse (at least one instance thereof) assumes you are adopting one or the other scenario:
 
-a)  Routing 101 Scenario:  The critical pieces of information that need to go into history.state are all encoded in the address bar.
-b)  Git in the browser scenario:  The address bar simply contains an id somewhere, which we need, but it doesn't need to go into history.state.  Rather, that id is used to query some remote data store, and *that* object is what is to go into history.state.
+1.  Routing 101 Scenario:  The critical pieces of information that need to go into history.state are all encoded in the address bar.
+2.  Git in the browser scenario:  The address bar simply contains an id somewhere, which we need, but it doesn't need to go into history.state.  Rather, that id is used to query some remote data store, and *that* object is what is to go into history.state.
 
 In the Routing 101 scenario, xtal-state-parse will initialize history.state, only if history.state starts out null.  
 
 In the git in the browser scenario, the id will simply emit an event with the decoded id (or really, the parsed object, which may contain more information than a single id), and will let other components take it from there, leaving history untouched.
 
-To let xtal-state-update know which scenario is desired, for scenario a) set attribute:  "init_history_if_null".  If that attribute isn't present, leave the history.state alone, and just emit an event "match-found".
+To let xtal-state-parse know which scenario is desired, for scenario a) set attribute:  "init-history-if-null".  If that attribute isn't present, leave history.state alone, and just emit an event "match-found".
 
 xtal-state-parse relies on the regular expression [named capture group enhancements](https://github.com/tc39/proposal-regexp-named-groups) that are part of [ES 2018](http://2ality.com/2017/05/regexp-named-capture-groups.html).  Only Chrome supports this feature currently.
-
-
-[XregExp](http://xregexp.com/) is a library that inspired this spec, and that can provide a kind of polyfill for browsers that don't support named capture groups yet. The code checks if this alternative library is present.  If not, it uses the native regexp native function. [TODO]
 
 Syntax:
 
@@ -163,11 +160,21 @@ then the syntax above will initialize history.state to:
 }
 ```
 
+[XregExp](http://xregexp.com/) is a library that inspired this spec, and that could provide a kind of polyfill for browsers that don't support named capture groups yet. However, it is a rather large polyfill, and supporting this is ultimately throw away code.  More useful is to be able to provide a parser function, should regular expressions not meet the requirements.  To set the parser function, use property "parser-fn".  The signature of the function should be:
+
+> function(url: string) : object
+
+If you set attribute, with-url-pattern, the code tries that first.  If that gives an error (e.g. no support for named capture groups), then it will try the parserFn property
+
 If attribute "init-history-if-null" is set, then if the url-pattern matches the location.href (or whatever path is specified by the parse attribute/property)  the (contextual) history.state object is set to the parsed object.  Otherwise / in addition, xtal-state-parse will emit event "match-found" after parsing, and the event contains the matching object.
 
 If the address bar doesn't match the regular expression, event "no-match-found" is emitted.
 
 All four files are combined into a single IIFE class script file, xtal-state.js, which totals ~2.8 kb minified and gzipped.  
+
+## Surely, xtal-state-parse watches for pop-state events, right?
+
+No.  Remember, xtal-state views history.state as the focal point, not the address bar.  The application is responsible for making sure the address bar can be parsed, and history restored, when the address bar contents are sent to someone else (or bookmarked for later use).  But xtal-state works with the premise that all binding should be done to history.state, not to the address bar.  And don't call me Shirley.
 
 ## Programmatic API
 
