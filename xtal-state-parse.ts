@@ -80,9 +80,9 @@ export class XtalStateParse extends XtalStateBase{
         const value = XtalStateParse.parseAddressBar(this._parse, this._withURLPattern);
         if(value === null) {
             this.noMatch = true;
-            this.de('no-match', {
+            this.de('no-match-found', {
                 value: true,
-            });
+            }, true);
             return;
         }else{
             this.value = value;
