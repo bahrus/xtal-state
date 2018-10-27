@@ -360,6 +360,12 @@ class XtalStateCommit extends WithPath(XtalStateBase) {
     set urlSearch(val) {
         this.attr(url_search, val);
     }
+    get stringifyFn() {
+        return this._stringifyFn;
+    }
+    set stringifyFn(nv) {
+        this._stringifyFn = nv;
+    }
     /**
      * Replace URL expression, coupled with urlSearch
      */
@@ -397,7 +403,7 @@ class XtalStateCommit extends WithPath(XtalStateBase) {
     }
     //_connected!: boolean;
     connectedCallback() {
-        this._upgradeProperties([make, rewrite, title, url, 'withPath', 'urlSearch', 'replaceUrlValue'].concat([history$]));
+        this._upgradeProperties([make, rewrite, title, url, 'withPath', 'urlSearch', 'replaceUrlValue', 'stringifyFn'].concat([history$]));
         this._debouncer = debounce(() => {
             this.updateHistory();
         }, 50);
@@ -448,7 +454,10 @@ class XtalStateCommit extends WithPath(XtalStateBase) {
         }
         if (!url)
             return;
-        if (this._replaceUrlValue && this._urlSearch) {
+        if (this._stringifyFn) {
+            url = this._stringifyFn(this);
+        }
+        else if (this._replaceUrlValue && this._urlSearch) {
             const reg = new RegExp(this._urlSearch);
             url = url.replace(reg, this._replaceUrlValue);
         }
@@ -643,11 +652,11 @@ class XtalStateParse extends XtalStateBase {
     set parse(val) {
         this.attr(parse, val);
     }
-    get parserFn() {
-        return this._parserFn;
+    get parseFn() {
+        return this._parseFn;
     }
-    set parserFn(nv) {
-        this._parserFn = nv;
+    set parseFn(nv) {
+        this._parseFn = nv;
         this.onParsePropsChange();
     }
     get initHistoryIfNull() {
@@ -657,7 +666,7 @@ class XtalStateParse extends XtalStateBase {
         this.attr(init_history_if_null, nv, '');
     }
     connectedCallback() {
-        this._upgradeProperties(['withURLPattern', parse, 'initHistoryIfNull']);
+        this._upgradeProperties(['withURLPattern', parse, 'initHistoryIfNull', 'parseFn']);
         super.connectedCallback();
         this.onParsePropsChange();
     }
@@ -689,9 +698,9 @@ class XtalStateParse extends XtalStateBase {
         if (this._withURLPattern) {
             value = XtalStateParse.parseAddressBar(this._parse, this._withURLPattern, this._window);
         }
-        if ((value === null) && this._parserFn) {
+        if ((value === null) && this._parseFn) {
             const prseString = XtalStateParse.getObj(this._parse, this._window);
-            value = this._parserFn(prseString);
+            value = this._parseFn(prseString, this);
         }
         if (value === null) {
             this.noMatch = true;

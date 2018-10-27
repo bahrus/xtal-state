@@ -93,6 +93,12 @@ export class XtalStateCommit extends WithPath(XtalStateBase) {
     set urlSearch(val) {
         this.attr(url_search, val);
     }
+    get stringifyFn() {
+        return this._stringifyFn;
+    }
+    set stringifyFn(nv) {
+        this._stringifyFn = nv;
+    }
     /**
      * Replace URL expression, coupled with urlSearch
      */
@@ -130,7 +136,7 @@ export class XtalStateCommit extends WithPath(XtalStateBase) {
     }
     //_connected!: boolean;
     connectedCallback() {
-        this._upgradeProperties([make, rewrite, title, url, 'withPath', 'urlSearch', 'replaceUrlValue'].concat([history$]));
+        this._upgradeProperties([make, rewrite, title, url, 'withPath', 'urlSearch', 'replaceUrlValue', 'stringifyFn'].concat([history$]));
         this._debouncer = debounce(() => {
             this.updateHistory();
         }, 50);
@@ -181,7 +187,10 @@ export class XtalStateCommit extends WithPath(XtalStateBase) {
         }
         if (!url)
             return;
-        if (this._replaceUrlValue && this._urlSearch) {
+        if (this._stringifyFn) {
+            url = this._stringifyFn(this);
+        }
+        else if (this._replaceUrlValue && this._urlSearch) {
             const reg = new RegExp(this._urlSearch);
             url = url.replace(reg, this._replaceUrlValue);
         }

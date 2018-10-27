@@ -40,12 +40,12 @@ export class XtalStateParse extends XtalStateBase{
         this.attr(parse, val);
     }
 
-    _parserFn: (s: string) => any;
-    get parserFn(){
-        return this._parserFn;
+    _parseFn: (s: string, t: XtalStateParse) => any;
+    get parseFn(){
+        return this._parseFn;
     }
-    set parserFn(nv){
-        this._parserFn = nv;
+    set parseFn(nv){
+        this._parseFn = nv;
         this.onParsePropsChange();
     }
 
@@ -58,7 +58,7 @@ export class XtalStateParse extends XtalStateBase{
     }
 
     connectedCallback(){
-        this._upgradeProperties(['withURLPattern', parse, 'initHistoryIfNull']);
+        this._upgradeProperties(['withURLPattern', parse, 'initHistoryIfNull', 'parseFn']);
         super.connectedCallback();
         this.onParsePropsChange();
     }
@@ -90,9 +90,9 @@ export class XtalStateParse extends XtalStateBase{
         if(this._withURLPattern){
             value = XtalStateParse.parseAddressBar(this._parse, this._withURLPattern, this._window);
         }
-        if((value === null) && this._parserFn){
+        if((value === null) && this._parseFn){
             const prseString = XtalStateParse.getObj(this._parse, this._window);
-            value = this._parserFn(prseString);
+            value = this._parseFn(prseString, this);
         }
         
         if(value === null) {

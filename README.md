@@ -2,7 +2,7 @@
 
 <a href="https://nodei.co/npm/xtal-state/"><img src="https://nodei.co/npm/xtal-state.png"></a>
 
-<img src="http://img.badgesize.io/https://unpkg.com/xtal-state@0.0.39/build/ES6/xtal-state.js?compression=gzip">
+<img src="http://img.badgesize.io/https://unpkg.com/xtal-state@0.0.40/build/ES6/xtal-state.js?compression=gzip">
 
 # \<xtal-state\>
 
@@ -12,7 +12,7 @@ One of the goals of xtal-state is that it be scalable (think [Scala](https://www
 
 ## Problem Statement I -- Object-centric routing
 
-At the simplest level, it can provide part of a routing solution (but other components are needed in combination with these components for a full routing implementation).  But unlike typical routing solutions, perhaps, xtal-state* views the history.state object as the focal point, and the address bar as a subservient recorder of the history.state object.
+At the simplest level, it can provide part of a routing solution (but a view selector component, such as [carbon-copy](https://www.webcomponents.org/element/carbon-copy) is needed, in combination with these components for a full routing implementation).  But unlike typical routing solutions, perhaps, xtal-state* views the history.state object as the focal point, and the address bar as a subservient recorder of the history.state object.
 
 At the other extreme, consider the following two problem statements.
 
@@ -22,7 +22,7 @@ At the other extreme, consider the following two problem statements.
 
 >Who is Soorjo Alexander William Langobard Oliphant Chuckerbutty III?
 
-*Agent Walker sends recent recruit Chuck Bartowski to visit the tombstone of Olipant Chuckerbutty (Senior), located in Paddington [located within greater London], in search of clues.*
+*Agent Walker sends recent recruit Chuck Bartowski to visit the tombstone of Oliphant Chuckerbutty (Senior), located in Paddington [located within greater London], in search of clues.*
 
 *Chuck Bartowski is a lanky, earnest looking twenty-something with tangled, somewhat curly dark hair.  He works at Buy More as a computer service technician, after being expelled from Standford University's CS Program. Chuck is relieved and excited to be sent away on his first solo mission.  Relieved, because he had just admitted to his feelings for Agent Walker the previous day, who stood there, stoically.*
 
@@ -66,13 +66,13 @@ One example of an existing service that requires no token or account, where one 
 
 And this strategy isn't very efficient.  It would require rapidly uploading a larger and larger object / JSON string as the user's application state grows, which could happen quite quickly.
 
-Basically what we need is a miniature, 1 kb git client running in the browser, combined, perhaps with some smart middle-ware sitting on the server, that can commit only the minimal required change set,  at every user click we want to preserve, to a central repository.  It would return a revision number, which would go somewhere in the address bar. Until naughty advertisers figure out the same trick, at which point only the domain can be sent via sharing, no query string parameters or paths.  
+Basically what we need is a miniature, 1 kb git client running in the browser, combined, perhaps, with some smart middle-ware sitting on the server, that can commit only the minimal required change set,  at every user click we want to preserve, to a central repository.  It would return a revision number, which would go somewhere in the address bar. Until naughty advertisers figure out the same trick, at which point only the domain can be sent via sharing, no query string parameters or paths.  
 
 ## Problem Statement III -- Building https://UFP.gov
 
 *In the year 2412, Guinan, president-elect of the United Federation of Planets, wants to make good on her promise to modernize the UFP website.  The last known browser running IE11 was destroyed when the planet Psi 2000 imploded, so Guinan thought it was time to finally take full advantage of what the platform had to offer in terms of scope isolation.  The current version of the website mashes together websites from each outpost - 5,173,000 in total.  Each website was built using the most popular framework of the day when the outpost was established, and due to framework lock-in, never migrated to anything newer.  Some of those frameworks, in fact, were conceived when the Beastie Boys' "Sabotage" was topping the Earthling charts.  Finding qualified developers requires finding time singularities and bringing in [ancient talent](https://motherboard.vice.com/en_us/article/pgapzy/heavens-gate-web-designers-higher-source-suicide-cult).  The mashing together is done via iframes.  So the idea is to switch out iframes for loosely coupled web components.*
 
-*Doing her due diligence, Guinan visited alternate timelines where parallel Guinan's had tried the same thing. Guinan found one timeline where a mass inter-galactic civil-war had broken out.  The cause?  One of the web components had code that would update the window.history.state object.  This inadvertenly caused another outposts's web component to initiate war with the Romulans.*   
+*Doing her due diligence, Guinan visited alternate timelines where parallel Guinan's had tried the same thing. Guinan found one timeline where a mass inter-galactic civil-war had broken out.  The cause?  One of the web components had code that would update the window.history.state object.  This inadvertently caused another outposts's web component to initiate war with the Romulans.*   
 
 
 ## Updating history.state
@@ -102,6 +102,12 @@ The value of url can be hardcoded, as shown above, or set programmatically.  A t
 </xtal-state-commit>
 ```
 
+[Possible enhancement, TODO]:  To help make this more useful, if the "url" property is empty (and no stringify-fn is specified, discussed below), the component will [alphabetize](https://stackoverflow.com/questions/16167581/sort-object-properties-and-json-stringify) the properties of the history object, and then apply the regular expression replace]
+
+But as universal support for ES2018 is some time off, this is a kind of pie-in-the untested idea for now.
+
+In the meantime, there's a property, stringify-fn, which is passed the the instance of xtal-state, which can return the acual url used in the history.push/replace call.
+
 ## Observing history.state
 
 xtal-state-watch watches for all history state changes.  Like xtal-state-commit, you can specify the level as "local", "shadow" or "global".  When history changes, it emits an event "history-changed".  xtal-state-watch also supports an attribute / property:  "once."  If this is set, it will only emit the first non trivial history object, and then stop listening for history change events.  This can be useful for initializing an object based on the last history object (received by Agent Walker, e.g.).
@@ -127,23 +133,27 @@ Syntax:
 
 xtal-state-parse is another web component that helps with parsing the address bar url and, often, populating history.state object when the page loads. 
 
-There are two distinctly different scenarios for how this could work.  For now xtal-state-parse (at least one instance thereof) assumes you are adopting one or the other scenario:
+There are two distinctly different scenarios for how this can work.  For now xtal-state-parse (at least one instance thereof) assumes you are adopting one or the other scenario:
 
 1.  Routing 101 Scenario:  The critical pieces of information that need to go into history.state are all encoded in the address bar.
-2.  Git in the browser scenario:  The address bar simply contains an id somewhere, which we need, but it doesn't need to go into history.state.  Rather, that id is used to query some remote data store, and *that* object is what is to go into history.state.
+2.  Git in the browser scenario:  The address bar simply contains an id somewhere, which we need, but that id doesn't need to go into history.state.  Rather, the id is used to query some remote data store, and *that* object is what is to go into history.state.
 
 In the Routing 101 scenario, xtal-state-parse will initialize history.state, only if history.state starts out null.  
 
-In the 'git in the browser scenario", the id will simply emit an event with the decoded id (or really, the parsed object, which may contain more information than a single id), and will let other components take it from there, leaving history untouched.
+In the 'git in the browser scenario", xtal-state-parse simply emits an event with the decoded id (or really, the parsed object, which may contain more information than a single id), and lets other components take it from there.  In this scenario, xtal-state-parse leaves the history untouched.
 
-To let xtal-state-parse know which scenario is desired, for scenario 1 (routing 101) set attribute:  "init-history-if-null".  If that attribute isn't present, leave history.state alone, and just emit an event "match-found".
+To let xtal-state-parse know which scenario is desired, for scenario 1 (routing 101) set attribute:  "init-history-if-null".  If that attribute isn't present, xtal-state-parse just emits an event "match-found," passing the matched object, or "no-match-found".
 
-xtal-state-parse relies on the regular expression [named capture group enhancements](https://github.com/tc39/proposal-regexp-named-groups) that are part of [ES 2018](http://2ality.com/2017/05/regexp-named-capture-groups.html).  Only Chrome supports this feature currently.
+xtal-state-parse's primary way of parsing is based on the regular expression [named capture group enhancements](https://github.com/tc39/proposal-regexp-named-groups) that are part of [ES 2018](http://2ality.com/2017/05/regexp-named-capture-groups.html).  Only Chrome supports this feature currently.
 
 Syntax:
 
 ```html
-<xtal-state-parse parse="location.href" with-url-pattern="https://(?<domain>[a-z\.]*)/factory-mind/(?<article>[a-z0-9-]*)" ></xtal-state-parse>
+<xtal-state-parse 
+    parse="location.href"  
+    with-url-pattern="https://(?<domain>[a-z\.]*)/factory-mind/(?<article>[a-z0-9-]*)" 
+    init-history-if-null>
+</xtal-state-parse>
 
 ```
 
@@ -160,15 +170,15 @@ then the syntax above will initialize history.state to:
 }
 ```
 
-[XregExp](http://xregexp.com/) is a library that inspired this spec, and that could provide a kind of polyfill for browsers that don't support named capture groups yet. However, it is a rather large polyfill, and supporting this is ultimately throw away code.  More useful is to be able to provide a parser function, should regular expressions not meet the requirements.  To set the parser function, use property "parserFn".  The signature of the function should be:
+[XregExp](http://xregexp.com/) is a library that inspired this spec, and that could provide a kind of polyfill for browsers that don't support named capture groups yet. However, it is a rather large polyfill, and supporting this is ultimately throw away code.  More useful is to be able to provide a parser function, should regular expressions not meet the requirements.  To set the parser function, use property "parseFn".  The signature of the function should be:
 
 > function(url: string) : object
 
-If you set attribute "with-url-pattern", the code tries that first.  If that gives an error (e.g. no support for named capture groups), then it will try the parserFn property
+If you set attribute "with-url-pattern", the code tries that first.  If that gives an error (e.g. no support for named capture groups), then it will try the parseFn property
 
-If attribute "init-history-if-null" is set, then if the url-pattern and/or parserFn matches the location.href (or whatever path is specified by the parse attribute/property)  the (contextual) history.state object is set to the parsed object.  Otherwise / in addition, xtal-state-parse will emit event "match-found" after parsing, and the event contains the matching object.
+If attribute "init-history-if-null" is set, then if the url-pattern and/or parseFn matches the location.href (or whatever path is specified by the parse attribute/property)  the (contextual) history.state object is set to the parsed object.  Otherwise / in addition, xtal-state-parse will emit event "match-found" after parsing, and the event contains the matching object.
 
-If the address bar doesn't match the regular expression, event "no-match-found" is emitted.
+If the address bar doesn't match the regular expression (or parseFn returns null), an event with name "no-match-found" is emitted.
 
 ## Surely, xtal-state-parse watches for pop-state events, right?
 
@@ -176,13 +186,12 @@ No.  Remember, xtal-state views history.state as the focal point, not the addres
 
 ## xtal-state.js
 
-All four files are combined into a single IIFE class script file, xtal-state.js, which totals ~3.3 kb minified and gzipped.  
-
+All four files are combined into a single IIFE class script file, xtal-state.js, which totals ~3.4 kb minified and gzipped.  
 
 
 ## Programmatic API
 
-To partake in usage of the state management without using web components, you can get the window object containing the history.state:
+To partake in usage of this state management solution without using these web components, you can get the window object containing the history.state:
 
 ```JavaScript
 import {getWinCtx} from 'xtal-state/xtal-state-base.js';

@@ -3,6 +3,7 @@ import {WithPath, with_path} from 'xtal-latx/with-path.js';
 
 import {define} from 'xtal-latx/define.js';
 import {debounce} from 'xtal-latx/debounce.js';
+import { XtalStateParse } from './xtal-state-parse.js';
 // export interface IHistoryUpdatePacket {
 //     proposedState: any,
 //     title: string,
@@ -100,6 +101,14 @@ export class XtalStateCommit extends WithPath(XtalStateBase) {
         this.attr(url_search, val);
     }
 
+    _stringifyFn: (t: XtalStateCommit) => string;
+    get stringifyFn(){
+        return this._stringifyFn;
+    }
+    set stringifyFn(nv){
+        this._stringifyFn = nv;
+    }
+
     _replaceUrlValue!: string;
     /**
      * Replace URL expression, coupled with urlSearch
@@ -143,7 +152,7 @@ export class XtalStateCommit extends WithPath(XtalStateBase) {
     _debouncer;
     //_connected!: boolean;
     connectedCallback() {
-        this._upgradeProperties([make, rewrite, title, url, 'withPath', 'urlSearch', 'replaceUrlValue'].concat([history$]));
+        this._upgradeProperties([make, rewrite, title, url, 'withPath', 'urlSearch', 'replaceUrlValue', 'stringifyFn'].concat([history$]));
         this._debouncer = debounce(() => {
             this.updateHistory();
         }, 50);
@@ -191,7 +200,9 @@ export class XtalStateCommit extends WithPath(XtalStateBase) {
             }
         }
         if(!url) return; 
-        if(this._replaceUrlValue && this._urlSearch){
+        if(this._stringifyFn){
+            url = this._stringifyFn(this);
+        }else if(this._replaceUrlValue && this._urlSearch){
             const reg = new RegExp(this._urlSearch);
             url = url.replace(reg, this._replaceUrlValue);
         }
