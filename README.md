@@ -130,13 +130,13 @@ xtal-state-parse is another web component that helps with parsing the address ba
 There are two distinctly different scenarios for how this could work.  For now xtal-state-parse (at least one instance thereof) assumes you are adopting one or the other scenario:
 
 a)  Routing 101 Scenario:  The critical pieces of information that need to go into history.state are all encoded in the address bar.
-b)  Scenario Bartowski:  The address bar simply contains an id somewhere, which we need, but it doesn't need to go into history.state.  Rather, that id is used to query some remote data store, and *that* object is what is to go into history.state.
+b)  Git in the browser scenario:  The address bar simply contains an id somewhere, which we need, but it doesn't need to go into history.state.  Rather, that id is used to query some remote data store, and *that* object is what is to go into history.state.
 
 In the Routing 101 scenario, xtal-state-parse will initialize history.state, only if history.state starts out null.  
 
-In the Bartowski scenario, the id will simply emit an event with the decoded id (or really, the parsed object, which may contain more information than a single id), and will let other components take it from there, leaving history untouched.
+In the git in the browser scenario, the id will simply emit an event with the decoded id (or really, the parsed object, which may contain more information than a single id), and will let other components take it from there, leaving history untouched.
 
-To let xtal-state-update know which scenario is desired, for scenario a), set attribute:  "init_history_if_null".  If that attribute isn't present, it will join team Bartowski.
+To let xtal-state-update know which scenario is desired, for scenario a) set attribute:  "init_history_if_null".  If that attribute isn't present, leave the history.state alone, and just emit an event "match-found".
 
 xtal-state-parse relies on the regular expression [named capture group enhancements](https://github.com/tc39/proposal-regexp-named-groups) that are part of [ES 2018](http://2ality.com/2017/05/regexp-named-capture-groups.html).  Only Chrome supports this feature currently.
 
@@ -163,7 +163,7 @@ then the syntax above will initialize history.state to:
 }
 ```
 
-If attribute "init-history-if-null" is set, then if the url-pattern matches the location.href (or whatever path is specified by the parse attribute/property)  the (contextual) history.state object is set to the parsed object.  Otherwise / in addition, xtal-state-parse will emit event "value-changed" after parsing.
+If attribute "init-history-if-null" is set, then if the url-pattern matches the location.href (or whatever path is specified by the parse attribute/property)  the (contextual) history.state object is set to the parsed object.  Otherwise / in addition, xtal-state-parse will emit event "match-found" after parsing, and the event contains the matching object.
 
 If the address bar doesn't match the regular expression, event "no-match-found" is emitted.
 
