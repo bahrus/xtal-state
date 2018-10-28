@@ -698,7 +698,7 @@ class XtalStateParse extends XtalStateBase {
         if (this._withURLPattern) {
             value = XtalStateParse.parseAddressBar(this._parse, this._withURLPattern, this._window);
         }
-        if ((value === null) && this._parseFn) {
+        if ((value === -1) && this._parseFn) {
             const prseString = XtalStateParse.getObj(this._parse, this._window);
             value = this._parseFn(prseString, this);
         }
@@ -730,17 +730,13 @@ class XtalStateParse extends XtalStateBase {
         try {
             const reg = new RegExp(urlPattern);
             let thingToParse = this.getObj(parsePath, winObj);
-            parsePath.split('.').forEach(token => {
-                if (thingToParse)
-                    thingToParse = thingToParse[token];
-            });
             const parsed = reg.exec(thingToParse);
             if (!parsed)
                 return null;
             return parsed['groups'];
         }
         catch (err) {
-            return null;
+            return -1;
         }
     }
 }

@@ -101,7 +101,7 @@ export class XtalStateCommit extends WithPath(XtalStateBase) {
         this.attr(url_search, val);
     }
 
-    _stringifyFn: (t: XtalStateCommit) => string;
+    _stringifyFn!: (t: XtalStateCommit) => string;
     get stringifyFn(){
         return this._stringifyFn;
     }
