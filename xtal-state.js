@@ -683,7 +683,7 @@ class XtalStateParse extends XtalStateBase {
         this.attr('no-match', val.toString());
     }
     onParsePropsChange() {
-        if (this._disabled)
+        if (this._disabled || this.value || this.noMatch)
             return;
         if (!this._window) {
             setTimeout(() => {
@@ -697,10 +697,12 @@ class XtalStateParse extends XtalStateBase {
         let value = null;
         if (this._withURLPattern) {
             value = XtalStateParse.parseAddressBar(this._parse, this._withURLPattern, this._window);
-        }
-        if ((value === -1) && this._parseFn) {
-            const prseString = XtalStateParse.getObj(this._parse, this._window);
-            value = this._parseFn(prseString, this);
+            if (value === -1) {
+                if (!this._parseFn)
+                    return;
+                const prseString = XtalStateParse.getObj(this._parse, this._window);
+                value = this._parseFn(prseString, this);
+            }
         }
         if (value === null) {
             this.noMatch = true;
