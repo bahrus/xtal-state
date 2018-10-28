@@ -96,7 +96,7 @@ export class XtalStateParse extends XtalStateBase {
             this.value = value;
             this.de('match-found', {
                 value: value
-            });
+            }, true);
         }
         if (this._initHistoryIfNull)
             this._window.history.replaceState(value, '', this._window.location.href);
