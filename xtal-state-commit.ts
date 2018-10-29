@@ -111,9 +111,8 @@ export class XtalStateCommit extends WithPath(XtalStateBase) {
     }
 
     set syncHistory(nv){
-        this.value = this._window.history;
         this.de('history',{
-            value: this.value
+            value: nv
         });
     }
     _replaceUrlValue!: string;

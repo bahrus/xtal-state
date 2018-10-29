@@ -367,9 +367,8 @@ class XtalStateCommit extends WithPath(XtalStateBase) {
         this._stringifyFn = nv;
     }
     set syncHistory(nv) {
-        this.value = this._window.history;
         this.de('history', {
-            value: this.value
+            value: nv
         });
     }
     /**
