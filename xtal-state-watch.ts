@@ -46,6 +46,7 @@ export class XtalStateWatch extends XtalStateBase {
             win.history.pushState = function (newState: any, title: string, URL: string) {
                 boundPushState(newState, title, URL);
                 win[xtal_subscribers].forEach(subscriber => {
+                    delete subscriber.dataset.popstate;
                     subscriber.history = newState;
                 })
             }
