@@ -512,7 +512,7 @@ class XtalStateUpdate extends XtalStateCommit {
 define(XtalStateUpdate);
 const watch = 'watch';
 const xtal_subscribers = 'xtal-subscribers';
-const once = 'once';
+//const once = 'once';
 function remove(array, element) {
     const index = array.indexOf(element);
     if (index !== -1) {
@@ -525,12 +525,11 @@ class XtalStateWatch extends XtalStateBase {
         super();
     }
     static get observedAttributes() {
-        return super.observedAttributes.concat([watch, once]);
+        return super.observedAttributes.concat([watch]);
     }
     attributeChangedCallback(name, oldValue, newValue) {
         super.attributeChangedCallback(name, oldValue, newValue);
         switch (name) {
-            case once:
             case watch:
                 this['_' + name] = newValue !== null;
                 break;
@@ -560,12 +559,14 @@ class XtalStateWatch extends XtalStateBase {
             win.history.replaceState = function (newState, title, URL) {
                 boundReplaceState(newState, title, URL);
                 win[xtal_subscribers].forEach(subscriber => {
+                    delete subscriber.dataset.popstate;
                     subscriber.history = newState;
                 });
             };
             win.addEventListener('popstate', e => {
                 win[xtal_subscribers].forEach(subscriber => {
-                    subscriber.history = history.state;
+                    subscriber.dataset.popstate = 'true';
+                    subscriber.history = win.history.state;
                 });
             });
         }
@@ -576,7 +577,7 @@ class XtalStateWatch extends XtalStateBase {
     }
     connectedCallback() {
         //this._connected = true;
-        this._upgradeProperties([watch, once]);
+        this._upgradeProperties([watch]);
         super.connectedCallback();
         this.addSubscribers();
     }
@@ -602,20 +603,31 @@ class XtalStateWatch extends XtalStateBase {
     set watch(nv) {
         this.attr(watch, nv, '');
     }
-    get once() { return this._once; }
-    set once(nv) {
-        this.attr(once, nv, '');
-    }
+    // _once!: boolean;
+    // get once(){return this._once;}
+    // set once(nv){
+    //     this.attr(once, nv, '');
+    // }
     notify() {
         if (!this._watch || this._disabled || !this._connected || this._history === undefined)
             return;
-        if (this._once && Object.keys(this._history).length === 0)
-            return;
+        //if(this._once && Object.keys(this._history).length === 0) return;
+        const kl = Object.keys(this._history).length;
+        const ds = this.dataset;
+        if (kl > 0) {
+            if (!ds.count) {
+                ds.init = "true";
+                ds.count = "1";
+            }
+            else {
+                delete ds.init;
+                ds.count = (parseInt(ds.count) + 1).toString();
+            }
+        }
         this.de('history', {
             value: this._history,
         });
-        if (this._history && this._once)
-            this.disconnect();
+        //if(this._history && this._once) this.disconnect();
     }
 }
 define(XtalStateWatch);

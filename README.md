@@ -110,7 +110,7 @@ In the meantime, there's a property, stringify-fn, which is passed the the insta
 
 ## Observing history.state
 
-xtal-state-watch watches for all history state changes.  Like xtal-state-commit, you can specify the level as "local", "shadow" or "global".  When history changes, it emits an event "history-changed".  xtal-state-watch also supports an attribute / property:  "once."  If this is set, it will only emit the first non trivial history object, and then stop listening for history change events.  This can be useful for initializing an object based on the last history object (received by Agent Walker, e.g.).
+xtal-state-watch watches for all history state changes.  Like xtal-state-commit, you can specify the level as "local", "shadow" or "global".  When history changes, it emits an event "history-changed".  
 
 ## Merging history.state
 
