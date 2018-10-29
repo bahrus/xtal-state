@@ -129,6 +129,7 @@ export class XtalStateCommit extends WithPath(XtalStateBase) {
     attributeChangedCallback(n: string, ov: string, nv: string) {
         
         switch (n) {
+            case init:
             case rewrite:
             case make:
                 this['_' + n] = nv !== null;
