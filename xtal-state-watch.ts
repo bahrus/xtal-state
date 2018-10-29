@@ -107,7 +107,7 @@ export class XtalStateWatch extends XtalStateBase {
     // }
     
     notify(){
-        if(!this._watch || this._disabled || !this._connected || this._history === undefined) return;
+        if(!this._watch || this._disabled || !this._connected || this._history === undefined || this._history === null) return;
         //if(this._once && Object.keys(this._history).length === 0) return;
         const kl = Object.keys(this._history).length;
         const ds = this.dataset;
