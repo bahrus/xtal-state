@@ -69,6 +69,7 @@ export class XtalStateCommit extends WithPath(XtalStateBase) {
         this._history = newVal;
         this.onPropsChange();
     }
+
     _title = '';
     /**
      * Title to use when calling push/replace state
@@ -109,6 +110,12 @@ export class XtalStateCommit extends WithPath(XtalStateBase) {
         this._stringifyFn = nv;
     }
 
+    set syncHistory(nv){
+        this.value = this._window.history;
+        this.de('history',{
+            value: this.value
+        });
+    }
     _replaceUrlValue!: string;
     /**
      * Replace URL expression, coupled with urlSearch
@@ -184,7 +191,7 @@ export class XtalStateCommit extends WithPath(XtalStateBase) {
        
         const method = this.make ? 'push' : 'replace';
         
-        const bH = this._window.history;
+        //const bH = this._window.history;
         //if(compare(bH.state, hist)) return;
         this.value = hist;
         this._disabled = true;
