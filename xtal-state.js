@@ -277,7 +277,7 @@ const title = 'title';
 const url = 'url';
 const url_search = 'url-search';
 const replace_url_value = 'replace-url-value';
-const init = 'init';
+const new$$ = 'new';
 /**
  * `xtal-state-commit`
  * Web component wrapper around the history api
@@ -368,18 +368,18 @@ class XtalStateCommit extends WithPath(XtalStateBase) {
     set replaceUrlValue(val) {
         this.attr(replace_url_value, val);
     }
-    get init() {
-        return this._init;
+    get new() {
+        return this._new;
     }
-    set init(v) {
-        this.attr(init, v, '');
+    set new(v) {
+        this.attr(new$$, v, '');
     }
     static get observedAttributes() {
-        return super.observedAttributes.concat([make, rewrite, title, url, with_path, url_search, replace_url_value, init]);
+        return super.observedAttributes.concat([make, rewrite, title, url, with_path, url_search, replace_url_value, new$$]);
     }
     attributeChangedCallback(n, ov, nv) {
         switch (n) {
-            case init:
+            case new$$:
             case rewrite:
             case make:
                 this['_' + n] = nv !== null;
@@ -403,7 +403,7 @@ class XtalStateCommit extends WithPath(XtalStateBase) {
     }
     //_connected!: boolean;
     connectedCallback() {
-        this._upgradeProperties([make, rewrite, title, url, 'withPath', 'urlSearch', 'replaceUrlValue', 'stringifyFn', init].concat([history$]));
+        this._upgradeProperties([make, rewrite, title, url, 'withPath', 'urlSearch', 'replaceUrlValue', 'stringifyFn', new$$].concat([history$]));
         this._debouncer = debounce(() => {
             this.updateHistory();
         }, 50);
@@ -432,7 +432,7 @@ class XtalStateCommit extends WithPath(XtalStateBase) {
         return this.wrap(this._history);
     }
     updateHistory() {
-        const hist = this._init ? {} : this.mergedHistory();
+        const hist = this._new ? {} : this.mergedHistory();
         if (hist === null || hist === undefined)
             return;
         const method = this.make ? 'push' : 'replace';
@@ -447,8 +447,8 @@ class XtalStateCommit extends WithPath(XtalStateBase) {
         if (this.make && !this.url)
             return;
         let url = this._url;
-        if (!url || this._init) {
-            if (!this._replaceUrlValue || this._init) {
+        if (!url || this._new) {
+            if (!this._replaceUrlValue || this._new) {
                 url = this._window.location.href;
             }
         }
