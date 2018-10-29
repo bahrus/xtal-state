@@ -111,6 +111,7 @@ export class XtalStateCommit extends WithPath(XtalStateBase) {
     }
 
     set syncHistory(nv){
+        this.value = nv;
         this.de('history',{
             value: nv
         });
