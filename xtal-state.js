@@ -511,6 +511,7 @@ class XtalStateUpdate extends XtalStateCommit {
 define(XtalStateUpdate);
 const watch = 'watch';
 const xtal_subscribers = 'xtal-subscribers';
+const popstate = 'popstate';
 //const once = 'once';
 function remove(array, element) {
     const index = array.indexOf(element);
@@ -530,7 +531,7 @@ class XtalStateWatch extends XtalStateBase {
         super.attributeChangedCallback(name, oldValue, nv);
         switch (name) {
             case watch:
-                this._watch = (nv === '') ? 'all' : 'pop-state';
+                this._watch = (nv === '') ? 'all' : popstate;
                 break;
         }
         this.notify();
@@ -563,7 +564,7 @@ class XtalStateWatch extends XtalStateBase {
                     subscriber.history = newState;
                 });
             };
-            win.addEventListener('popstate', e => {
+            win.addEventListener(popstate, e => {
                 win[xtal_subscribers].forEach(subscriber => {
                     subscriber.dataset.popstate = 'true';
                     subscriber.history = win.history.state;
@@ -612,7 +613,7 @@ class XtalStateWatch extends XtalStateBase {
             case 'all':
                 doIt = true;
                 break;
-            case 'popstate':
+            case popstate:
                 doIt = !ds.historyChanged || ds.popstate === 'true';
                 break;
         }

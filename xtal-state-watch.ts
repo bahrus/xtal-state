@@ -2,6 +2,7 @@ import {XtalStateBase} from './xtal-state-base.js';
 import {define} from 'xtal-latx/define.js';
 const watch = 'watch';
 const xtal_subscribers = 'xtal-subscribers';
+const popstate = 'popstate';
 //const once = 'once';
 
 function remove(array, element) {
@@ -25,7 +26,7 @@ export class XtalStateWatch extends XtalStateBase {
         super.attributeChangedCallback(name, oldValue, nv);
         switch (name) {
             case watch:
-                this._watch = (nv === '') ? 'all' : 'pop-state'
+                this._watch = (nv === '') ? 'all' : popstate
                 break;
         }
         this.notify();
@@ -59,7 +60,7 @@ export class XtalStateWatch extends XtalStateBase {
                     subscriber.history = newState;
                 })
             }
-            win.addEventListener('popstate', e => {
+            win.addEventListener(popstate, e => {
                 win[xtal_subscribers].forEach(subscriber => {
                     subscriber.dataset.popstate = 'true';
                     subscriber.history = win.history.state;
@@ -110,7 +111,7 @@ export class XtalStateWatch extends XtalStateBase {
             case 'all':
                 doIt = true;
                 break;
-            case 'popstate':
+            case popstate:
                 doIt = !ds.historyChanged || ds.popstate==='true';
                 break;
         }
