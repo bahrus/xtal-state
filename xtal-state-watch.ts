@@ -21,11 +21,11 @@ export class XtalStateWatch extends XtalStateBase {
         return super.observedAttributes.concat( [watch]);
     }
 
-    attributeChangedCallback(name: string, oldValue: string, newValue: string) {
-        super.attributeChangedCallback(name, oldValue, newValue);
+    attributeChangedCallback(name: string, oldValue: string, nv: string) {
+        super.attributeChangedCallback(name, oldValue, nv);
         switch (name) {
             case watch:
-                this['_' + name] = newValue !== null;
+                this._watch = (nv === '') ? 'all' : 'pop-state'
                 break;
         }
         this.notify();
@@ -95,36 +95,29 @@ export class XtalStateWatch extends XtalStateBase {
         this._history = newVal;
         if(this._watch) this.notify();
     }
-    _watch!: boolean;
+    _watch!: string;
     get watch(){return this._watch;}
     set watch(nv){
-        this.attr(watch, nv, '');
+        this.attr(watch, nv);
     }
-    
-    // _once!: boolean;
-    // get once(){return this._once;}
-    // set once(nv){
-    //     this.attr(once, nv, '');
-    // }
+
     
     notify(){
         if(!this._watch || this._disabled || !this._connected || this._history === undefined || this._history === null) return;
-        //if(this._once && Object.keys(this._history).length === 0) return;
-        const kl = Object.keys(this._history).length;
         const ds = this.dataset;
-        if(kl > 0){
-            if(!ds.count){
-                ds.init = "true";
-                ds.count = "1"
-            }else{
-                delete ds.init;
-                ds.count = (parseInt(ds.count) + 1).toString();
-            }
-        } 
+        let doIt = false;
+        switch(this._watch){
+            case 'all':
+                doIt = true;
+                break;
+            case 'popstate':
+                doIt = !ds.historyChanged || ds.popstate==='true';
+                break;
+        }
+        if(!doIt) return;
         this.de('history', {
             value:this._history,
         });
-        //if(this._history && this._once) this.disconnect();
     }
 }
 define(XtalStateWatch);

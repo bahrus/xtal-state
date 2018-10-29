@@ -269,14 +269,6 @@ class XtalStateBase extends XtallatX(HTMLElement) {
             return true;
     }
 }
-// export interface IHistoryUpdatePacket {
-//     proposedState: any,
-//     title: string,
-//     url: string,
-//     completed?: boolean,
-//     wherePath?: string,
-//     customUpdater?: any,
-// }
 const make = 'make';
 const rewrite = 'rewrite';
 const history$ = 'history';
@@ -285,12 +277,7 @@ const title = 'title';
 const url = 'url';
 const url_search = 'url-search';
 const replace_url_value = 'replace-url-value';
-// function compare(lhs: any, rhs: any){
-//     if(!lhs && !rhs) return true;
-//     if(!lhs && rhs) return false;
-//     if(lhs && !rhs) return false;
-//     return JSON.stringify(lhs) === JSON.stringify(rhs);
-// }
+const init = 'init';
 /**
  * `xtal-state-commit`
  * Web component wrapper around the history api
@@ -381,8 +368,14 @@ class XtalStateCommit extends WithPath(XtalStateBase) {
     set replaceUrlValue(val) {
         this.attr(replace_url_value, val);
     }
+    get init() {
+        return this._init;
+    }
+    set init(v) {
+        this.attr(init, v, '');
+    }
     static get observedAttributes() {
-        return super.observedAttributes.concat([make, rewrite, title, url, with_path, url_search, replace_url_value]);
+        return super.observedAttributes.concat([make, rewrite, title, url, with_path, url_search, replace_url_value, init]);
     }
     attributeChangedCallback(n, ov, nv) {
         switch (n) {
@@ -409,7 +402,7 @@ class XtalStateCommit extends WithPath(XtalStateBase) {
     }
     //_connected!: boolean;
     connectedCallback() {
-        this._upgradeProperties([make, rewrite, title, url, 'withPath', 'urlSearch', 'replaceUrlValue', 'stringifyFn'].concat([history$]));
+        this._upgradeProperties([make, rewrite, title, url, 'withPath', 'urlSearch', 'replaceUrlValue', 'stringifyFn', init].concat([history$]));
         this._debouncer = debounce(() => {
             this.updateHistory();
         }, 50);
@@ -438,7 +431,7 @@ class XtalStateCommit extends WithPath(XtalStateBase) {
         return this.wrap(this._history);
     }
     updateHistory() {
-        const hist = this.mergedHistory();
+        const hist = this._init ? {} : this.mergedHistory();
         if (hist === null || hist === undefined)
             return;
         const method = this.make ? 'push' : 'replace';
@@ -453,8 +446,8 @@ class XtalStateCommit extends WithPath(XtalStateBase) {
         if (this.make && !this.url)
             return;
         let url = this._url;
-        if (!url) {
-            if (!this._replaceUrlValue) {
+        if (!url || this._init) {
+            if (!this._replaceUrlValue || this._init) {
                 url = this._window.location.href;
             }
         }
@@ -533,11 +526,11 @@ class XtalStateWatch extends XtalStateBase {
     static get observedAttributes() {
         return super.observedAttributes.concat([watch]);
     }
-    attributeChangedCallback(name, oldValue, newValue) {
-        super.attributeChangedCallback(name, oldValue, newValue);
+    attributeChangedCallback(name, oldValue, nv) {
+        super.attributeChangedCallback(name, oldValue, nv);
         switch (name) {
             case watch:
-                this['_' + name] = newValue !== null;
+                this._watch = (nv === '') ? 'all' : 'pop-state';
                 break;
         }
         this.notify();
@@ -608,33 +601,26 @@ class XtalStateWatch extends XtalStateBase {
     }
     get watch() { return this._watch; }
     set watch(nv) {
-        this.attr(watch, nv, '');
+        this.attr(watch, nv);
     }
-    // _once!: boolean;
-    // get once(){return this._once;}
-    // set once(nv){
-    //     this.attr(once, nv, '');
-    // }
     notify() {
         if (!this._watch || this._disabled || !this._connected || this._history === undefined || this._history === null)
             return;
-        //if(this._once && Object.keys(this._history).length === 0) return;
-        const kl = Object.keys(this._history).length;
         const ds = this.dataset;
-        if (kl > 0) {
-            if (!ds.count) {
-                ds.init = "true";
-                ds.count = "1";
-            }
-            else {
-                delete ds.init;
-                ds.count = (parseInt(ds.count) + 1).toString();
-            }
+        let doIt = false;
+        switch (this._watch) {
+            case 'all':
+                doIt = true;
+                break;
+            case 'popstate':
+                doIt = !ds.historyChanged || ds.popstate === 'true';
+                break;
         }
+        if (!doIt)
+            return;
         this.de('history', {
             value: this._history,
         });
-        //if(this._history && this._once) this.disconnect();
     }
 }
 define(XtalStateWatch);

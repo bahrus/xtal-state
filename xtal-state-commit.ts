@@ -4,14 +4,7 @@ import {WithPath, with_path} from 'xtal-latx/with-path.js';
 import {define} from 'xtal-latx/define.js';
 import {debounce} from 'xtal-latx/debounce.js';
 import { XtalStateParse } from './xtal-state-parse.js';
-// export interface IHistoryUpdatePacket {
-//     proposedState: any,
-//     title: string,
-//     url: string,
-//     completed?: boolean,
-//     wherePath?: string,
-//     customUpdater?: any,
-// }
+
 const make = 'make';
 const rewrite = 'rewrite';
 const history$ = 'history';
@@ -20,13 +13,7 @@ const title = 'title';
 const url = 'url';
 const url_search = 'url-search';
 const replace_url_value = 'replace-url-value';
-
-// function compare(lhs: any, rhs: any){
-//     if(!lhs && !rhs) return true;
-//     if(!lhs && rhs) return false;
-//     if(lhs && !rhs) return false;
-//     return JSON.stringify(lhs) === JSON.stringify(rhs);
-// }
+const init = 'init';
 /**
  * `xtal-state-commit`
  * Web component wrapper around the history api
@@ -127,8 +114,16 @@ export class XtalStateCommit extends WithPath(XtalStateBase) {
         this.attr(replace_url_value, val);
     }
 
+    _init: boolean;
+    get init(){
+        return this._init;
+    }
+    set init(v){
+        this.attr(init, v, '');
+    }
+
     static get observedAttributes() {
-        return super.observedAttributes.concat([make, rewrite, title, url, with_path, url_search, replace_url_value]);
+        return super.observedAttributes.concat([make, rewrite, title, url, with_path, url_search, replace_url_value, init]);
     }
 
     attributeChangedCallback(n: string, ov: string, nv: string) {
@@ -150,7 +145,8 @@ export class XtalStateCommit extends WithPath(XtalStateBase) {
                 break;
             case replace_url_value:
                 this._replaceUrlValue = nv;
-                break; 
+                break;
+             
 
         }
         super.attributeChangedCallback(n, ov, nv);
@@ -159,7 +155,7 @@ export class XtalStateCommit extends WithPath(XtalStateBase) {
     _debouncer;
     //_connected!: boolean;
     connectedCallback() {
-        this._upgradeProperties([make, rewrite, title, url, 'withPath', 'urlSearch', 'replaceUrlValue', 'stringifyFn'].concat([history$]));
+        this._upgradeProperties([make, rewrite, title, url, 'withPath', 'urlSearch', 'replaceUrlValue', 'stringifyFn', init].concat([history$]));
         this._debouncer = debounce(() => {
             this.updateHistory();
         }, 50);
@@ -186,7 +182,7 @@ export class XtalStateCommit extends WithPath(XtalStateBase) {
     }
     value: any;
     updateHistory() {
-        const hist = this.mergedHistory();
+        const hist = this._init ? {} : this.mergedHistory();
         if(hist === null || hist === undefined) return;
        
         const method = this.make ? 'push' : 'replace';
@@ -201,8 +197,8 @@ export class XtalStateCommit extends WithPath(XtalStateBase) {
         this._disabled = false;
         if(this.make && !this.url) return;
         let url = this._url;
-        if(!url){
-            if(!this._replaceUrlValue){
+        if(!url || this._init){
+            if(!this._replaceUrlValue || this._init){
                 url = this._window.location.href;
             }
         }
