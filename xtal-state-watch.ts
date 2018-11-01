@@ -1,5 +1,6 @@
 import {XtalStateBase} from './xtal-state-base.js';
 import {define} from 'xtal-latx/define.js';
+
 const watch = 'watch';
 const xtal_subscribers = 'xtal-subscribers';
 const popstate = 'popstate';

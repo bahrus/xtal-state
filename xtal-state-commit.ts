@@ -3,7 +3,6 @@ import {WithPath, with_path} from 'xtal-latx/with-path.js';
 
 import {define} from 'xtal-latx/define.js';
 import {debounce} from 'xtal-latx/debounce.js';
-import { XtalStateParse } from './xtal-state-parse.js';
 
 const make = 'make';
 const rewrite = 'rewrite';

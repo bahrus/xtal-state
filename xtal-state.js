@@ -113,6 +113,39 @@ function XtallatX(superClass) {
         }
     };
 }
+function createNestedProp(target, pathTokens, val, clone) {
+    const firstToken = pathTokens.shift();
+    const tft = target[firstToken];
+    const returnObj = { [firstToken]: tft ? tft : {} };
+    let tc = returnObj[firstToken]; //targetContext
+    const lastToken = pathTokens.pop();
+    pathTokens.forEach(token => {
+        let newContext = tc[token];
+        if (!newContext) {
+            newContext = tc[token] = {};
+        }
+        tc = newContext;
+    });
+    if (tc[lastToken] && typeof (val) === 'object') {
+        Object.assign(tc[lastToken], val);
+    }
+    else {
+        if (lastToken === undefined) {
+            returnObj[firstToken] = val;
+        }
+        else {
+            tc[lastToken] = val;
+        }
+    }
+    //this controversial line is to force the target to see new properties, even though we are updating nested properties.
+    //In some scenarios, this will fail (like if updating element.dataset), but hopefully it's okay to ignore such failures 
+    if (clone)
+        try {
+            Object.assign(target, returnObj);
+        }
+        catch (e) { }
+    ;
+}
 const with_path = 'with-path';
 /**
  * Custom Element mixin that allows a property to be namespaced
@@ -137,24 +170,64 @@ function WithPath(superClass) {
         wrap(obj) {
             if (this._withPath) {
                 let mergedObj = {};
-                const retObj = mergedObj;
-                const splitPath = this._withPath.split('.');
-                const lenMinus1 = splitPath.length - 1;
-                splitPath.forEach((pathToken, idx) => {
-                    if (idx === lenMinus1) {
-                        mergedObj[pathToken] = obj;
-                    }
-                    else {
-                        mergedObj = mergedObj[pathToken] = {};
-                    }
-                });
-                return retObj;
+                createNestedProp(mergedObj, this._withPath.split('.'), obj, true);
+                return mergedObj;
+                // const retObj = mergedObj;
+                // const splitPath = this._withPath.split('.');
+                // const lenMinus1 = splitPath.length - 1;
+                // splitPath.forEach((pathToken, idx) => {
+                //     if(idx === lenMinus1){
+                //         mergedObj[pathToken] = obj;
+                //     }else{
+                //         mergedObj = mergedObj[pathToken] = {};
+                //     }
+                // })
+                // return retObj;
             }
             else {
                 return obj;
             }
         }
     };
+}
+/**
+ * Deep merge two objects.
+ * Inspired by Stackoverflow.com/questions/27936772/deep-object-merging-in-es6-es7
+ * @param target
+ * @param source
+ *
+ */
+function mergeDeep(target, source) {
+    if (typeof target !== 'object')
+        return;
+    if (typeof source !== 'object')
+        return;
+    for (const key in source) {
+        const sourceVal = source[key];
+        const targetVal = target[key];
+        if (!sourceVal)
+            continue; //TODO:  null out property?
+        if (!targetVal) {
+            target[key] = sourceVal;
+            continue;
+        }
+        switch (typeof sourceVal) {
+            case 'object':
+                switch (typeof targetVal) {
+                    case 'object':
+                        mergeDeep(targetVal, sourceVal);
+                        break;
+                    default:
+                        //console.log(key);
+                        target[key] = sourceVal;
+                        break;
+                }
+                break;
+            default:
+                target[key] = sourceVal;
+        }
+    }
+    return target;
 }
 const level = 'level';
 /**
@@ -467,38 +540,6 @@ class XtalStateCommit extends WithPath(XtalStateBase) {
 define(XtalStateCommit);
 class XtalStateUpdate extends XtalStateCommit {
     static get is() { return 'xtal-state-update'; }
-    mergeDeep(target, source) {
-        if (typeof target !== 'object')
-            return;
-        if (typeof source !== 'object')
-            return;
-        for (const key in source) {
-            const sourceVal = source[key];
-            const targetVal = target[key];
-            if (!sourceVal)
-                continue; //TODO:  null out property?
-            if (!targetVal) {
-                target[key] = sourceVal;
-                continue;
-            }
-            switch (typeof sourceVal) {
-                case 'object':
-                    switch (typeof targetVal) {
-                        case 'object':
-                            this.mergeDeep(targetVal, sourceVal);
-                            break;
-                        default:
-                            //console.log(key);
-                            target[key] = sourceVal;
-                            break;
-                    }
-                    break;
-                default:
-                    target[key] = sourceVal;
-            }
-        }
-        return target;
-    }
     mergedHistory() {
         const sm = super.mergedHistory();
         if (sm === undefined)
@@ -506,7 +547,7 @@ class XtalStateUpdate extends XtalStateCommit {
         if (this._window.history.state === null)
             return sm;
         const retObj = Object.assign({}, this._window.history.state);
-        return this.mergeDeep(retObj, this.wrap(this._history));
+        return mergeDeep(retObj, this.wrap(this._history));
     }
 }
 define(XtalStateUpdate);
