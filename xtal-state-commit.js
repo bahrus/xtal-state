@@ -1,5 +1,6 @@
 import { XtalStateBase } from './xtal-state-base.js';
 import { WithPath, with_path } from 'xtal-latx/with-path.js';
+import { UrlFormatter } from './url-formatter.js';
 import { define } from 'xtal-latx/define.js';
 import { debounce } from 'xtal-latx/debounce.js';
 const make = 'make';
@@ -7,9 +8,6 @@ const rewrite = 'rewrite';
 const history$ = 'history';
 //const wherePath = 'where-path';
 const title = 'title';
-const url = 'url';
-const url_search = 'url-search';
-const replace_url_value = 'replace-url-value';
 const new$$ = 'new';
 /**
  * `xtal-state-commit`
@@ -19,7 +17,7 @@ const new$$ = 'new';
  * @polymer
  * @demo demo/index.html
  */
-export class XtalStateCommit extends WithPath(XtalStateBase) {
+export class XtalStateCommit extends UrlFormatter(WithPath(XtalStateBase)) {
     constructor() {
         super(...arguments);
         this._title = '';
@@ -62,44 +60,11 @@ export class XtalStateCommit extends WithPath(XtalStateBase) {
     set title(val) {
         this.attr(title, val);
     }
-    /**
-     * URL to use when calling push/replace state
-     */
-    get url() {
-        return this._url;
-    }
-    set url(val) {
-        this.attr(url, val);
-    }
-    /**
-     * Regular expression to search url for.
-     */
-    get urlSearch() {
-        return this._urlSearch;
-    }
-    set urlSearch(val) {
-        this.attr(url_search, val);
-    }
-    get stringifyFn() {
-        return this._stringifyFn;
-    }
-    set stringifyFn(nv) {
-        this._stringifyFn = nv;
-    }
     set syncHistory(nv) {
         this.value = nv;
         this.de('history', {
             value: nv
         });
-    }
-    /**
-     * Replace URL expression, coupled with urlSearch
-     */
-    get replaceUrlValue() {
-        return this._replaceUrlValue;
-    }
-    set replaceUrlValue(val) {
-        this.attr(replace_url_value, val);
     }
     get new() {
         return this._new;
@@ -108,7 +73,7 @@ export class XtalStateCommit extends WithPath(XtalStateBase) {
         this.attr(new$$, v, '');
     }
     static get observedAttributes() {
-        return super.observedAttributes.concat([make, rewrite, title, url, with_path, url_search, replace_url_value, new$$]);
+        return super.observedAttributes.concat(super.UFAttribs).concat([make, rewrite, title, with_path, new$$]);
     }
     attributeChangedCallback(n, ov, nv) {
         switch (n) {
@@ -117,18 +82,11 @@ export class XtalStateCommit extends WithPath(XtalStateBase) {
             case make:
                 this['_' + n] = nv !== null;
                 break;
-            case url:
             case title:
                 this['_' + n] = nv;
                 break;
             case with_path:
                 this._withPath = nv;
-                break;
-            case url_search:
-                this._urlSearch = nv;
-                break;
-            case replace_url_value:
-                this._replaceUrlValue = nv;
                 break;
         }
         super.attributeChangedCallback(n, ov, nv);
@@ -136,7 +94,7 @@ export class XtalStateCommit extends WithPath(XtalStateBase) {
     }
     //_connected!: boolean;
     connectedCallback() {
-        this._upgradeProperties([make, rewrite, title, url, 'withPath', 'urlSearch', 'replaceUrlValue', 'stringifyFn', new$$].concat([history$]));
+        this._upgradeProperties([make, rewrite, title, 'withPath', 'stringifyFn', new$$].concat([history$]));
         this._debouncer = debounce(() => {
             this.updateHistory();
         }, 50);
@@ -186,14 +144,10 @@ export class XtalStateCommit extends WithPath(XtalStateBase) {
             }
         }
         if (!url)
+            return null;
+        url = this.adjustUrl(url);
+        if (url === null)
             return;
-        if (this._stringifyFn) {
-            url = this._stringifyFn(this);
-        }
-        else if (this._replaceUrlValue && this._urlSearch) {
-            const reg = new RegExp(this._urlSearch);
-            url = url.replace(reg, this._replaceUrlValue);
-        }
         this._window.history[method + 'State'](hist, this._title, url);
     }
 }
