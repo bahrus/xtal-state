@@ -67,17 +67,17 @@ export class XtalStateCommit extends UrlFormatter(WithPath(XtalStateBase)) {
 
 
 
-    _syncHistory: any;
-    get syncHistory(){
-        return this._syncHistory;
-    }
-    set syncHistory(nv){
-        this._syncHistory = nv;
-        this.value = nv;
-        this.de('history',{
-            value: nv
-        });
-    }
+    // _syncHistory: any;
+    // get syncHistory(){
+    //     return this._syncHistory;
+    // }
+    // set syncHistory(nv){
+    //     this._syncHistory = nv;
+    //     this.value = nv;
+    //     this.de('history',{
+    //         value: nv
+    //     });
+    // }
 
 
     _new: boolean;

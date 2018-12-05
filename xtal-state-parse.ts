@@ -83,7 +83,7 @@ export class XtalStateParse extends XtalStateBase{
             }, 50);
             return;
         }
-        if(this._initHistoryIfNull && this._window.history.state !== null){
+        if(this._window.history.state !== null){
             return;
         }
         let value: any = null;

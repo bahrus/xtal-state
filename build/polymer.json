@@ -6,7 +6,7 @@
     "xtal-state-update.js",
     "xtal-state-watch.js",
     "xtal-state-parse.js",
-    "xtal-state.js",
+    "dist/xtal-state.iife.js",
     "index.html"
   ],
   "extraDependencies": [
@@ -16,15 +16,8 @@
     {
       "name": "ES5",
       "js": {
-        "minify": true,
+        "minify": false,
         "compile": true
-      }
-    },
-    {
-      "name": "ES6",
-      "js": {
-        "minify": true,
-        "compile": false
       }
     }
   ],

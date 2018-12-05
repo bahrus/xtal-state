@@ -87,7 +87,7 @@ function XtallatX(superClass) {
          * @param detail Information to be passed with the event
          * @param asIs If true, don't append event name with '-changed'
          */
-        de(name, detail, asIs) {
+        de(name, detail, asIs = false) {
             const eventName = name + (asIs ? '' : '-changed');
             const newEvent = new CustomEvent(eventName, {
                 detail: detail,
@@ -472,16 +472,6 @@ class XtalStateCommit extends UrlFormatter(WithPath(XtalStateBase)) {
     set title(val) {
         this.attr(title, val);
     }
-    get syncHistory() {
-        return this._syncHistory;
-    }
-    set syncHistory(nv) {
-        this._syncHistory = nv;
-        this.value = nv;
-        this.de('history', {
-            value: nv
-        });
-    }
     get new() {
         return this._new;
     }
@@ -769,7 +759,7 @@ class XtalStateParse extends XtalStateBase {
             }, 50);
             return;
         }
-        if (this._initHistoryIfNull && this._window.history.state !== null) {
+        if (this._window.history.state !== null) {
             return;
         }
         let value = null;
