@@ -2,7 +2,7 @@
 
 <a href="https://nodei.co/npm/xtal-state/"><img src="https://nodei.co/npm/xtal-state.png"></a>
 
-File size of all components combined <img src="http://img.badgesize.io/https://unpkg.com/xtal-state@0.0.57/dist/xtal-state.iife.js?compression=gzip">
+File size of all components combined <img src="http://img.badgesize.io/https://unpkg.com/xtal-state@0.0.57/dist/xtal-state.iife.min.js?compression=gzip">
 
 # \<xtal-state\>
 
