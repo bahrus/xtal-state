@@ -2,7 +2,7 @@
 
 <a href="https://nodei.co/npm/xtal-state/"><img src="https://nodei.co/npm/xtal-state.png"></a>
 
-File size of all components combined <img src="http://img.badgesize.io/https://unpkg.com/xtal-state@0.0.57/dist/xtal-state.iife.min.js?compression=gzip">
+File size of all components combined <img src="http://img.badgesize.io/https://unpkg.com/xtal-state@0.0.59/dist/xtal-state.iife.min.js?compression=gzip">
 
 # \<xtal-state\>
 
@@ -131,7 +131,7 @@ Syntax:
 
 ### Parsing
 
-xtal-state-parse is another web component that helps with parsing the address bar url and, often, populating history.state object when the page loads (but only if no history.state is found to start with). 
+xtal-state-parse is another web component that helps with parsing the address bar url and, often, populating history.state object when the page loads. 
 
 There are two distinctly different scenarios for how this can work.  For now xtal-state-parse (at least one instance thereof) assumes you are adopting one or the other scenario:
 
