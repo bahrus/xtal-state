@@ -4,6 +4,7 @@ const with_url_pattern = 'with-url-pattern';
 const parse = 'parse';
 const init_history_if_null = 'init-history-if-null';
 
+
 export class XtalStateParse extends XtalStateBase{
     static get is(){return 'xtal-state-parse';}
     static get observedAttributes(){return super.observedAttributes.concat([with_url_pattern, parse, init_history_if_null])}
@@ -75,6 +76,7 @@ export class XtalStateParse extends XtalStateBase{
         this._noMatch = val;
         this.attr('no-match', val.toString());
     }
+    _checkedNull: boolean = false;
     onParsePropsChange(){
         if(this._disabled || this.value || this.noMatch) return;
         if(!this._window){
@@ -83,9 +85,13 @@ export class XtalStateParse extends XtalStateBase{
             }, 50);
             return;
         }
-        if(this._window.history.state !== null){
-            return;
+        if(!this._checkedNull){
+            if(this._window.history.state === null){
+                this.dataset.historyWasNull = 'true';
+            }
+            this._checkedNull = true;
         }
+
         let value: any = null;
         if(this._withURLPattern){
             value = XtalStateParse.parseAddressBar(this._parse, this._withURLPattern, this._window);
@@ -108,7 +114,7 @@ export class XtalStateParse extends XtalStateBase{
                 value: value
             }, true);
         }
-        if(this._initHistoryIfNull) this._window.history.replaceState(value, '', this._window.location.href);
+        if(this._initHistoryIfNull && (this._window.history.state !== null)) this._window.history.replaceState(value, '', this._window.location.href);
     }
 
     static getObj(parsePath, winObj: Window){

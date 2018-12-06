@@ -9,8 +9,12 @@ function (_XtalStateBase) {
   babelHelpers.inherits(XtalStateParse, _XtalStateBase);
 
   function XtalStateParse() {
+    var _this;
+
     babelHelpers.classCallCheck(this, XtalStateParse);
-    return babelHelpers.possibleConstructorReturn(this, babelHelpers.getPrototypeOf(XtalStateParse).apply(this, arguments));
+    _this = babelHelpers.possibleConstructorReturn(this, babelHelpers.getPrototypeOf(XtalStateParse).apply(this, arguments));
+    _this._checkedNull = false;
+    return _this;
   }
 
   babelHelpers.createClass(XtalStateParse, [{
@@ -51,19 +55,23 @@ function (_XtalStateBase) {
   }, {
     key: "onParsePropsChange",
     value: function onParsePropsChange() {
-      var _this = this;
+      var _this2 = this;
 
       if (this._disabled || this.value || this.noMatch) return;
 
       if (!this._window) {
         setTimeout(function () {
-          _this.onParsePropsChange();
+          _this2.onParsePropsChange();
         }, 50);
         return;
       }
 
-      if (this._window.history.state !== null) {
-        return;
+      if (!this._checkedNull) {
+        if (this._window.history.state === null) {
+          this.dataset.historyWasNull = 'true';
+        }
+
+        this._checkedNull = true;
       }
 
       var value = null;
@@ -91,7 +99,7 @@ function (_XtalStateBase) {
         }, true);
       }
 
-      if (this._initHistoryIfNull) this._window.history.replaceState(value, '', this._window.location.href);
+      if (this._initHistoryIfNull && this._window.history.state !== null) this._window.history.replaceState(value, '', this._window.location.href);
     }
   }, {
     key: "withURLPattern",

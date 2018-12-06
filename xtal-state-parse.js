@@ -4,6 +4,10 @@ const with_url_pattern = 'with-url-pattern';
 const parse = 'parse';
 const init_history_if_null = 'init-history-if-null';
 export class XtalStateParse extends XtalStateBase {
+    constructor() {
+        super(...arguments);
+        this._checkedNull = false;
+    }
     static get is() { return 'xtal-state-parse'; }
     static get observedAttributes() { return super.observedAttributes.concat([with_url_pattern, parse, init_history_if_null]); }
     attributeChangedCallback(name, oldVal, newVal) {
@@ -72,8 +76,11 @@ export class XtalStateParse extends XtalStateBase {
             }, 50);
             return;
         }
-        if (this._window.history.state !== null) {
-            return;
+        if (!this._checkedNull) {
+            if (this._window.history.state === null) {
+                this.dataset.historyWasNull = 'true';
+            }
+            this._checkedNull = true;
         }
         let value = null;
         if (this._withURLPattern) {
@@ -98,7 +105,7 @@ export class XtalStateParse extends XtalStateBase {
                 value: value
             }, true);
         }
-        if (this._initHistoryIfNull)
+        if (this._initHistoryIfNull && (this._window.history.state !== null))
             this._window.history.replaceState(value, '', this._window.location.href);
     }
     static getObj(parsePath, winObj) {
