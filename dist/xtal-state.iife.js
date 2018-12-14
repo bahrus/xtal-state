@@ -239,7 +239,7 @@ function getIFrmWin(par, callBack) {
     let ifr = par.querySelector('iframe[xtal-state]');
     if (ifr === null) {
         ifr = document.createElement('iframe');
-        //ifr.src = 'about:blank';
+        const lnk = document.head.querySelector('link[rel="shortcut icon"]');
         ifr.setAttribute('xtal-state', '');
         ifr.addEventListener('load', () => {
             ifr.setAttribute('loaded', '');

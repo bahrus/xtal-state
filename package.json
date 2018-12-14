@@ -3,14 +3,15 @@
   "description": "Web component wrapper around the history api",
   "version": "0.0.59",
   "main": "xtal-state-parse.js",
+  "module": "xtal-state-parse.js",
   "repository": "https://github.com/bahrus/xtal-state",
   "author": "bahrus <anderson.bruce.b@gmail.com>",
   "license": "MIT",
   "dependencies": {
-    "xtal-latx": "0.0.82"
+    "xtal-latx": "0.0.85"
   },
   "devDependencies": {
     "@webcomponents/webcomponentsjs": "^2.0.0",
-    "jiife": "0.0.9"
+    "jiife": "0.0.10"
   }
 }

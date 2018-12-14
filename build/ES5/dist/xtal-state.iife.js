@@ -315,8 +315,8 @@
     var ifr = par.querySelector('iframe[xtal-state]');
 
     if (ifr === null) {
-      ifr = document.createElement('iframe'); //ifr.src = 'about:blank';
-
+      ifr = document.createElement('iframe');
+      var lnk = document.head.querySelector('link[rel="shortcut icon"]');
       ifr.setAttribute('xtal-state', '');
       ifr.addEventListener('load', function () {
         ifr.setAttribute('loaded', '');

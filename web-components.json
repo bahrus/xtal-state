@@ -1,0 +1,107 @@
+{
+    "tags":[
+        {
+            "label": "xtal-state-parse",
+            "description": "Parses the address bar url, and can populate history.state object when the page loads.",
+            "attributes":[
+                {
+                    "label":"disabled",
+                    "description":"Nothing happens if this property is set / attribute is present."
+                },{
+                    "label":"level",
+                    "description": "Specifies the context window where history.state should be modified.  Reserved values are global, shadow, local."
+                },{
+                    "label":"parse",
+                    "description": "Must be true for anything to happen"
+                },{
+                    "label":"with-url-pattern",
+                    "description":"Pattern to match for, using ES2018 named capture groups"
+                },{
+                    "label":"init-history-if-null",
+                    "description":"Place parsed object into history.state if history.state is null"
+                }
+            ]
+        },{
+            "label": "xtal-state-watch",
+            "description":"Watch for history.state changes",
+            "attributes":[
+                {
+                    "label":"disabled",
+                    "description":"Nothing happens if this property is set / attribute is present."
+                },{
+                    "label":"level",
+                    "description": "Specifies the context window where history.state should be modified.  Reserved values are global, shadow, local."
+                },{
+                    "label":"watch",
+                    "description":"Indicates what type of history changes to watch for, and notify via 'history-changed' event.  Possible values are all and popstate.  If not present, history won't be watched.  If popstate, initial history will also be noted."
+                }             
+            ]
+        },{
+            "label": "xtal-state-commit",
+            "description":"Write to the history.state.",
+            "attributes":[
+                {
+                    "label":"disabled",
+                    "description":"Nothing happens if this property is set / attribute is present."
+                },{
+                    "label":"level",
+                    "description": "Specifies the context window where history.state should be modified.  Reserved values are global, shadow, local."
+                },{
+                    "label":"make",
+                    "description":"If true/present, history.state will be replaced, not adding to history stack."
+                },{
+                    "label":"write",
+                    "description":"If true/present, history.state will be appended to, adding to history stack."
+                },{
+                    "label": "title",
+                    "description":"Title to use when updating history.state"
+                },{
+                    "label": "new",
+                    "description" :"If history  is null, initialize history to empty {} object."
+                },{
+                    "label": "url",
+                    "description": "URL to use when calling push/replace state"
+                },{
+                    "label": "url-search",
+                    "description": "Regular expression to search url for."
+                },{
+                    "label": "replace-url-value",
+                    "description": "Regular expression to replace url with"
+                }              
+            ]
+        },{
+            "label": "xtal-state-update",
+            "description":"Extends xtal-state-commit, but history changes are merged.",
+            "attributes":[
+                {
+                    "label":"disabled",
+                    "description":"Nothing happens if this property is set / attribute is present."
+                },{
+                    "label":"level",
+                    "description": "Specifies the context window where history.state should be modified.  Reserved values are global, shadow, local."
+                },{
+                    "label":"make",
+                    "description":"If true/present, history.state will be replaced, not adding to history stack."
+                },{
+                    "label":"write",
+                    "description":"If true/present, history.state will be appended to, adding to history stack."
+                },{
+                    "label": "title",
+                    "description":"Title to use when updating history.state"
+                },{
+                    "label": "new",
+                    "description" :"If history  is null, initialize history to empty {} object."
+                },{
+                    "label": "url",
+                    "description": "URL to use when calling push/replace state"
+                },{
+                    "label": "url-search",
+                    "description": "Regular expression to search url for."
+                },{
+                    "label": "replace-url-value",
+                    "description": "Regular expression to replace url with"
+                }              
+            ]
+        }
+    ]
+}

@@ -12,7 +12,7 @@ One of the goals of xtal-state is that it be scalable (think [Scala](https://www
 
 ## Problem Statement I -- Object-centric routing
 
-At the simplest level, it can provide part of a routing solution (but a view selector component, such as [carbon-copy](https://www.webcomponents.org/element/carbon-copy) is needed, in combination with these components for a full routing implementation).  But unlike typical routing solutions, perhaps, xtal-state* views the history.state object as the focal point, and the address bar as a subservient recorder of the history.state object.
+At the simplest level, it can provide part of a routing solution (but a view selector component, such as [if-diff](https://www.webcomponents.org/element/if-diff) is needed, in combination with these components for a full routing implementation).  But unlike typical routing solutions, perhaps, xtal-state* views the history.state object as the focal point, and the address bar as a subservient recorder of the history.state object.
 
 At the other extreme, consider the following two problem statements.
 
@@ -74,6 +74,24 @@ Basically what we need is a miniature, 1 kb git client running in the browser, c
 
 *Doing her due diligence, Guinan visited alternate timelines where parallel Guinan's had tried the same thing. Guinan found one timeline where a mass inter-galactic civil-war had broken out.  The cause?  One of the web components had code that would update the window.history.state object.  This inadvertently caused another outposts's web component to initiate war with the Romulans.*   
 
+## Demo
+
+Here is a [demo](https://bahrus.github.io/purr-sist-demos/Example3.htm), which shows the outline of how these components, combined with [purr-sist](https://www.webcomponents.org/element/purr-sist) can be used to create "git in the browser."
+
+## Syntax
+
+<!--
+```
+<custom-element-demo>
+<template>
+    <div>
+        <wc-info package-name="npm install xtal-state" href="https://unpkg.com/xtal-state@0.0.60/web-components.json"></wc-info>
+        <script type="module" src="https://unpkg.com/wc-info@0.0.12/wc-info.js?module"></script>
+    </div>
+</template>
+</custom-element-demo>
+```
+-->
 
 ## Updating history.state
 
@@ -104,9 +122,9 @@ The value of url can be hardcoded, as shown above, or set programmatically.  A t
 
 [Possible enhancement, TODO]:  To help make this more useful, if the "url" property is empty (and no stringify-fn is specified, discussed below), the component will [alphabetize](https://stackoverflow.com/questions/16167581/sort-object-properties-and-json-stringify) the properties of the history object, and then apply the regular expression replace]
 
-But as universal support for ES2018 is some time off, this is a kind of pie-in-the untested idea for now.
+But as universal support for ES2018 is some time off, this is a kind of pie-in-the-sky untested idea for now.
 
-In the meantime, there's a property, stringify-fn, which is passed the the instance of xtal-state, which can return the acual url used in the history.push/replace call.
+In the meantime, there's a property, stringify-fn, which is passed the instance of xtal-state, which can return the actual url used in the history.push/replace call.
 
 ## Observing history.state
 
@@ -140,7 +158,7 @@ There are two distinctly different scenarios for how this can work.  For now xta
 
 In the Routing 101 scenario, xtal-state-parse will initialize history.state, only if history.state starts out null.  
 
-In the 'git in the browser scenario", xtal-state-parse simply emits an event with the decoded id (or really, the parsed object, which may contain more information than a single id), and lets other components take it from there.  In this scenario, xtal-state-parse leaves the history untouched.
+In the 'git in the browser scenario", xtal-state-parse simply emits an event with the decoded id (or really, the parsed object, which may contain more information than a single id), and lets other components take it from there.  In this scenario, xtal-state-parse leaves the history untouched.  The event (and dynamic attributes of xtal-state-parse) let other components know whether history started out null or not.
 
 To let xtal-state-parse know which scenario is desired, for scenario 1 (routing 101) set attribute:  "init-history-if-null".  If that attribute isn't present, xtal-state-parse just emits an event "match-found," passing the matched object, or "no-match-found".
 
@@ -186,7 +204,7 @@ No.  Remember, xtal-state views history.state as the focal point, not the addres
 
 ## xtal-state.js
 
-All four files are combined into a single IIFE class script file, xtal-state.js, which totals ~3.4 kb minified and gzipped.  
+All four files are combined into a single IIFE class script file, dist/xtal-state.iife.js or dist/xtal-state.iife.min.js.  
 
 
 ## Programmatic API
