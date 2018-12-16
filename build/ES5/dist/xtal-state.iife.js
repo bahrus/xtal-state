@@ -304,6 +304,20 @@
     return target;
   }
 
+  function getHost(el) {
+    var parent = el;
+
+    while (parent = parent.parentNode) {
+      if (parent.nodeType === 11) {
+        return parent['host'];
+      } else if (parent.tagName === 'BODY') {
+        return null;
+      }
+    }
+
+    return null;
+  }
+
   var level = 'level';
   /**
    *
@@ -315,8 +329,8 @@
     var ifr = par.querySelector('iframe[xtal-state]');
 
     if (ifr === null) {
-      ifr = document.createElement('iframe');
-      var lnk = document.head.querySelector('link[rel="shortcut icon"]');
+      ifr = document.createElement('iframe'); //ifr.src = 'about:blank';
+
       ifr.setAttribute('xtal-state', '');
       ifr.addEventListener('load', function () {
         ifr.setAttribute('loaded', '');

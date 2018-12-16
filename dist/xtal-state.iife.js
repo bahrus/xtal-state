@@ -229,6 +229,18 @@ function mergeDeep(target, source) {
     }
     return target;
 }
+function getHost(el) {
+    let parent = el;
+    while (parent = (parent.parentNode)) {
+        if (parent.nodeType === 11) {
+            return parent['host'];
+        }
+        else if (parent.tagName === 'BODY') {
+            return null;
+        }
+    }
+    return null;
+}
 const level = 'level';
 /**
  *
@@ -239,7 +251,7 @@ function getIFrmWin(par, callBack) {
     let ifr = par.querySelector('iframe[xtal-state]');
     if (ifr === null) {
         ifr = document.createElement('iframe');
-        const lnk = document.head.querySelector('link[rel="shortcut icon"]');
+        //ifr.src = 'about:blank';
         ifr.setAttribute('xtal-state', '');
         ifr.addEventListener('load', () => {
             ifr.setAttribute('loaded', '');

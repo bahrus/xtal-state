@@ -2,7 +2,7 @@
 
 <a href="https://nodei.co/npm/xtal-state/"><img src="https://nodei.co/npm/xtal-state.png"></a>
 
-File size of all components combined <img src="http://img.badgesize.io/https://unpkg.com/xtal-state@0.0.59/dist/xtal-state.iife.min.js?compression=gzip">
+File size of all components combined <img src="http://img.badgesize.io/https://unpkg.com/xtal-state@0.0.61/dist/xtal-state.iife.min.js?compression=gzip">
 
 # \<xtal-state\>
 
@@ -86,7 +86,7 @@ Here is a [demo](https://bahrus.github.io/purr-sist-demos/Example3.htm), which s
 <template>
     <div>
         <wc-info package-name="npm install xtal-state" href="https://unpkg.com/xtal-state@0.0.60/web-components.json"></wc-info>
-        <script type="module" src="https://unpkg.com/wc-info@0.0.12/wc-info.js?module"></script>
+        <script type="module" src="https://unpkg.com/wc-info@0.0.13/wc-info.js?module"></script>
     </div>
 </template>
 </custom-element-demo>
