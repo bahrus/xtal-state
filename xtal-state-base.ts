@@ -37,6 +37,10 @@ function getMchPar(el: HTMLElement, level: string){
         test = test.parentElement;
     }
 }
+function getSC(el: HTMLElement){
+    const test = getHost(el);
+    return test.shadowRoot === null ? test : test.shadowRoot;
+}
 export function getWinCtx(el: HTMLElement, level: string){
     const _t = this;
     return new Promise((resolve, reject) => {
@@ -48,7 +52,7 @@ export function getWinCtx(el: HTMLElement, level: string){
                 getIFrmWin(el.parentElement, ifrm => resolve(ifrm.contentWindow));
                 break;
             case "shadow":
-                getIFrmWin(getHost(el), ifrm => resolve(ifrm.contentWindow));
+                getIFrmWin(getSC(el), ifrm => resolve(ifrm.contentWindow));
                 break;
             default:
                 getIFrmWin(getMchPar(el, level), ifrm => resolve(ifrm.contentWindow));
@@ -89,13 +93,7 @@ export class XtalStateBase extends XtallatX(HTMLElement){
     }
     _notReady!: boolean;
 
-    // getMchPar(){
-    //     let test = this.parentElement;
-    //     while(test){
-    //         if(test.matches(this.level)) return test;
-    //         test = test.parentElement;
-    //     }
-    // }
+    
     onPropsChange(){
         if(!this._conn || this._disabled) return true;
         if(!this._window){

@@ -361,6 +361,11 @@
     }
   }
 
+  function getSC(el) {
+    var test = getHost(el);
+    return test.shadowRoot === null ? test : test.shadowRoot;
+  }
+
   function getWinCtx(el, level) {
     var _t = this;
 
@@ -377,7 +382,7 @@
           break;
 
         case "shadow":
-          getIFrmWin(getHost(el), function (ifrm) {
+          getIFrmWin(getSC(el), function (ifrm) {
             return resolve(ifrm.contentWindow);
           });
           break;
@@ -426,14 +431,7 @@
 
         this._conn = true;
         this.onPropsChange();
-      } // getMchPar(){
-      //     let test = this.parentElement;
-      //     while(test){
-      //         if(test.matches(this.level)) return test;
-      //         test = test.parentElement;
-      //     }
-      // }
-
+      }
     }, {
       key: "onPropsChange",
       value: function onPropsChange() {
