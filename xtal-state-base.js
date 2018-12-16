@@ -44,6 +44,7 @@ function getMchPar(el, level) {
     }
 }
 export function getWinCtx(el, level) {
+    const _t = this;
     return new Promise((resolve, reject) => {
         switch (level) {
             case "global":
@@ -53,10 +54,10 @@ export function getWinCtx(el, level) {
                 getIFrmWin(el.parentElement, ifrm => resolve(ifrm.contentWindow));
                 break;
             case "shadow":
-                this._window = getIFrmWin(getHost(this), ifrm => resolve(ifrm.contentWindow));
+                getIFrmWin(getHost(el), ifrm => resolve(ifrm.contentWindow));
                 break;
             default:
-                this._window = getIFrmWin(getMchPar(el, level), ifrm => resolve(ifrm.contentWindow));
+                getIFrmWin(getMchPar(el, level), ifrm => resolve(ifrm.contentWindow));
         }
     });
 }
