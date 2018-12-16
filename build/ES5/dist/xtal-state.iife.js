@@ -362,7 +362,7 @@
   }
 
   function getWinCtx(el, level) {
-    var _this4 = this;
+    var _t = this;
 
     return new Promise(function (resolve, reject) {
       switch (level) {
@@ -377,13 +377,13 @@
           break;
 
         case "shadow":
-          _this4._window = getIFrmWin(getHost(_this4), function (ifrm) {
+          getIFrmWin(getHost(el), function (ifrm) {
             return resolve(ifrm.contentWindow);
           });
           break;
 
         default:
-          _this4._window = getIFrmWin(getMchPar(el, level), function (ifrm) {
+          getIFrmWin(getMchPar(el, level), function (ifrm) {
             return resolve(ifrm.contentWindow);
           });
       }
@@ -396,12 +396,12 @@
     babelHelpers.inherits(XtalStateBase, _XtallatX);
 
     function XtalStateBase() {
-      var _this5;
+      var _this4;
 
       babelHelpers.classCallCheck(this, XtalStateBase);
-      _this5 = babelHelpers.possibleConstructorReturn(this, babelHelpers.getPrototypeOf(XtalStateBase).apply(this, arguments));
-      _this5._level = 'global';
-      return _this5;
+      _this4 = babelHelpers.possibleConstructorReturn(this, babelHelpers.getPrototypeOf(XtalStateBase).apply(this, arguments));
+      _this4._level = 'global';
+      return _this4;
     }
 
     babelHelpers.createClass(XtalStateBase, [{
@@ -437,15 +437,15 @@
     }, {
       key: "onPropsChange",
       value: function onPropsChange() {
-        var _this6 = this;
+        var _this5 = this;
 
         if (!this._conn || this._disabled) return true;
 
         if (!this._window) {
           this._notReady = true;
           getWinCtx(this, this._level).then(function (win) {
-            _this6._window = win;
-            _this6._notReady = false;
+            _this5._window = win;
+            _this5._notReady = false;
           });
         }
 
@@ -602,12 +602,12 @@
     babelHelpers.inherits(XtalStateCommit, _UrlFormatter);
 
     function XtalStateCommit() {
-      var _this7;
+      var _this6;
 
       babelHelpers.classCallCheck(this, XtalStateCommit);
-      _this7 = babelHelpers.possibleConstructorReturn(this, babelHelpers.getPrototypeOf(XtalStateCommit).apply(this, arguments));
-      _this7._title = '';
-      return _this7;
+      _this6 = babelHelpers.possibleConstructorReturn(this, babelHelpers.getPrototypeOf(XtalStateCommit).apply(this, arguments));
+      _this6._title = '';
+      return _this6;
     }
 
     babelHelpers.createClass(XtalStateCommit, [{
@@ -635,12 +635,12 @@
     }, {
       key: "connectedCallback",
       value: function connectedCallback() {
-        var _this8 = this;
+        var _this7 = this;
 
         this._upgradeProperties([make, rewrite, title, 'withPath', 'stringifyFn', new$$, 'syncHistory'].concat([history$]));
 
         this._debouncer = debounce(function () {
-          _this8.updateHistory();
+          _this7.updateHistory();
         }, 50); //this._connected = true;
 
         babelHelpers.get(babelHelpers.getPrototypeOf(XtalStateCommit.prototype), "connectedCallback", this).call(this);
@@ -648,14 +648,14 @@
     }, {
       key: "onPropsChange",
       value: function onPropsChange() {
-        var _this9 = this;
+        var _this8 = this;
 
         if (this._disabled) return;
 
         if (babelHelpers.get(babelHelpers.getPrototypeOf(XtalStateCommit.prototype), "onPropsChange", this).call(this)) {
           if (this._notReady) {
             setTimeout(function () {
-              _this9.onPropsChange();
+              _this8.onPropsChange();
             }, 50);
             return;
           }
@@ -848,11 +848,11 @@
     }, {
       key: "addSubscribers",
       value: function addSubscribers() {
-        var _this10 = this;
+        var _this9 = this;
 
         if (this._notReady) {
           setTimeout(function () {
-            _this10.addSubscribers();
+            _this9.addSubscribers();
           }, 50);
           return;
         }
@@ -977,12 +977,12 @@
     babelHelpers.inherits(XtalStateParse, _XtalStateBase2);
 
     function XtalStateParse() {
-      var _this11;
+      var _this10;
 
       babelHelpers.classCallCheck(this, XtalStateParse);
-      _this11 = babelHelpers.possibleConstructorReturn(this, babelHelpers.getPrototypeOf(XtalStateParse).apply(this, arguments));
-      _this11._checkedNull = false;
-      return _this11;
+      _this10 = babelHelpers.possibleConstructorReturn(this, babelHelpers.getPrototypeOf(XtalStateParse).apply(this, arguments));
+      _this10._checkedNull = false;
+      return _this10;
     }
 
     babelHelpers.createClass(XtalStateParse, [{
@@ -1023,13 +1023,13 @@
     }, {
       key: "onParsePropsChange",
       value: function onParsePropsChange() {
-        var _this12 = this;
+        var _this11 = this;
 
         if (this._disabled || this.value || this.noMatch) return;
 
         if (!this._window) {
           setTimeout(function () {
-            _this12.onParsePropsChange();
+            _this11.onParsePropsChange();
           }, 50);
           return;
         }
