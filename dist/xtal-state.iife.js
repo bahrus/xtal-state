@@ -242,70 +242,6 @@ function getHost(el) {
     return null;
 }
 const level = 'level';
-/**
- *
- * @param par Parent or document fragment which should mantain regional state
- * @param _t XtalStateBase element
- */
-function getIFrmWin(par, callBack) {
-    let ifr = par.querySelector('iframe[xtal-state]');
-    if (ifr === null) {
-        ifr = document.createElement('iframe');
-        //ifr.src = 'about:blank';
-        ifr.setAttribute('xtal-state', '');
-        ifr.addEventListener('load', () => {
-            ifr.setAttribute('loaded', '');
-            if (callBack !== null)
-                callBack(ifr);
-        });
-        ifr.src = 'blank.html';
-        ifr.style.display = 'none';
-        par.appendChild(ifr);
-    }
-    else {
-        if (!ifr.hasAttribute('loaded')) {
-            ifr.addEventListener('load', () => {
-                if (callBack !== null)
-                    callBack(ifr);
-            });
-        }
-        else {
-            if (callBack !== null)
-                callBack(ifr);
-        }
-    }
-    return ifr.contentWindow;
-}
-function getMchPar(el, level) {
-    let test = el.parentElement;
-    while (test) {
-        if (test.matches(level))
-            return test;
-        test = test.parentElement;
-    }
-}
-function getSC(el) {
-    const test = getHost(el);
-    return test.shadowRoot === null ? test : test.shadowRoot;
-}
-function getWinCtx(el, level) {
-    const _t = this;
-    return new Promise((resolve, reject) => {
-        switch (level) {
-            case "global":
-                resolve(self);
-                break;
-            case "local":
-                getIFrmWin(el.parentElement, ifrm => resolve(ifrm.contentWindow));
-                break;
-            case "shadow":
-                getIFrmWin(getSC(el), ifrm => resolve(ifrm.contentWindow));
-                break;
-            default:
-                getIFrmWin(getMchPar(el, level), ifrm => resolve(ifrm.contentWindow));
-        }
-    });
-}
 class XtalStateBase extends XtallatX(HTMLElement) {
     constructor() {
         super(...arguments);
@@ -582,6 +518,7 @@ class XtalStateUpdate extends XtalStateCommit {
 }
 define(XtalStateUpdate);
 const watch = 'watch';
+const all = 'all';
 const xtal_subscribers = 'xtal-subscribers';
 const popstate = 'popstate';
 //const once = 'once';
@@ -593,9 +530,6 @@ function remove(array, element) {
 }
 class XtalStateWatch extends XtalStateBase {
     static get is() { return 'xtal-state-watch'; }
-    constructor() {
-        super();
-    }
     static get observedAttributes() {
         return super.observedAttributes.concat([watch]);
     }
@@ -603,10 +537,26 @@ class XtalStateWatch extends XtalStateBase {
         super.attributeChangedCallback(name, oldValue, nv);
         switch (name) {
             case watch:
-                this._watch = (nv === '') ? 'all' : popstate;
+                this._watch = (nv === '') ? all : popstate;
                 break;
         }
         this.notify();
+    }
+    pushReplaceHandler(e) {
+        const win = this._window;
+        const detail = e.detail;
+        if (detail.newState && win.__xtalStateInfo.startedAsNull && !win.__xtalStateInfo.hasStarted) {
+            win.__xtalStateInfo.hasStarted;
+            this.dataset.popstate = 'true';
+        }
+        else {
+            delete this.dataset.popstate;
+        }
+        this.history = this._window.history.state;
+    }
+    popStateHandler(e) {
+        this.dataset.popstate = 'true';
+        this.history = this._window.history.state;
     }
     addSubscribers() {
         if (this._notReady) {
@@ -616,34 +566,26 @@ class XtalStateWatch extends XtalStateBase {
             return;
         }
         const win = this._window;
-        if (!win[xtal_subscribers]) {
-            win[xtal_subscribers] = [];
-            const originalPushState = win.history.pushState;
-            const boundPushState = originalPushState.bind(win.history);
-            win.history.pushState = function (newState, title, URL) {
-                boundPushState(newState, title, URL);
-                win[xtal_subscribers].forEach(subscriber => {
-                    delete subscriber.dataset.popstate;
-                    subscriber.history = newState;
-                });
+        if (!win.__xtalStateInfo) {
+            win.__xtalStateInfo = {
+                startedAsNull: win.history.state === null,
             };
-            const originalReplaceState = win.history.replaceState;
-            const boundReplaceState = originalReplaceState.bind(win.history);
-            win.history.replaceState = function (newState, title, URL) {
-                boundReplaceState(newState, title, URL);
-                win[xtal_subscribers].forEach(subscriber => {
-                    delete subscriber.dataset.popstate;
-                    subscriber.history = newState;
-                });
-            };
-            win.addEventListener(popstate, e => {
-                win[xtal_subscribers].forEach(subscriber => {
-                    subscriber.dataset.popstate = 'true';
-                    subscriber.history = win.history.state;
-                });
-            });
         }
-        this._window[xtal_subscribers].push(this);
+        switch (this._watch) {
+            case all:
+            case popstate:
+                if (!this._boundPushReplaceListener) {
+                    this._boundPushReplaceListener = this.pushReplaceHandler.bind(this);
+                    this._window.addEventListener(history_state_update, this._boundPushReplaceListener);
+                }
+        }
+        switch (this._watch) {
+            case popstate:
+                if (!this._boundPopStateListener) {
+                    this._boundPopStateListener = this.popStateHandler.bind(this);
+                    this._window.addEventListener(popstate, this._boundPopStateListener);
+                }
+        }
         this._connected = true;
         this.history = this._window.history.state;
         //this.notify();
@@ -655,11 +597,10 @@ class XtalStateWatch extends XtalStateBase {
         this.addSubscribers();
     }
     disconnect() {
-        if (this._window) {
-            const subs = this._window[xtal_subscribers];
-            if (subs)
-                remove(subs, this);
-        }
+        if (this._boundPopStateListener)
+            this.removeEventListener(popstate, this._boundPopStateListener);
+        if (this._boundPushReplaceListener)
+            this.removeEventListener(history_state_update, this._boundPushReplaceListener);
     }
     disconnectedCallback() {
         this.disconnect();
@@ -678,18 +619,6 @@ class XtalStateWatch extends XtalStateBase {
     }
     notify() {
         if (!this._watch || this._disabled || !this._connected || this._history === undefined || this._history === null)
-            return;
-        const ds = this.dataset;
-        let doIt = false;
-        switch (this._watch) {
-            case 'all':
-                doIt = true;
-                break;
-            case popstate:
-                doIt = !ds.historyChanged || ds.popstate === 'true';
-                break;
-        }
-        if (!doIt)
             return;
         this.de('history', {
             value: this._history,
