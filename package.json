@@ -12,6 +12,8 @@
   },
   "devDependencies": {
     "@webcomponents/webcomponentsjs": "2.2.1",
-    "jiife": "0.0.10"
+    "jiife": "0.0.10",
+    "p-d.p-u": "0.0.97",
+    "purr-sist": "0.0.35"
   }
 }

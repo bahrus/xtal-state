@@ -6,7 +6,7 @@ File size of all components combined <img src="http://img.badgesize.io/https://u
 
 # \<xtal-state\>
 
-xtal-state-* are a few Web components that wrap and extend the power of the history api.
+xtal-state-* are a few Web components (and an api) that wrap and extend the power of the history api.
 
 One of the goals of xtal-state is that it be scalable (think [Scala](https://www.scala-lang.org/old/node/250.html)) -- it can solve simple problems simply, with a miminal learning curve, but it can also be used to tackle progressively more difficult problems, each problem requiring more nuance and mastery.
 
@@ -207,7 +207,7 @@ No.  Remember, xtal-state views history.state as the focal point, not the addres
 All four files are combined into a single IIFE class script file, dist/xtal-state.iife.js or dist/xtal-state.iife.min.js.  
 
 
-## Programmatic API
+## Programmatic API (Not tested)
 
 To partake in usage of this state management solution without using these web components, you can get the window object containing the history.state:
 
@@ -215,8 +215,16 @@ To partake in usage of this state management solution without using these web co
 import {getWinCtx} from 'xtal-state/xtal-state-base.js';
 
 ...
-const win = getWinCtx(el, level);
-console.log(win.history.state);
+getWinCtx(el, level).then(win =>{
+    console.log(win.history.state);
+    win.addEventListener('history-state-update', event =>{
+        //code is hit whener history.pushState, replaceState is called, but not when back button is pressed 
+    });
+    win.addEventListener('popstate', event =>{
+        //regular popstate events
+    })
+})
+
 ```
 
 where "el" is a DOM element, and "level" has the same meaning as described above.  Unless level is "global", "el" will be used as the reference point to apply the "level" to.
