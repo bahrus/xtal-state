@@ -230,7 +230,7 @@ import {getWinCtx} from 'xtal-state/xtal-state-api.js';
 getWinCtx(el, level).then(win =>{
     console.log(win.history.state);
     win.addEventListener('history-state-update', event =>{
-        //code is hit whener history.pushState, replaceState is called, but not when back button is pressed 
+        //code is hit whenever history.pushState, replaceState is called, but not when back button is pressed 
     });
     win.addEventListener('popstate', event =>{
         //regular popstate events
