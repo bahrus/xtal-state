@@ -224,7 +224,7 @@ All four files are combined into a single IIFE class script file, dist/xtal-stat
 To partake in usage of this state management solution without using these web components, you can get the window object containing the history.state:
 
 ```JavaScript
-import {getWinCtx} from 'xtal-state/xtal-state-base.js';
+import {getWinCtx} from 'xtal-state/xtal-state-api.js';
 
 ...
 getWinCtx(el, level).then(win =>{
