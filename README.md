@@ -10,7 +10,7 @@ xtal-state-watch: <img src="http://img.badgesize.io/https://unpkg.com/xtal-state
 
 xtal-state-commit: <img src="http://img.badgesize.io/https://unpkg.com/xtal-state@0.0.64/dist/xtal-state-commit.iife.min.js?compression=gzip">
 
-xtal-state-watch (includes xtal-state-commit): <img src="http://img.badgesize.io/https://unpkg.com/xtal-state@0.0.64/dist/xtal-state-watch.iife.min.js?compression=gzip"> 
+xtal-state-update (includes xtal-state-commit): <img src="http://img.badgesize.io/https://unpkg.com/xtal-state@0.0.64/dist/xtal-state-update.iife.min.js?compression=gzip"> 
 
 xtal-state-parse:  <img src="http://img.badgesize.io/https://unpkg.com/xtal-state@0.0.64/dist/xtal-state-parse.iife.min.js?compression=gzip">
 
