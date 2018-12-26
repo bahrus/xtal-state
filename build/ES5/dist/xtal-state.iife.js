@@ -319,81 +319,6 @@
   }
 
   var level = 'level';
-  /**
-   *
-   * @param par Parent or document fragment which should mantain regional state
-   * @param _t XtalStateBase element
-   */
-
-  function getIFrmWin(par, callBack) {
-    var ifr = par.querySelector('iframe[xtal-state]');
-
-    if (ifr === null) {
-      ifr = document.createElement('iframe'); //ifr.src = 'about:blank';
-
-      ifr.setAttribute('xtal-state', '');
-      ifr.addEventListener('load', function () {
-        ifr.setAttribute('loaded', '');
-        if (callBack !== null) callBack(ifr);
-      });
-      ifr.src = 'blank.html';
-      ifr.style.display = 'none';
-      par.appendChild(ifr);
-    } else {
-      if (!ifr.hasAttribute('loaded')) {
-        ifr.addEventListener('load', function () {
-          if (callBack !== null) callBack(ifr);
-        });
-      } else {
-        if (callBack !== null) callBack(ifr);
-      }
-    }
-
-    return ifr.contentWindow;
-  }
-
-  function getMchPar(el, level) {
-    var test = el.parentElement;
-
-    while (test) {
-      if (test.matches(level)) return test;
-      test = test.parentElement;
-    }
-  }
-
-  function getSC(el) {
-    var test = getHost(el);
-    return test.shadowRoot === null ? test : test.shadowRoot;
-  }
-
-  function getWinCtx(el, level) {
-    var _t = this;
-
-    return new Promise(function (resolve, reject) {
-      switch (level) {
-        case "global":
-          resolve(self);
-          break;
-
-        case "local":
-          getIFrmWin(el.parentElement, function (ifrm) {
-            return resolve(ifrm.contentWindow);
-          });
-          break;
-
-        case "shadow":
-          getIFrmWin(getSC(el), function (ifrm) {
-            return resolve(ifrm.contentWindow);
-          });
-          break;
-
-        default:
-          getIFrmWin(getMchPar(el, level), function (ifrm) {
-            return resolve(ifrm.contentWindow);
-          });
-      }
-    });
-  }
 
   var XtalStateBase =
   /*#__PURE__*/
@@ -803,6 +728,7 @@
 
   define(XtalStateUpdate);
   var watch = 'watch';
+  var all = 'all';
   var xtal_subscribers = 'xtal-subscribers';
   var popstate = 'popstate'; //const once = 'once';
 
@@ -818,16 +744,10 @@
   /*#__PURE__*/
   function (_XtalStateBase) {
     babelHelpers.inherits(XtalStateWatch, _XtalStateBase);
-    babelHelpers.createClass(XtalStateWatch, null, [{
-      key: "is",
-      get: function get() {
-        return 'xtal-state-watch';
-      }
-    }]);
 
     function XtalStateWatch() {
       babelHelpers.classCallCheck(this, XtalStateWatch);
-      return babelHelpers.possibleConstructorReturn(this, babelHelpers.getPrototypeOf(XtalStateWatch).call(this));
+      return babelHelpers.possibleConstructorReturn(this, babelHelpers.getPrototypeOf(XtalStateWatch).apply(this, arguments));
     }
 
     babelHelpers.createClass(XtalStateWatch, [{
@@ -837,11 +757,34 @@
 
         switch (name) {
           case watch:
-            this._watch = nv === '' ? 'all' : popstate;
+            this._watch = nv === '' ? all : popstate;
             break;
         }
 
         this.notify();
+      }
+    }, {
+      key: "pushReplaceHandler",
+      value: function pushReplaceHandler(e) {
+        var win = this._window;
+        var detail = e.detail;
+
+        if (detail.newState && win.__xtalStateInfo.startedAsNull && !win.__xtalStateInfo.hasStarted) {
+          win.__xtalStateInfo.hasStarted;
+          this.dataset.historyInit = 'true';
+          this.dataset.popstate = 'true';
+        } else {
+          delete this.dataset.popstate;
+          delete this.dataset.historyInit;
+        }
+
+        this.history = this._window.history.state;
+      }
+    }, {
+      key: "popStateHandler",
+      value: function popStateHandler(e) {
+        this.dataset.popstate = 'true';
+        this.history = this._window.history.state;
       }
     }, {
       key: "addSubscribers",
@@ -857,39 +800,32 @@
 
         var win = this._window;
 
-        if (!win[xtal_subscribers]) {
-          win[xtal_subscribers] = [];
-          var originalPushState = win.history.pushState;
-          var boundPushState = originalPushState.bind(win.history);
-
-          win.history.pushState = function (newState, title, URL) {
-            boundPushState(newState, title, URL);
-            win[xtal_subscribers].forEach(function (subscriber) {
-              delete subscriber.dataset.popstate;
-              subscriber.history = newState;
-            });
+        if (!win.__xtalStateInfo) {
+          win.__xtalStateInfo = {
+            startedAsNull: win.history.state === null
           };
-
-          var originalReplaceState = win.history.replaceState;
-          var boundReplaceState = originalReplaceState.bind(win.history);
-
-          win.history.replaceState = function (newState, title, URL) {
-            boundReplaceState(newState, title, URL);
-            win[xtal_subscribers].forEach(function (subscriber) {
-              delete subscriber.dataset.popstate;
-              subscriber.history = newState;
-            });
-          };
-
-          win.addEventListener(popstate, function (e) {
-            win[xtal_subscribers].forEach(function (subscriber) {
-              subscriber.dataset.popstate = 'true';
-              subscriber.history = win.history.state;
-            });
-          });
         }
 
-        this._window[xtal_subscribers].push(this);
+        switch (this._watch) {
+          case all:
+          case popstate:
+            if (!this._boundPushReplaceListener) {
+              this._boundPushReplaceListener = this.pushReplaceHandler.bind(this);
+
+              this._window.addEventListener(history_state_update, this._boundPushReplaceListener);
+            }
+
+        }
+
+        switch (this._watch) {
+          case popstate:
+            if (!this._boundPopStateListener) {
+              this._boundPopStateListener = this.popStateHandler.bind(this);
+
+              this._window.addEventListener(popstate, this._boundPopStateListener);
+            }
+
+        }
 
         this._connected = true;
         this.history = this._window.history.state; //this.notify();
@@ -906,10 +842,8 @@
     }, {
       key: "disconnect",
       value: function disconnect() {
-        if (this._window) {
-          var subs = this._window[xtal_subscribers];
-          if (subs) remove(subs, this);
-        }
+        if (this._boundPopStateListener) this.removeEventListener(popstate, this._boundPopStateListener);
+        if (this._boundPushReplaceListener) this.removeEventListener(history_state_update, this._boundPushReplaceListener);
       }
     }, {
       key: "disconnectedCallback",
@@ -920,20 +854,6 @@
       key: "notify",
       value: function notify() {
         if (!this._watch || this._disabled || !this._connected || this._history === undefined || this._history === null) return;
-        var ds = this.dataset;
-        var doIt = false;
-
-        switch (this._watch) {
-          case 'all':
-            doIt = true;
-            break;
-
-          case popstate:
-            doIt = !ds.historyChanged || ds.popstate === 'true';
-            break;
-        }
-
-        if (!doIt) return;
         this.de('history', {
           value: this._history
         });
@@ -956,6 +876,11 @@
         this.attr(watch, nv);
       }
     }], [{
+      key: "is",
+      get: function get() {
+        return 'xtal-state-watch';
+      }
+    }, {
       key: "observedAttributes",
       get: function get() {
         return babelHelpers.get(babelHelpers.getPrototypeOf(XtalStateWatch), "observedAttributes", this).concat([watch]);

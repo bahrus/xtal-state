@@ -2,7 +2,19 @@
 
 <a href="https://nodei.co/npm/xtal-state/"><img src="https://nodei.co/npm/xtal-state.png"></a>
 
-File size of all components combined <img src="http://img.badgesize.io/https://unpkg.com/xtal-state@0.0.63/dist/xtal-state.iife.min.js?compression=gzip">
+## File sizes:
+
+Core api enhancements:  <img src="http://img.badgesize.io/https://unpkg.com/xtal-state@0.0.64/dist/xtal-state-api.min.js?compression=gzip">
+
+xtal-state-watch: <img src="http://img.badgesize.io/https://unpkg.com/xtal-state@0.0.64/dist/xtal-state-watch.iife.min.js?compression=gzip">
+
+xtal-state-commit: <img src="http://img.badgesize.io/https://unpkg.com/xtal-state@0.0.64/dist/xtal-state-commit.iife.min.js?compression=gzip">
+
+xtal-state-watch (includes xtal-state-commit): <img src="http://img.badgesize.io/https://unpkg.com/xtal-state@0.0.64/dist/xtal-state-watch.iife.min.js?compression=gzip"> 
+
+xtal-state-parse:  <img src="http://img.badgesize.io/https://unpkg.com/xtal-state@0.0.64/dist/xtal-state-parse.iife.min.js?compression=gzip">
+
+All together now:  <img src="http://img.badgesize.io/https://unpkg.com/xtal-state@0.0.64/dist/xtal-state.iife.min.js?compression=gzip">
 
 # \<xtal-state\>
 
