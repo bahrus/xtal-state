@@ -2,10 +2,7 @@ import {XtalStateBase} from './xtal-state-base.js';
 import {history_state_update, IHistoryUpdateDetails} from './xtal-state-api.js';
 import {define} from 'xtal-latx/define.js';
 
-interface IHistoryInfo{
-    startedAsNull?: boolean;
-    hasStarted?:boolean;
-}
+
 
 const watch = 'watch';
 const all = 'all';
@@ -44,8 +41,10 @@ export class XtalStateWatch extends XtalStateBase {
     pushReplaceHandler(e: Event){
         const win = this._window as any;
         const detail = (<any>e).detail as IHistoryUpdateDetails;
-        if(detail.newState && win.__xtalStateInfo.startedAsNull && !win.__xtalStateInfo.hasStarted){
-            win.__xtalStateInfo.hasStarted;
+        
+        //if(detail.newState && win.__xtalStateInfo.startedAsNull && !win.__xtalStateInfo.hasStarted){
+        if(detail.initVal){
+            //win.__xtalStateInfo.hasStarted;
             this.dataset.historyInit = 'true';
             this.dataset.popstate = 'true';
         }else{
@@ -65,12 +64,7 @@ export class XtalStateWatch extends XtalStateBase {
             }, 50);
             return;
         }
-        const win = this._window as any;
-        if(!win.__xtalStateInfo){
-            win.__xtalStateInfo = {
-                startedAsNull: win.history.state === null,
-            } as IHistoryInfo;
-        }
+
         switch(this._watch){
             case all:
             case popstate:

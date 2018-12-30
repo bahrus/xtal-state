@@ -2,7 +2,12 @@ import {getHost} from 'xtal-latx/getHost.js';
 export const history_state_update = 'history-state-update';
 export interface IHistoryUpdateDetails {
     oldState: any,
-    newState: any
+    newState: any,
+    initVal: boolean,
+}
+export interface IHistoryInfo{
+    startedAsNull?: boolean;
+    hasStarted?:boolean;
 }
 /**
  * 
@@ -33,6 +38,7 @@ function  getIFrmWin(par: HTMLElement | DocumentFragment, callBack?: (ifrm: HTML
     }
     return ifr.contentWindow;
 }
+
 function getMchPar(el: HTMLElement, level: string){
     let test = el.parentElement;
     while(test){
@@ -77,7 +83,15 @@ function de(oldState: any, win: any){
     const detail = {
         oldState: oldState,
         newState: win.history.state,
-    };
+        initVal: false
+    } as IHistoryUpdateDetails;
+    const historyInfo = win.__xtalStateInfo as IHistoryInfo;
+    if(!historyInfo.hasStarted){
+        historyInfo.hasStarted = true;
+        if(historyInfo.startedAsNull){
+            detail.initVal = true;
+        }
+    }
     const newEvent = new CustomEvent(history_state_update, {
         detail: detail,
         bubbles: true,
@@ -89,6 +103,11 @@ function de(oldState: any, win: any){
 function init(win: any): void{
     if(win.__xtalStateInit) return;
     win.__xtalStateInit = true;
+    if(!win.__xtalStateInfo){
+        win.__xtalStateInfo = {
+            startedAsNull: win.history.state === null,
+        } as IHistoryInfo;
+    }
     const originalPushState = win.history.pushState;
     const boundPushState = originalPushState.bind(win.history);
     win.history.pushState = function (newState: any, title: string, URL: string) {

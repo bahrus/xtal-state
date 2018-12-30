@@ -11,21 +11,6 @@
     customElements.define(tagName, custEl);
   }
 
-  var debounce = function debounce(fn, time) {
-    var timeout;
-    return function () {
-      var _this = this,
-          _arguments = arguments;
-
-      var functionCall = function functionCall() {
-        return fn.apply(_this, _arguments);
-      };
-
-      clearTimeout(timeout);
-      timeout = setTimeout(functionCall, time);
-    };
-  };
-
   var disabled = 'disabled';
   /**
    * Base class for many xtal- components
@@ -39,12 +24,12 @@
         babelHelpers.inherits(_class, _superClass);
 
         function _class() {
-          var _this2;
+          var _this;
 
           babelHelpers.classCallCheck(this, _class);
-          _this2 = babelHelpers.possibleConstructorReturn(this, babelHelpers.getPrototypeOf(_class).apply(this, arguments));
-          _this2._evCount = {};
-          return _this2;
+          _this = babelHelpers.possibleConstructorReturn(this, babelHelpers.getPrototypeOf(_class).apply(this, arguments));
+          _this._evCount = {};
+          return _this;
         }
 
         babelHelpers.createClass(_class, [{
@@ -128,13 +113,13 @@
         }, {
           key: "_upgradeProperties",
           value: function _upgradeProperties(props) {
-            var _this3 = this;
+            var _this2 = this;
 
             props.forEach(function (prop) {
-              if (_this3.hasOwnProperty(prop)) {
-                var value = _this3[prop];
-                delete _this3[prop];
-                _this3[prop] = value;
+              if (_this2.hasOwnProperty(prop)) {
+                var value = _this2[prop];
+                delete _this2[prop];
+                _this2[prop] = value;
               }
             });
           }
@@ -162,6 +147,584 @@
       }(superClass)
     );
   }
+
+  function getHost(el) {
+    var parent = el;
+
+    while (parent = parent.parentNode) {
+      if (parent.nodeType === 11) {
+        return parent['host'];
+      } else if (parent.tagName === 'BODY') {
+        return null;
+      }
+    }
+
+    return null;
+  }
+
+  var history_state_update = 'history-state-update';
+  /**
+   *
+   * @param par Parent or document fragment which should mantain regional state
+   * @param _t XtalStateBase element
+   */
+
+  function getIFrmWin(par, callBack) {
+    var ifr = par.querySelector('iframe[xtal-state]');
+
+    if (ifr === null) {
+      ifr = document.createElement('iframe'); //ifr.src = 'about:blank';
+
+      ifr.setAttribute('xtal-state', '');
+      ifr.addEventListener('load', function () {
+        ifr.setAttribute('loaded', '');
+        if (callBack !== null) callBack(ifr);
+      });
+      ifr.src = 'blank.html';
+      ifr.style.display = 'none';
+      par.appendChild(ifr);
+    } else {
+      if (!ifr.hasAttribute('loaded')) {
+        ifr.addEventListener('load', function () {
+          if (callBack !== null) callBack(ifr);
+        });
+      } else {
+        if (callBack !== null) callBack(ifr);
+      }
+    }
+
+    return ifr.contentWindow;
+  }
+
+  function getMchPar(el, level) {
+    var test = el.parentElement;
+
+    while (test) {
+      if (test.matches(level)) return test;
+      test = test.parentElement;
+    }
+  }
+
+  function getSC(el) {
+    var test = getHost(el);
+    return test.shadowRoot === null ? test : test.shadowRoot;
+  }
+
+  function getWinCtx(el, level) {
+    var _t = this;
+
+    return new Promise(function (resolve, reject) {
+      switch (level) {
+        case "global":
+          init(self);
+          resolve(self);
+          break;
+
+        case "local":
+          getIFrmWin(el.parentElement, function (ifrm) {
+            init(ifrm.contentWindow);
+            resolve(ifrm.contentWindow);
+          });
+          break;
+
+        case "shadow":
+          getIFrmWin(getSC(el), function (ifrm) {
+            init(ifrm.contentWindow);
+            resolve(ifrm.contentWindow);
+          });
+          break;
+
+        default:
+          getIFrmWin(getMchPar(el, level), function (ifrm) {
+            init(ifrm.contentWindow);
+            resolve(ifrm.contentWindow);
+          });
+      }
+    });
+  }
+
+  function de(oldState, win) {
+    var detail = {
+      oldState: oldState,
+      newState: win.history.state,
+      initVal: false
+    };
+    var historyInfo = win.__xtalStateInfo;
+
+    if (!historyInfo.hasStarted) {
+      historyInfo.hasStarted = true;
+
+      if (historyInfo.startedAsNull) {
+        detail.initVal = true;
+      }
+    }
+
+    var newEvent = new CustomEvent(history_state_update, {
+      detail: detail,
+      bubbles: true,
+      composed: true
+    });
+    win.dispatchEvent(newEvent);
+  }
+
+  function init(win) {
+    if (win.__xtalStateInit) return;
+    win.__xtalStateInit = true;
+
+    if (!win.__xtalStateInfo) {
+      win.__xtalStateInfo = {
+        startedAsNull: win.history.state === null
+      };
+    }
+
+    var originalPushState = win.history.pushState;
+    var boundPushState = originalPushState.bind(win.history);
+
+    win.history.pushState = function (newState, title, URL) {
+      var oldState = win.history.state;
+      boundPushState(newState, title, URL);
+      de(oldState, win);
+    };
+
+    var originalReplaceState = win.history.replaceState;
+    var boundReplaceState = originalReplaceState.bind(win.history);
+
+    win.history.replaceState = function (newState, title, URL) {
+      var oldState = win.history.state;
+      boundReplaceState(newState, title, URL);
+      de(oldState, win);
+    };
+  }
+
+  var level = 'level';
+
+  var XtalStateBase =
+  /*#__PURE__*/
+  function (_XtallatX) {
+    babelHelpers.inherits(XtalStateBase, _XtallatX);
+
+    function XtalStateBase() {
+      var _this3;
+
+      babelHelpers.classCallCheck(this, XtalStateBase);
+      _this3 = babelHelpers.possibleConstructorReturn(this, babelHelpers.getPrototypeOf(XtalStateBase).apply(this, arguments));
+      _this3._level = 'global';
+      return _this3;
+    }
+
+    babelHelpers.createClass(XtalStateBase, [{
+      key: "attributeChangedCallback",
+      value: function attributeChangedCallback(name, oldVal, newVal) {
+        babelHelpers.get(babelHelpers.getPrototypeOf(XtalStateBase.prototype), "attributeChangedCallback", this).call(this, name, oldVal, newVal);
+
+        switch (name) {
+          case level:
+            this._level = newVal;
+            break;
+        }
+
+        this.onPropsChange();
+      }
+    }, {
+      key: "connectedCallback",
+      value: function connectedCallback() {
+        this.style.display = 'none';
+
+        this._upgradeProperties(['disabled', level]);
+
+        this._conn = true;
+        this.onPropsChange();
+      }
+    }, {
+      key: "onPropsChange",
+      value: function onPropsChange() {
+        var _this4 = this;
+
+        if (!this._conn || this._disabled) return true;
+
+        if (!this._window) {
+          this._notReady = true;
+          getWinCtx(this, this._level).then(function (win) {
+            _this4._window = win;
+            _this4._notReady = false;
+          });
+        }
+
+        if (this._notReady) return true;
+      }
+    }, {
+      key: "level",
+      get: function get() {
+        return this._level;
+      },
+      set: function set(val) {
+        this.attr(level, val);
+      }
+    }, {
+      key: "window",
+      get: function get() {
+        return this._window;
+      }
+    }], [{
+      key: "observedAttributes",
+      get: function get() {
+        return babelHelpers.get(babelHelpers.getPrototypeOf(XtalStateBase), "observedAttributes", this).concat([level]);
+      }
+    }]);
+    return XtalStateBase;
+  }(XtallatX(HTMLElement));
+
+  var watch = 'watch';
+  var all = 'all';
+  var xtal_subscribers = 'xtal-subscribers';
+  var popstate = 'popstate'; //const once = 'once';
+
+  function remove(array, element) {
+    var index = array.indexOf(element);
+
+    if (index !== -1) {
+      array.splice(index, 1);
+    }
+  }
+
+  var XtalStateWatch =
+  /*#__PURE__*/
+  function (_XtalStateBase) {
+    babelHelpers.inherits(XtalStateWatch, _XtalStateBase);
+
+    function XtalStateWatch() {
+      babelHelpers.classCallCheck(this, XtalStateWatch);
+      return babelHelpers.possibleConstructorReturn(this, babelHelpers.getPrototypeOf(XtalStateWatch).apply(this, arguments));
+    }
+
+    babelHelpers.createClass(XtalStateWatch, [{
+      key: "attributeChangedCallback",
+      value: function attributeChangedCallback(name, oldValue, nv) {
+        babelHelpers.get(babelHelpers.getPrototypeOf(XtalStateWatch.prototype), "attributeChangedCallback", this).call(this, name, oldValue, nv);
+
+        switch (name) {
+          case watch:
+            this._watch = nv === '' ? all : popstate;
+            break;
+        }
+
+        this.notify();
+      }
+    }, {
+      key: "pushReplaceHandler",
+      value: function pushReplaceHandler(e) {
+        var win = this._window;
+        var detail = e.detail; //if(detail.newState && win.__xtalStateInfo.startedAsNull && !win.__xtalStateInfo.hasStarted){
+
+        if (detail.initVal) {
+          //win.__xtalStateInfo.hasStarted;
+          this.dataset.historyInit = 'true';
+          this.dataset.popstate = 'true';
+        } else {
+          delete this.dataset.popstate;
+          delete this.dataset.historyInit;
+        }
+
+        this.history = this._window.history.state;
+      }
+    }, {
+      key: "popStateHandler",
+      value: function popStateHandler(e) {
+        this.dataset.popstate = 'true';
+        this.history = this._window.history.state;
+      }
+    }, {
+      key: "addSubscribers",
+      value: function addSubscribers() {
+        var _this5 = this;
+
+        if (this._notReady) {
+          setTimeout(function () {
+            _this5.addSubscribers();
+          }, 50);
+          return;
+        }
+
+        switch (this._watch) {
+          case all:
+          case popstate:
+            if (!this._boundPushReplaceListener) {
+              this._boundPushReplaceListener = this.pushReplaceHandler.bind(this);
+
+              this._window.addEventListener(history_state_update, this._boundPushReplaceListener);
+            }
+
+        }
+
+        switch (this._watch) {
+          case popstate:
+            if (!this._boundPopStateListener) {
+              this._boundPopStateListener = this.popStateHandler.bind(this);
+
+              this._window.addEventListener(popstate, this._boundPopStateListener);
+            }
+
+        }
+
+        this._connected = true;
+        this.history = this._window.history.state; //this.notify();
+      }
+    }, {
+      key: "connectedCallback",
+      value: function connectedCallback() {
+        //this._connected = true;
+        this._upgradeProperties([watch]);
+
+        babelHelpers.get(babelHelpers.getPrototypeOf(XtalStateWatch.prototype), "connectedCallback", this).call(this);
+        this.addSubscribers();
+      }
+    }, {
+      key: "disconnect",
+      value: function disconnect() {
+        if (this._boundPopStateListener) this.removeEventListener(popstate, this._boundPopStateListener);
+        if (this._boundPushReplaceListener) this.removeEventListener(history_state_update, this._boundPushReplaceListener);
+      }
+    }, {
+      key: "disconnectedCallback",
+      value: function disconnectedCallback() {
+        this.disconnect();
+      }
+    }, {
+      key: "notify",
+      value: function notify() {
+        if (!this._watch || this._disabled || !this._connected || this._history === undefined || this._history === null) return;
+        this.de('history', {
+          value: this._history
+        });
+      }
+    }, {
+      key: "history",
+      get: function get() {
+        return this._history;
+      },
+      set: function set(newVal) {
+        this._history = newVal;
+        if (this._watch) this.notify();
+      }
+    }, {
+      key: "watch",
+      get: function get() {
+        return this._watch;
+      },
+      set: function set(nv) {
+        this.attr(watch, nv);
+      }
+    }], [{
+      key: "is",
+      get: function get() {
+        return 'xtal-state-watch';
+      }
+    }, {
+      key: "observedAttributes",
+      get: function get() {
+        return babelHelpers.get(babelHelpers.getPrototypeOf(XtalStateWatch), "observedAttributes", this).concat([watch]);
+      }
+    }]);
+    return XtalStateWatch;
+  }(XtalStateBase);
+
+  define(XtalStateWatch);
+  var with_url_pattern = 'with-url-pattern';
+  var parse = 'parse';
+  var init_history_if_null = 'init-history-if-null';
+
+  var XtalStateParse =
+  /*#__PURE__*/
+  function (_XtalStateBase2) {
+    babelHelpers.inherits(XtalStateParse, _XtalStateBase2);
+
+    function XtalStateParse() {
+      var _this6;
+
+      babelHelpers.classCallCheck(this, XtalStateParse);
+      _this6 = babelHelpers.possibleConstructorReturn(this, babelHelpers.getPrototypeOf(XtalStateParse).apply(this, arguments));
+      _this6._checkedNull = false;
+      return _this6;
+    }
+
+    babelHelpers.createClass(XtalStateParse, [{
+      key: "attributeChangedCallback",
+      value: function attributeChangedCallback(name, oldVal, newVal) {
+        babelHelpers.get(babelHelpers.getPrototypeOf(XtalStateParse.prototype), "attributeChangedCallback", this).call(this, name, oldVal, newVal);
+
+        switch (name) {
+          case with_url_pattern:
+            this._withURLPattern = newVal;
+            break;
+
+          case parse:
+            this['_' + name] = newVal;
+            break;
+
+          default:
+            babelHelpers.get(babelHelpers.getPrototypeOf(XtalStateParse.prototype), "attributeChangedCallback", this).call(this, name, oldVal, newVal);
+            return;
+        }
+
+        this.onParsePropsChange();
+      }
+    }, {
+      key: "connectedCallback",
+      value: function connectedCallback() {
+        this._upgradeProperties(['withURLPattern', parse, 'initHistoryIfNull', 'parseFn']);
+
+        babelHelpers.get(babelHelpers.getPrototypeOf(XtalStateParse.prototype), "connectedCallback", this).call(this);
+        this.onParsePropsChange();
+      }
+    }, {
+      key: "onPropsChange",
+      value: function onPropsChange() {
+        if (this._initHistoryIfNull) return false;
+        return babelHelpers.get(babelHelpers.getPrototypeOf(XtalStateParse.prototype), "onPropsChange", this).call(this);
+      }
+    }, {
+      key: "onParsePropsChange",
+      value: function onParsePropsChange() {
+        var _this7 = this;
+
+        if (this._disabled || this.value || this.noMatch) return;
+
+        if (!this._window) {
+          setTimeout(function () {
+            _this7.onParsePropsChange();
+          }, 50);
+          return;
+        }
+
+        if (!this._checkedNull) {
+          if (this._window.history.state === null) {
+            this.dataset.historyWasNull = 'true';
+          }
+
+          this._checkedNull = true;
+        }
+
+        var value = null;
+
+        if (this._withURLPattern) {
+          value = XtalStateParse.parseAddressBar(this._parse, this._withURLPattern, this._window);
+
+          if (value === -1) {
+            if (!this._parseFn) return;
+            var prseString = XtalStateParse.getObj(this._parse, this._window);
+            value = this._parseFn(prseString, this);
+          }
+        }
+
+        if (value === null) {
+          this.noMatch = true;
+          this.de('no-match-found', {
+            value: true
+          }, true);
+          return;
+        } else {
+          this.value = value;
+          this.de('match-found', {
+            value: value
+          }, true);
+        }
+
+        if (this._initHistoryIfNull && this._window.history.state !== null) this._window.history.replaceState(value, '', this._window.location.href);
+      }
+    }, {
+      key: "withURLPattern",
+      get: function get() {
+        return this._withURLPattern;
+      },
+      set: function set(val) {
+        this.attr(with_url_pattern, val);
+      }
+    }, {
+      key: "parse",
+      get: function get() {
+        return this._parse;
+      },
+      set: function set(val) {
+        this.attr(parse, val);
+      }
+    }, {
+      key: "parseFn",
+      get: function get() {
+        return this._parseFn;
+      },
+      set: function set(nv) {
+        this._parseFn = nv;
+        this.onParsePropsChange();
+      }
+    }, {
+      key: "initHistoryIfNull",
+      get: function get() {
+        return this._initHistoryIfNull;
+      },
+      set: function set(nv) {
+        this.attr(init_history_if_null, nv, '');
+      }
+    }, {
+      key: "noMatch",
+      get: function get() {
+        return this._noMatch;
+      },
+      set: function set(val) {
+        this._noMatch = val;
+        this.attr('no-match', val.toString());
+      }
+    }], [{
+      key: "getObj",
+      value: function getObj(parsePath, winObj) {
+        var thingToParse = winObj;
+        parsePath.split('.').forEach(function (token) {
+          if (thingToParse) thingToParse = thingToParse[token];
+        });
+        return thingToParse;
+      }
+    }, {
+      key: "parseAddressBar",
+      value: function parseAddressBar(parsePath, urlPattern, winObj) {
+        try {
+          var reg = new RegExp(urlPattern);
+          var thingToParse = this.getObj(parsePath, winObj);
+          var parsed = reg.exec(thingToParse);
+          if (!parsed) return null;
+          return parsed['groups'];
+        } catch (err) {
+          return -1;
+        }
+      }
+    }, {
+      key: "is",
+      get: function get() {
+        return 'xtal-state-parse';
+      }
+    }, {
+      key: "observedAttributes",
+      get: function get() {
+        return babelHelpers.get(babelHelpers.getPrototypeOf(XtalStateParse), "observedAttributes", this).concat([with_url_pattern, parse, init_history_if_null]);
+      }
+    }]);
+    return XtalStateParse;
+  }(XtalStateBase);
+
+  define(XtalStateParse);
+
+  var debounce = function debounce(fn, time) {
+    var timeout;
+    return function () {
+      var _this8 = this,
+          _arguments = arguments;
+
+      var functionCall = function functionCall() {
+        return fn.apply(_this8, _arguments);
+      };
+
+      clearTimeout(timeout);
+      timeout = setTimeout(functionCall, time);
+    };
+  };
 
   function createNestedProp(target, pathTokens, val, clone) {
     var firstToken = pathTokens.shift();
@@ -304,98 +867,6 @@
     return target;
   }
 
-  function getHost(el) {
-    var parent = el;
-
-    while (parent = parent.parentNode) {
-      if (parent.nodeType === 11) {
-        return parent['host'];
-      } else if (parent.tagName === 'BODY') {
-        return null;
-      }
-    }
-
-    return null;
-  }
-
-  var level = 'level';
-
-  var XtalStateBase =
-  /*#__PURE__*/
-  function (_XtallatX) {
-    babelHelpers.inherits(XtalStateBase, _XtallatX);
-
-    function XtalStateBase() {
-      var _this4;
-
-      babelHelpers.classCallCheck(this, XtalStateBase);
-      _this4 = babelHelpers.possibleConstructorReturn(this, babelHelpers.getPrototypeOf(XtalStateBase).apply(this, arguments));
-      _this4._level = 'global';
-      return _this4;
-    }
-
-    babelHelpers.createClass(XtalStateBase, [{
-      key: "attributeChangedCallback",
-      value: function attributeChangedCallback(name, oldVal, newVal) {
-        babelHelpers.get(babelHelpers.getPrototypeOf(XtalStateBase.prototype), "attributeChangedCallback", this).call(this, name, oldVal, newVal);
-
-        switch (name) {
-          case level:
-            this._level = newVal;
-            break;
-        }
-
-        this.onPropsChange();
-      }
-    }, {
-      key: "connectedCallback",
-      value: function connectedCallback() {
-        this.style.display = 'none';
-
-        this._upgradeProperties(['disabled', level]);
-
-        this._conn = true;
-        this.onPropsChange();
-      }
-    }, {
-      key: "onPropsChange",
-      value: function onPropsChange() {
-        var _this5 = this;
-
-        if (!this._conn || this._disabled) return true;
-
-        if (!this._window) {
-          this._notReady = true;
-          getWinCtx(this, this._level).then(function (win) {
-            _this5._window = win;
-            _this5._notReady = false;
-          });
-        }
-
-        if (this._notReady) return true;
-      }
-    }, {
-      key: "level",
-      get: function get() {
-        return this._level;
-      },
-      set: function set(val) {
-        this.attr(level, val);
-      }
-    }, {
-      key: "window",
-      get: function get() {
-        return this._window;
-      }
-    }], [{
-      key: "observedAttributes",
-      get: function get() {
-        return babelHelpers.get(babelHelpers.getPrototypeOf(XtalStateBase), "observedAttributes", this).concat([level]);
-      }
-    }]);
-    return XtalStateBase;
-  }(XtallatX(HTMLElement));
-
   var url = 'url';
   var url_search = 'url-search';
   var replace_url_value = 'replace-url-value';
@@ -525,12 +996,12 @@
     babelHelpers.inherits(XtalStateCommit, _UrlFormatter);
 
     function XtalStateCommit() {
-      var _this6;
+      var _this9;
 
       babelHelpers.classCallCheck(this, XtalStateCommit);
-      _this6 = babelHelpers.possibleConstructorReturn(this, babelHelpers.getPrototypeOf(XtalStateCommit).apply(this, arguments));
-      _this6._title = '';
-      return _this6;
+      _this9 = babelHelpers.possibleConstructorReturn(this, babelHelpers.getPrototypeOf(XtalStateCommit).apply(this, arguments));
+      _this9._title = '';
+      return _this9;
     }
 
     babelHelpers.createClass(XtalStateCommit, [{
@@ -558,12 +1029,12 @@
     }, {
       key: "connectedCallback",
       value: function connectedCallback() {
-        var _this7 = this;
+        var _this10 = this;
 
         this._upgradeProperties([make, rewrite, title, 'withPath', 'stringifyFn', new$$, 'syncHistory'].concat([history$]));
 
         this._debouncer = debounce(function () {
-          _this7.updateHistory();
+          _this10.updateHistory();
         }, 50); //this._connected = true;
 
         babelHelpers.get(babelHelpers.getPrototypeOf(XtalStateCommit.prototype), "connectedCallback", this).call(this);
@@ -571,14 +1042,14 @@
     }, {
       key: "onPropsChange",
       value: function onPropsChange() {
-        var _this8 = this;
+        var _this11 = this;
 
         if (this._disabled) return;
 
         if (babelHelpers.get(babelHelpers.getPrototypeOf(XtalStateCommit.prototype), "onPropsChange", this).call(this)) {
           if (this._notReady) {
             setTimeout(function () {
-              _this8.onPropsChange();
+              _this11.onPropsChange();
             }, 50);
             return;
           }
@@ -727,348 +1198,4 @@
   }(XtalStateCommit);
 
   define(XtalStateUpdate);
-  var watch = 'watch';
-  var all = 'all';
-  var xtal_subscribers = 'xtal-subscribers';
-  var popstate = 'popstate'; //const once = 'once';
-
-  function remove(array, element) {
-    var index = array.indexOf(element);
-
-    if (index !== -1) {
-      array.splice(index, 1);
-    }
-  }
-
-  var XtalStateWatch =
-  /*#__PURE__*/
-  function (_XtalStateBase) {
-    babelHelpers.inherits(XtalStateWatch, _XtalStateBase);
-
-    function XtalStateWatch() {
-      babelHelpers.classCallCheck(this, XtalStateWatch);
-      return babelHelpers.possibleConstructorReturn(this, babelHelpers.getPrototypeOf(XtalStateWatch).apply(this, arguments));
-    }
-
-    babelHelpers.createClass(XtalStateWatch, [{
-      key: "attributeChangedCallback",
-      value: function attributeChangedCallback(name, oldValue, nv) {
-        babelHelpers.get(babelHelpers.getPrototypeOf(XtalStateWatch.prototype), "attributeChangedCallback", this).call(this, name, oldValue, nv);
-
-        switch (name) {
-          case watch:
-            this._watch = nv === '' ? all : popstate;
-            break;
-        }
-
-        this.notify();
-      }
-    }, {
-      key: "pushReplaceHandler",
-      value: function pushReplaceHandler(e) {
-        var win = this._window;
-        var detail = e.detail;
-
-        if (detail.newState && win.__xtalStateInfo.startedAsNull && !win.__xtalStateInfo.hasStarted) {
-          win.__xtalStateInfo.hasStarted;
-          this.dataset.historyInit = 'true';
-          this.dataset.popstate = 'true';
-        } else {
-          delete this.dataset.popstate;
-          delete this.dataset.historyInit;
-        }
-
-        this.history = this._window.history.state;
-      }
-    }, {
-      key: "popStateHandler",
-      value: function popStateHandler(e) {
-        this.dataset.popstate = 'true';
-        this.history = this._window.history.state;
-      }
-    }, {
-      key: "addSubscribers",
-      value: function addSubscribers() {
-        var _this9 = this;
-
-        if (this._notReady) {
-          setTimeout(function () {
-            _this9.addSubscribers();
-          }, 50);
-          return;
-        }
-
-        var win = this._window;
-
-        if (!win.__xtalStateInfo) {
-          win.__xtalStateInfo = {
-            startedAsNull: win.history.state === null
-          };
-        }
-
-        switch (this._watch) {
-          case all:
-          case popstate:
-            if (!this._boundPushReplaceListener) {
-              this._boundPushReplaceListener = this.pushReplaceHandler.bind(this);
-
-              this._window.addEventListener(history_state_update, this._boundPushReplaceListener);
-            }
-
-        }
-
-        switch (this._watch) {
-          case popstate:
-            if (!this._boundPopStateListener) {
-              this._boundPopStateListener = this.popStateHandler.bind(this);
-
-              this._window.addEventListener(popstate, this._boundPopStateListener);
-            }
-
-        }
-
-        this._connected = true;
-        this.history = this._window.history.state; //this.notify();
-      }
-    }, {
-      key: "connectedCallback",
-      value: function connectedCallback() {
-        //this._connected = true;
-        this._upgradeProperties([watch]);
-
-        babelHelpers.get(babelHelpers.getPrototypeOf(XtalStateWatch.prototype), "connectedCallback", this).call(this);
-        this.addSubscribers();
-      }
-    }, {
-      key: "disconnect",
-      value: function disconnect() {
-        if (this._boundPopStateListener) this.removeEventListener(popstate, this._boundPopStateListener);
-        if (this._boundPushReplaceListener) this.removeEventListener(history_state_update, this._boundPushReplaceListener);
-      }
-    }, {
-      key: "disconnectedCallback",
-      value: function disconnectedCallback() {
-        this.disconnect();
-      }
-    }, {
-      key: "notify",
-      value: function notify() {
-        if (!this._watch || this._disabled || !this._connected || this._history === undefined || this._history === null) return;
-        this.de('history', {
-          value: this._history
-        });
-      }
-    }, {
-      key: "history",
-      get: function get() {
-        return this._history;
-      },
-      set: function set(newVal) {
-        this._history = newVal;
-        if (this._watch) this.notify();
-      }
-    }, {
-      key: "watch",
-      get: function get() {
-        return this._watch;
-      },
-      set: function set(nv) {
-        this.attr(watch, nv);
-      }
-    }], [{
-      key: "is",
-      get: function get() {
-        return 'xtal-state-watch';
-      }
-    }, {
-      key: "observedAttributes",
-      get: function get() {
-        return babelHelpers.get(babelHelpers.getPrototypeOf(XtalStateWatch), "observedAttributes", this).concat([watch]);
-      }
-    }]);
-    return XtalStateWatch;
-  }(XtalStateBase);
-
-  define(XtalStateWatch);
-  var with_url_pattern = 'with-url-pattern';
-  var parse = 'parse';
-  var init_history_if_null = 'init-history-if-null';
-
-  var XtalStateParse =
-  /*#__PURE__*/
-  function (_XtalStateBase2) {
-    babelHelpers.inherits(XtalStateParse, _XtalStateBase2);
-
-    function XtalStateParse() {
-      var _this10;
-
-      babelHelpers.classCallCheck(this, XtalStateParse);
-      _this10 = babelHelpers.possibleConstructorReturn(this, babelHelpers.getPrototypeOf(XtalStateParse).apply(this, arguments));
-      _this10._checkedNull = false;
-      return _this10;
-    }
-
-    babelHelpers.createClass(XtalStateParse, [{
-      key: "attributeChangedCallback",
-      value: function attributeChangedCallback(name, oldVal, newVal) {
-        babelHelpers.get(babelHelpers.getPrototypeOf(XtalStateParse.prototype), "attributeChangedCallback", this).call(this, name, oldVal, newVal);
-
-        switch (name) {
-          case with_url_pattern:
-            this._withURLPattern = newVal;
-            break;
-
-          case parse:
-            this['_' + name] = newVal;
-            break;
-
-          default:
-            babelHelpers.get(babelHelpers.getPrototypeOf(XtalStateParse.prototype), "attributeChangedCallback", this).call(this, name, oldVal, newVal);
-            return;
-        }
-
-        this.onParsePropsChange();
-      }
-    }, {
-      key: "connectedCallback",
-      value: function connectedCallback() {
-        this._upgradeProperties(['withURLPattern', parse, 'initHistoryIfNull', 'parseFn']);
-
-        babelHelpers.get(babelHelpers.getPrototypeOf(XtalStateParse.prototype), "connectedCallback", this).call(this);
-        this.onParsePropsChange();
-      }
-    }, {
-      key: "onPropsChange",
-      value: function onPropsChange() {
-        if (this._initHistoryIfNull) return false;
-        return babelHelpers.get(babelHelpers.getPrototypeOf(XtalStateParse.prototype), "onPropsChange", this).call(this);
-      }
-    }, {
-      key: "onParsePropsChange",
-      value: function onParsePropsChange() {
-        var _this11 = this;
-
-        if (this._disabled || this.value || this.noMatch) return;
-
-        if (!this._window) {
-          setTimeout(function () {
-            _this11.onParsePropsChange();
-          }, 50);
-          return;
-        }
-
-        if (!this._checkedNull) {
-          if (this._window.history.state === null) {
-            this.dataset.historyWasNull = 'true';
-          }
-
-          this._checkedNull = true;
-        }
-
-        var value = null;
-
-        if (this._withURLPattern) {
-          value = XtalStateParse.parseAddressBar(this._parse, this._withURLPattern, this._window);
-
-          if (value === -1) {
-            if (!this._parseFn) return;
-            var prseString = XtalStateParse.getObj(this._parse, this._window);
-            value = this._parseFn(prseString, this);
-          }
-        }
-
-        if (value === null) {
-          this.noMatch = true;
-          this.de('no-match-found', {
-            value: true
-          }, true);
-          return;
-        } else {
-          this.value = value;
-          this.de('match-found', {
-            value: value
-          }, true);
-        }
-
-        if (this._initHistoryIfNull && this._window.history.state !== null) this._window.history.replaceState(value, '', this._window.location.href);
-      }
-    }, {
-      key: "withURLPattern",
-      get: function get() {
-        return this._withURLPattern;
-      },
-      set: function set(val) {
-        this.attr(with_url_pattern, val);
-      }
-    }, {
-      key: "parse",
-      get: function get() {
-        return this._parse;
-      },
-      set: function set(val) {
-        this.attr(parse, val);
-      }
-    }, {
-      key: "parseFn",
-      get: function get() {
-        return this._parseFn;
-      },
-      set: function set(nv) {
-        this._parseFn = nv;
-        this.onParsePropsChange();
-      }
-    }, {
-      key: "initHistoryIfNull",
-      get: function get() {
-        return this._initHistoryIfNull;
-      },
-      set: function set(nv) {
-        this.attr(init_history_if_null, nv, '');
-      }
-    }, {
-      key: "noMatch",
-      get: function get() {
-        return this._noMatch;
-      },
-      set: function set(val) {
-        this._noMatch = val;
-        this.attr('no-match', val.toString());
-      }
-    }], [{
-      key: "getObj",
-      value: function getObj(parsePath, winObj) {
-        var thingToParse = winObj;
-        parsePath.split('.').forEach(function (token) {
-          if (thingToParse) thingToParse = thingToParse[token];
-        });
-        return thingToParse;
-      }
-    }, {
-      key: "parseAddressBar",
-      value: function parseAddressBar(parsePath, urlPattern, winObj) {
-        try {
-          var reg = new RegExp(urlPattern);
-          var thingToParse = this.getObj(parsePath, winObj);
-          var parsed = reg.exec(thingToParse);
-          if (!parsed) return null;
-          return parsed['groups'];
-        } catch (err) {
-          return -1;
-        }
-      }
-    }, {
-      key: "is",
-      get: function get() {
-        return 'xtal-state-parse';
-      }
-    }, {
-      key: "observedAttributes",
-      get: function get() {
-        return babelHelpers.get(babelHelpers.getPrototypeOf(XtalStateParse), "observedAttributes", this).concat([with_url_pattern, parse, init_history_if_null]);
-      }
-    }]);
-    return XtalStateParse;
-  }(XtalStateBase);
-
-  define(XtalStateParse);
 })();

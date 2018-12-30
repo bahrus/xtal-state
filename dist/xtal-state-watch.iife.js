@@ -196,7 +196,15 @@ function de(oldState, win) {
     const detail = {
         oldState: oldState,
         newState: win.history.state,
+        initVal: false
     };
+    const historyInfo = win.__xtalStateInfo;
+    if (!historyInfo.hasStarted) {
+        historyInfo.hasStarted = true;
+        if (historyInfo.startedAsNull) {
+            detail.initVal = true;
+        }
+    }
     const newEvent = new CustomEvent(history_state_update, {
         detail: detail,
         bubbles: true,
@@ -208,6 +216,11 @@ function init(win) {
     if (win.__xtalStateInit)
         return;
     win.__xtalStateInit = true;
+    if (!win.__xtalStateInfo) {
+        win.__xtalStateInfo = {
+            startedAsNull: win.history.state === null,
+        };
+    }
     const originalPushState = win.history.pushState;
     const boundPushState = originalPushState.bind(win.history);
     win.history.pushState = function (newState, title, URL) {
@@ -298,8 +311,9 @@ class XtalStateWatch extends XtalStateBase {
     pushReplaceHandler(e) {
         const win = this._window;
         const detail = e.detail;
-        if (detail.newState && win.__xtalStateInfo.startedAsNull && !win.__xtalStateInfo.hasStarted) {
-            win.__xtalStateInfo.hasStarted;
+        //if(detail.newState && win.__xtalStateInfo.startedAsNull && !win.__xtalStateInfo.hasStarted){
+        if (detail.initVal) {
+            //win.__xtalStateInfo.hasStarted;
             this.dataset.historyInit = 'true';
             this.dataset.popstate = 'true';
         }
@@ -319,12 +333,6 @@ class XtalStateWatch extends XtalStateBase {
                 this.addSubscribers();
             }, 50);
             return;
-        }
-        const win = this._window;
-        if (!win.__xtalStateInfo) {
-            win.__xtalStateInfo = {
-                startedAsNull: win.history.state === null,
-            };
         }
         switch (this._watch) {
             case all:

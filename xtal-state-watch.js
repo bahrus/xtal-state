@@ -29,8 +29,9 @@ export class XtalStateWatch extends XtalStateBase {
     pushReplaceHandler(e) {
         const win = this._window;
         const detail = e.detail;
-        if (detail.newState && win.__xtalStateInfo.startedAsNull && !win.__xtalStateInfo.hasStarted) {
-            win.__xtalStateInfo.hasStarted;
+        //if(detail.newState && win.__xtalStateInfo.startedAsNull && !win.__xtalStateInfo.hasStarted){
+        if (detail.initVal) {
+            //win.__xtalStateInfo.hasStarted;
             this.dataset.historyInit = 'true';
             this.dataset.popstate = 'true';
         }
@@ -50,12 +51,6 @@ export class XtalStateWatch extends XtalStateBase {
                 this.addSubscribers();
             }, 50);
             return;
-        }
-        const win = this._window;
-        if (!win.__xtalStateInfo) {
-            win.__xtalStateInfo = {
-                startedAsNull: win.history.state === null,
-            };
         }
         switch (this._watch) {
             case all:
