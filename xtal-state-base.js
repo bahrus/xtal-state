@@ -1,4 +1,4 @@
-import { XtallatX } from 'xtal-latx/xtal-latx.js';
+import { XtallatX } from 'xtal-element/xtal-latx.js';
 import { getWinCtx } from './xtal-state-api.js';
 const level = 'level';
 export class XtalStateBase extends XtallatX(HTMLElement) {
@@ -47,4 +47,3 @@ export class XtalStateBase extends XtallatX(HTMLElement) {
             return true;
     }
 }
-//# sourceMappingURL=xtal-state-base.js.map

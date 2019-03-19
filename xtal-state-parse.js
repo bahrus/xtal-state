@@ -1,5 +1,5 @@
 import { XtalStateBase } from './xtal-state-base.js';
-import { define } from 'xtal-latx/define.js';
+import { define } from 'xtal-element/define.js';
 const with_url_pattern = 'with-url-pattern';
 const parse = 'parse';
 const init_history_if_null = 'init-history-if-null';
@@ -131,4 +131,3 @@ export class XtalStateParse extends XtalStateBase {
     }
 }
 define(XtalStateParse);
-//# sourceMappingURL=xtal-state-parse.js.map

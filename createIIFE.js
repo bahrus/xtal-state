@@ -1,6 +1,6 @@
 //@ts-check
 const jiife = require('jiife');
-const xl = 'node_modules/xtal-latx/';
+const xl = 'node_modules/xtal-element/';
 const api = [xl + 'define.js', xl + 'xtal-latx.js', xl + 'getHost.js', 'xtal-state-api.js'];
 jiife.processFiles(api, 'dist/xtal-state-api.js', true);
 const common = api.concat(['xtal-state-base.js']);

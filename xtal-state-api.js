@@ -1,4 +1,4 @@
-import { getHost } from 'xtal-latx/getHost.js';
+import { getHost } from 'xtal-element/getHost.js';
 export const history_state_update = 'history-state-update';
 /**
  *
@@ -118,4 +118,3 @@ function init(win) {
         de(oldState, win);
     };
 }
-//# sourceMappingURL=xtal-state-api.js.map

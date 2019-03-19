@@ -1,4 +1,4 @@
-import { IXtallatXI } from 'xtal-latx/xtal-latx.js';
+import { IXtallatXI } from 'xtal-element/xtal-latx.js';
 type Constructor<T = {}> = new (...args: any[]) => T;
 declare global{
     interface HTMLElement{

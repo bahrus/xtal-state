@@ -1,6 +1,6 @@
 import {XtalStateBase} from './xtal-state-base.js';
 import {history_state_update, IHistoryUpdateDetails} from './xtal-state-api.js';
-import {define} from 'xtal-latx/define.js';
+import {define} from 'xtal-element/define.js';
 
 
 

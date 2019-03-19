@@ -6,6 +6,7 @@ export function define(custEl) {
     }
     customElements.define(tagName, custEl);
 }
+
 export const disabled = 'disabled';
 /**
  * Base class for many xtal- components
@@ -102,11 +103,15 @@ export function XtallatX(superClass) {
         }
     };
 }
+
 export function getHost(el) {
     let parent = el;
     while (parent = (parent.parentNode)) {
         if (parent.nodeType === 11) {
             return parent['host'];
+        }
+        else if (parent.tagName.indexOf('-') > -1) {
+            return parent;
         }
         else if (parent.tagName === 'BODY') {
             return null;
@@ -114,7 +119,8 @@ export function getHost(el) {
     }
     return null;
 }
-import { getHost } from 'xtal-latx/getHost.js';
+
+import { getHost } from 'xtal-element/getHost.js';
 export const history_state_update = 'history-state-update';
 /**
  *

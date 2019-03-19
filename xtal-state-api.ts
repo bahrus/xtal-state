@@ -1,4 +1,4 @@
-import {getHost} from 'xtal-latx/getHost.js';
+import {getHost} from 'xtal-element/getHost.js';
 export const history_state_update = 'history-state-update';
 export interface IHistoryUpdateDetails {
     oldState: any,

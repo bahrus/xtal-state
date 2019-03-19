@@ -9,6 +9,7 @@
     }
     customElements.define(tagName, custEl);
 }
+
 const disabled = 'disabled';
 /**
  * Base class for many xtal- components
@@ -105,11 +106,15 @@ function XtallatX(superClass) {
         }
     };
 }
+
 function getHost(el) {
     let parent = el;
     while (parent = (parent.parentNode)) {
         if (parent.nodeType === 11) {
             return parent['host'];
+        }
+        else if (parent.tagName.indexOf('-') > -1) {
+            return parent;
         }
         else if (parent.tagName === 'BODY') {
             return null;
@@ -117,6 +122,7 @@ function getHost(el) {
     }
     return null;
 }
+
 const history_state_update = 'history-state-update';
 /**
  *
@@ -236,6 +242,7 @@ function init(win) {
         de(oldState, win);
     };
 }
+
 const level = 'level';
 class XtalStateBase extends XtallatX(HTMLElement) {
     constructor() {
@@ -283,6 +290,7 @@ class XtalStateBase extends XtallatX(HTMLElement) {
             return true;
     }
 }
+
 const watch = 'watch';
 const all = 'all';
 const xtal_subscribers = 'xtal-subscribers';
@@ -389,6 +397,7 @@ class XtalStateWatch extends XtalStateBase {
     }
 }
 define(XtalStateWatch);
+
 const with_url_pattern = 'with-url-pattern';
 const parse = 'parse';
 const init_history_if_null = 'init-history-if-null';
@@ -520,6 +529,7 @@ class XtalStateParse extends XtalStateBase {
     }
 }
 define(XtalStateParse);
+
 const debounce = (fn, time) => {
     let timeout;
     return function () {
@@ -528,6 +538,7 @@ const debounce = (fn, time) => {
         timeout = setTimeout(functionCall, time);
     };
 };
+
 function createNestedProp(target, pathTokens, val, clone) {
     const firstToken = pathTokens.shift();
     const tft = target[firstToken];
@@ -561,6 +572,7 @@ function createNestedProp(target, pathTokens, val, clone) {
         catch (e) { }
     ;
 }
+
 const with_path = 'with-path';
 /**
  * Custom Element mixin that allows a property to be namespaced
@@ -605,6 +617,7 @@ function WithPath(superClass) {
         }
     };
 }
+
 /**
  * Deep merge two objects.
  * Inspired by Stackoverflow.com/questions/27936772/deep-object-merging-in-es6-es7
@@ -644,6 +657,7 @@ function mergeDeep(target, source) {
     }
     return target;
 }
+
 const url = 'url';
 const url_search = 'url-search';
 const replace_url_value = 'replace-url-value';
@@ -717,6 +731,7 @@ function UrlFormatter(superClass) {
         }
     };
 }
+
 const make = 'make';
 const rewrite = 'rewrite';
 const history$ = 'history';
@@ -860,6 +875,7 @@ class XtalStateCommit extends UrlFormatter(WithPath(XtalStateBase)) {
     }
 }
 define(XtalStateCommit);
+
 class XtalStateUpdate extends XtalStateCommit {
     static get is() { return 'xtal-state-update'; }
     mergedHistory() {
@@ -873,5 +889,6 @@ class XtalStateUpdate extends XtalStateCommit {
     }
 }
 define(XtalStateUpdate);
+
     })();  
         

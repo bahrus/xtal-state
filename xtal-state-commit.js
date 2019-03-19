@@ -1,8 +1,8 @@
 import { XtalStateBase } from './xtal-state-base.js';
-import { WithPath, with_path } from 'xtal-latx/with-path.js';
+import { WithPath, with_path } from 'xtal-element/with-path.js';
 import { UrlFormatter } from './url-formatter.js';
-import { define } from 'xtal-latx/define.js';
-import { debounce } from 'xtal-latx/debounce.js';
+import { define } from 'xtal-element/define.js';
+import { debounce } from 'xtal-element/debounce.js';
 const make = 'make';
 const rewrite = 'rewrite';
 const history$ = 'history';
@@ -146,4 +146,3 @@ export class XtalStateCommit extends UrlFormatter(WithPath(XtalStateBase)) {
     }
 }
 define(XtalStateCommit);
-//# sourceMappingURL=xtal-state-commit.js.map

@@ -71,4 +71,3 @@ export function UrlFormatter(superClass) {
         }
     };
 }
-//# sourceMappingURL=url-formatter.js.map

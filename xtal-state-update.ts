@@ -1,6 +1,6 @@
 import { XtalStateCommit} from './xtal-state-commit.js';
-import {define} from 'xtal-latx/define.js';
-import {mergeDeep} from 'xtal-latx/mergeDeep.js';
+import {define} from 'xtal-element/define.js';
+import {mergeDeep} from 'xtal-element/mergeDeep.js';
 
 
 export class XtalStateUpdate extends XtalStateCommit {

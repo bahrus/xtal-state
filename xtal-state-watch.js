@@ -1,6 +1,6 @@
 import { XtalStateBase } from './xtal-state-base.js';
 import { history_state_update } from './xtal-state-api.js';
-import { define } from 'xtal-latx/define.js';
+import { define } from 'xtal-element/define.js';
 const watch = 'watch';
 const all = 'all';
 const xtal_subscribers = 'xtal-subscribers';
@@ -107,4 +107,3 @@ export class XtalStateWatch extends XtalStateBase {
     }
 }
 define(XtalStateWatch);
-//# sourceMappingURL=xtal-state-watch.js.map
