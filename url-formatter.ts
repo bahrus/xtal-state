@@ -1,4 +1,5 @@
 import { IXtallatXI } from 'xtal-element/xtal-latx.js';
+import {IHydrate, up} from 'trans-render/hydrate.js';
 type Constructor<T = {}> = new (...args: any[]) => T;
 declare global{
     interface HTMLElement{
@@ -8,7 +9,7 @@ declare global{
 const url = 'url';
 const url_search = 'url-search';
 const replace_url_value = 'replace-url-value';
-export function UrlFormatter<TBase extends Constructor<IXtallatXI>>(superClass: TBase) {
+export function UrlFormatter<TBase extends Constructor<IHydrate>>(superClass: TBase) {
     return class extends superClass {
         _url!: string;
         /**
@@ -73,8 +74,8 @@ export function UrlFormatter<TBase extends Constructor<IXtallatXI>>(superClass: 
         }
         value: any;
         connectedCallback() {
-            this._upgradeProperties([url, 'urlSearch', 'replaceUrlValue', 'stringifyFn']);
-            if(super.connectedCallback) super.connectedCallback();
+            this[up]([url, 'urlSearch', 'replaceUrlValue', 'stringifyFn']);
+            //if(super.connectedCallback) super.connectedCallback();
         }
 
         adjustUrl(url: string){

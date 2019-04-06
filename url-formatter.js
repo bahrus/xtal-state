@@ -1,3 +1,4 @@
+import { up } from 'trans-render/hydrate.js';
 const url = 'url';
 const url_search = 'url-search';
 const replace_url_value = 'replace-url-value';
@@ -55,9 +56,8 @@ export function UrlFormatter(superClass) {
                 super.attributeChangedCallback(n, ov, nv);
         }
         connectedCallback() {
-            this._upgradeProperties([url, 'urlSearch', 'replaceUrlValue', 'stringifyFn']);
-            if (super.connectedCallback)
-                super.connectedCallback();
+            this[up]([url, 'urlSearch', 'replaceUrlValue', 'stringifyFn']);
+            //if(super.connectedCallback) super.connectedCallback();
         }
         adjustUrl(url) {
             if (this._stringifyFn) {
