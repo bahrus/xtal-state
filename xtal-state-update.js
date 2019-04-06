@@ -1,5 +1,5 @@
 import { XtalStateCommit } from './xtal-state-commit.js';
-import { define } from 'xtal-element/define.js';
+import { define } from 'trans-render/define.js';
 import { mergeDeep } from 'xtal-element/mergeDeep.js';
 export class XtalStateUpdate extends XtalStateCommit {
     static get is() { return 'xtal-state-update'; }
