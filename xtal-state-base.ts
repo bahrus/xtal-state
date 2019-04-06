@@ -1,11 +1,12 @@
 import { XtallatX } from 'xtal-element/xtal-latx.js';
+import {up, hydrate, disabled} from 'trans-render/hydrate.js';
 import {getWinCtx} from './xtal-state-api.js';
 const level = 'level';
 
 
 
 
-export class XtalStateBase extends XtallatX(HTMLElement){
+export class XtalStateBase extends XtallatX(hydrate(HTMLElement)){
     private _level = 'global';
     get level(){
         return this._level;
@@ -32,7 +33,7 @@ export class XtalStateBase extends XtallatX(HTMLElement){
     _conn!:boolean;
     connectedCallback(){
         this.style.display = 'none';
-        this._upgradeProperties(['disabled', level]);
+        this[up](['disabled', level]);
         this._conn = true;
         this.onPropsChange();
 
