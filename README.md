@@ -6,6 +6,8 @@
 
 # \<xtal-state\>
 
+**NB**  I am excited (and slightly embarassed) to report that AMP actually provides numerous components built around the same concept as these components -- namely, amp-bind (which I had heard about before this component was created) actually uses [history.state](https://amp.dev/documentation/components/amp-bind?referrer=ampproject.org#modifying-history-with-amp.pushstate()) as its "system of record" and all of the binding it provides for components like the datepicker actually stores the values in history.state!  So what do these components offer that AMP doesn't?  I guess the address parser, and the ability to have state add the local DOM as well as Shadow level.  But definitely take a look at AMP.
+
 xtal-state-* are a few Web components (and an api) that wrap and extend the power of the history api.
 
 One of the goals of xtal-state is that it be scalable (think [Scala](https://www.scala-lang.org/old/node/250.html)) -- it can solve simple problems simply, with a miminal learning curve, but it can also be used to tackle progressively more difficult problems, each problem requiring more nuance and mastery.
