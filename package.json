@@ -8,13 +8,13 @@
   "author": "bahrus <anderson.bruce.b@gmail.com>",
   "license": "MIT",
   "dependencies": {
-    "xtal-element": "0.0.56",
-    "trans-render": "0.0.106"
+    "xtal-element": "0.0.57",
+    "trans-render": "0.0.107"
   },
   "devDependencies": {
     "@webcomponents/webcomponentsjs": "2.2.10",
     "jiife": "0.0.12",
-    "p-d.p-u": "0.0.117",
-    "purr-sist": "0.0.51"
+    "p-d.p-u": "0.0.118",
+    "purr-sist": "0.0.52"
   }
 }
