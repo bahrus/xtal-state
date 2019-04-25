@@ -75,7 +75,7 @@ export function UrlFormatter<TBase extends Constructor<IHydrate>>(superClass: TB
         value: any;
         connectedCallback() {
             this[up]([url, 'urlSearch', 'replaceUrlValue', 'stringifyFn']);
-            //if(super.connectedCallback) super.connectedCallback();
+            if(super.connectedCallback) super.connectedCallback();
         }
 
         adjustUrl(url: string){

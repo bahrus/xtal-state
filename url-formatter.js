@@ -57,7 +57,8 @@ export function UrlFormatter(superClass) {
         }
         connectedCallback() {
             this[up]([url, 'urlSearch', 'replaceUrlValue', 'stringifyFn']);
-            //if(super.connectedCallback) super.connectedCallback();
+            if (super.connectedCallback)
+                super.connectedCallback();
         }
         adjustUrl(url) {
             if (this._stringifyFn) {
