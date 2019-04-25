@@ -97,19 +97,10 @@ export class XtalStateCommit extends UrlFormatter(WithPath(XtalStateBase)) {
         super.connectedCallback();
     }
     onPropsChange() {
-        if (this._disabled)
-            return;
-        if (super.onPropsChange()) {
-            if (this._notReady) {
-                setTimeout(() => {
-                    this.onPropsChange();
-                }, 50);
-                return;
-            }
-            return true;
-        }
+        if (!super.onPropsChange())
+            return false;
         if (!this._make && !this._rewrite)
-            return true;
+            return false;
         this._debouncer();
     }
     mergedHistory() {
