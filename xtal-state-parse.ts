@@ -1,5 +1,6 @@
 import {XtalStateBase} from './xtal-state-base.js';
-import {define} from 'xtal-element/define.js';
+import {define} from 'trans-render/define.js';
+import {up} from 'trans-render/hydrate.js';
 const with_url_pattern = 'with-url-pattern';
 const parse = 'parse';
 const init_history_if_null = 'init-history-if-null';
@@ -59,7 +60,7 @@ export class XtalStateParse extends XtalStateBase{
     }
 
     connectedCallback(){
-        this._upgradeProperties(['withURLPattern', parse, 'initHistoryIfNull', 'parseFn']);
+        this[up](['withURLPattern', parse, 'initHistoryIfNull', 'parseFn']);
         super.connectedCallback();
         this.onParsePropsChange();
     }
