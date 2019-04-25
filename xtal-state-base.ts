@@ -3,11 +3,8 @@ import {up, hydrate, disabled} from 'trans-render/hydrate.js';
 import {getWinCtx} from './xtal-state-api.js';
 const level = 'level';
 
-
-
-
 export class XtalStateBase extends XtallatX(hydrate(HTMLElement)){
-    private _level = 'global';
+    private _level: string;
     get level(){
         return this._level;
     }
@@ -25,10 +22,17 @@ export class XtalStateBase extends XtallatX(hydrate(HTMLElement)){
         super.attributeChangedCallback(name, oldVal, newVal);
         switch(name){
             case level:
+                if(this._level !== undefined) throw "Change of level not allowed";
                 this._level = newVal;
+                getWinCtx(this, this._level).then((win: Window) =>{
+                    this._window = win;
+                    this._notReady = false;
+                    this.onPropsChange();
+                })
                 break;
+            
         }
-        this.onPropsChange();
+        if(name !== level) this.onPropsChange();
     }
     _conn!:boolean;
     connectedCallback(){
@@ -38,18 +42,11 @@ export class XtalStateBase extends XtallatX(hydrate(HTMLElement)){
         this.onPropsChange();
 
     }
-    _notReady!: boolean;
+    _notReady: boolean = true;;
 
     
-    onPropsChange(){
-        if(!this._conn || this._disabled) return true;
-        if(!this._window){
-            this._notReady = true;
-            getWinCtx(this, this._level).then((win: Window) =>{
-                this._window = win;
-                this._notReady = false;
-            })
-        }
-        if(this._notReady) return true;
+    onPropsChange() : boolean{
+        if(!this._conn || this._disabled || this._notReady || !this._window) return false;
+        return true;
     }
 }
