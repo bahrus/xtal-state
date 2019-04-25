@@ -22,7 +22,7 @@ export class XtalStateBase extends XtallatX(hydrate(HTMLElement)){
         super.attributeChangedCallback(name, oldVal, newVal);
         switch(name){
             case level:
-                if(this._level !== undefined) throw "Change of level not allowed";
+                if(this._level !== undefined) return;
                 this._level = newVal;
                 getWinCtx(this, this._level).then((win: Window) =>{
                     this._window = win;
