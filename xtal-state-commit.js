@@ -3,7 +3,6 @@ import { WithPath, with_path } from 'xtal-element/with-path.js';
 import { UrlFormatter } from './url-formatter.js';
 import { define } from 'trans-render/define.js';
 import { debounce } from 'xtal-element/debounce.js';
-import { up } from 'trans-render/hydrate.js';
 const make = 'make';
 const rewrite = 'rewrite';
 const history$ = 'history';
@@ -89,7 +88,7 @@ export class XtalStateCommit extends UrlFormatter(WithPath(XtalStateBase)) {
     }
     //_connected!: boolean;
     connectedCallback() {
-        this[up]([make, rewrite, title, 'withPath', 'stringifyFn', new$$, 'syncHistory'].concat([history$]));
+        this.propUp([make, rewrite, title, 'withPath', 'stringifyFn', new$$, 'syncHistory'].concat([history$]));
         this._debouncer = debounce(() => {
             this.updateHistory();
         }, 50);

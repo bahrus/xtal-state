@@ -1,5 +1,5 @@
 import { IXtallatXI } from 'xtal-element/xtal-latx.js';
-import {IHydrate, up} from 'trans-render/hydrate.js';
+import {IHydrate} from 'trans-render/hydrate.js';
 type Constructor<T = {}> = new (...args: any[]) => T;
 declare global{
     interface HTMLElement{
@@ -74,7 +74,7 @@ export function UrlFormatter<TBase extends Constructor<IHydrate>>(superClass: TB
         }
         value: any;
         connectedCallback() {
-            this[up]([url, 'urlSearch', 'replaceUrlValue', 'stringifyFn']);
+            this.propUp([url, 'urlSearch', 'replaceUrlValue', 'stringifyFn']);
             if(super.connectedCallback) super.connectedCallback();
         }
 

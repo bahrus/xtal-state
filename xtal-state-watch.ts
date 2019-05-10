@@ -1,7 +1,6 @@
 import {XtalStateBase} from './xtal-state-base.js';
 import {history_state_update, IHistoryUpdateDetails} from './xtal-state-api.js';
 import {define} from 'trans-render/define.js';
-import {up} from 'trans-render/hydrate.js';
 
 
 const watch = 'watch';
@@ -86,7 +85,7 @@ export class XtalStateWatch extends XtalStateBase {
     }
     connectedCallback(){
         //this._connected = true;
-        this[up]([watch]);
+        this.propUp([watch]);
         super.connectedCallback();
         this.addSubscribers();
     }

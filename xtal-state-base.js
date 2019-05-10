@@ -1,5 +1,5 @@
 import { XtallatX } from 'xtal-element/xtal-latx.js';
-import { up, hydrate } from 'trans-render/hydrate.js';
+import { hydrate } from 'trans-render/hydrate.js';
 import { getWinCtx } from './xtal-state-api.js';
 const level = 'level';
 export class XtalStateBase extends XtallatX(hydrate(HTMLElement)) {
@@ -38,7 +38,7 @@ export class XtalStateBase extends XtallatX(hydrate(HTMLElement)) {
     }
     connectedCallback() {
         this.style.display = 'none';
-        this[up](['disabled', level]);
+        this.propUp(['disabled', level]);
         this._conn = true;
         this.onPropsChange();
     }
