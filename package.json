@@ -15,6 +15,11 @@
     "@webcomponents/webcomponentsjs": "2.2.10",
     "jiife": "0.0.12",
     "p-d.p-u": "0.0.119",
-    "purr-sist": "0.0.53"
+    "purr-sist": "0.0.53",
+    "xtal-test": "0.0.18"
+  },
+  "scripts": {
+    "test": "node createIIFE.js && tape test/*.js",
+    "serve": "node node_modules/xtal-test/serve.js"
   }
 }

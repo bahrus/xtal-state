@@ -6,24 +6,37 @@
     <link rel="shortcut icon" href="/wikipedia.ico"/>
     <title>xtal-state demo</title>
 
-    <script src="../node_modules/@webcomponents/webcomponentsjs/webcomponents-loader.js"></script>
-    <script type="module" async src="https://unpkg.com/p-d.p-u@0.0.74/p-d.js?module"></script>
-    <script type="module" src="../xtal-state-commit.js"></script>
-    <script type="module" src="../xtal-state-watch.js"></script>
-    <script type="module" src="../xtal-state-parse.js"></script>
   </head>
   <body>
     <div class="vertical-section-container centered">
+      <xtal-sip><script nomodule>["xtal-state-commit", "xtal-state-watch", "p-d"]</script></xtal-sip>
       <h3>Basic xtal-state demo</h3>
       <a data-test="hello">Test 1</a>
-      <p-d on="click" if="a" to="{history:target.dataset.test}"></p-d>
+      <p-d on="click" if="a" prop="history" val="target.dataset.test"></p-d>
       <xtal-state-commit make url="/testing" level="local" with-path="abcd"></xtal-state-commit>
 
       <xtal-state-watch watch level="local"></xtal-state-watch>
-      <p-d on="history-changed" to="{innerHTML}"></p-d>
+      <p-d on="history-changed" to="textContent"></p-d>
       <div></div>
 
       <xtal-state-parse disabled="2" parse="location.href" with-url-pattern="http://(?<domain>[a-z0-9\.\:]*)/demo/(?<page>[a-z0-9-\.]*)"></xtal-state-parse>
+        <!-- Use experimental import maps -->
+        <script defer src="https://cdn.jsdelivr.net/npm/es-module-shims@0.2.4/dist/es-module-shims.js"></script>
+        <script type="importmap-shim">
+        {
+          "imports": {
+            "xtal-element/": "../node_modules/xtal-element/",
+            "trans-render/": "../node_modules/trans-render/",
+            "xtal-state-commit": "../xtal-state-commit.js",
+            "xtal-state-watch": "../xtal-state-watch.js",
+            "xtal-sip": "https://cdn.jsdelivr.net/npm/xtal-sip@0.0.80/xtal-sip.js",
+            "p-d": "https://cdn.jsdelivr.net/npm/p-d.p-u@0.0.122/p-d.js"
+          }
+        }
+        </script>
+        <script  type="module-shim">
+            import 'xtal-sip';
+        </script>
     </div>
   </body>
 </html>
