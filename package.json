@@ -2,21 +2,20 @@
   "name": "xtal-state",
   "description": "Web component wrapper around the history api",
   "version": "0.0.85",
-  "main": "xtal-state-parse.js",
   "module": "xtal-state-parse.js",
   "repository": "https://github.com/bahrus/xtal-state",
   "author": "bahrus <anderson.bruce.b@gmail.com>",
   "license": "MIT",
   "dependencies": {
-    "xtal-element": "0.0.59",
-    "trans-render": "0.0.111"
+    "xtal-element": "0.0.60",
+    "trans-render": "0.0.113"
   },
   "devDependencies": {
     "@webcomponents/webcomponentsjs": "2.2.10",
     "jiife": "0.0.12",
-    "p-d.p-u": "0.0.119",
-    "purr-sist": "0.0.53",
-    "xtal-test": "0.0.18"
+    "p-et-alia": "0.0.8",
+    "purr-sist": "0.0.58",
+    "xtal-test": "0.0.19"
   },
   "scripts": {
     "test": "node createIIFE.js && tape test/*.js",
