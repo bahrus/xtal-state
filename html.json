@@ -1,8 +1,33 @@
 {
+    "version": 1,
     "tags": [
         {
             "name": "xtal-state-commit",
             "description": "Inserts its history property into the history.state object with an optional specified path",
+            "attributes": [
+                {
+                    "name": "make",
+                    "description": "Use pushState to update history"
+                },{
+                    "name": "rewrite",
+                    "description": "Use replaceState to update history"
+                },{
+                    "name": "title",
+                    "description": "Title to use when calling push/replace state"
+                },{
+                    "name": "new",
+                    "description": "Initite history to empty object"
+                }
+            ],
+            "customEvents":[
+                {
+                    "name": "history-changed",
+                    "description": "Fires when the element instance updates history.  Does not fire when history is updated elsewhere."
+                }
+            ]
+        },{
+            "name": "xtal-state-update",
+            "description": "xtal-state-update extends xtal-state-commit, but adds the ability to *deep merge* changes to the existing history.state object, even with the same path, if it exists, so that other history updates done by other pieces of code will be even less likely to be lost.",
             "attributes": [
                 {
                     "name": "make",
