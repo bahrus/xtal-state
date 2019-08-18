@@ -47,7 +47,7 @@ function de(oldState, win, title) {
     win.dispatchEvent(newEvent);
 }
 export function setState(state, win = window) {
-    window.requestAnimationFrame(function () {
+    window.requestAnimationFrame(() => {
         const merged = mergeDeep(win.history.state, state);
         win.history.replaceState(merged, '', win.location.href);
     });

@@ -52,7 +52,7 @@ function de(oldState: any, win: Window, title: string){
 }
 
 export function setState(state: object, win: Window = window){
-    window.requestAnimationFrame(function () {
+    window.requestAnimationFrame(() => {
         const merged = mergeDeep(win.history.state, state);
         win.history.replaceState(merged, '', win.location.href);
     });

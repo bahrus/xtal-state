@@ -86,20 +86,22 @@ Here is a [demo](https://bahrus.github.io/purr-sist-demos/Example3.htm), which s
 
 ## Basic Concept
 
-history.state has a number of positive attributes, which is why I'm so interested in building (part of) state management around it:
+history.state has a number of positive attributes, which is why it seems so inviting to build "state" management around:
 
 1.  The data is stored out of RAM, which is good for memory strapped devices.
-2.  Although the data size is limited, you can have multiple histories by using multiple iframes (preferably with style=display:none), which allows you to exceed the limit.   
-3.  Web sites that provide sensitive information shouldn't have any audit concerns with history.state, as there would likely be with other forms of local storage.
+2.  Although the data size is limited (the limit is configurable on Firefox), you can have multiple histories by using multiple iframes (preferably with style=display:none), which allows you to exceed the limit.   
+3.  Web sites that provide sensitive information shouldn't have any audit concerns with history.state, as there would likely be with other forms of local storage like IndexedDB.
 4.  Support for time travel via the back button.  Adding developer tools on top of that seems pretty straightforward.
 5.  Built into the platform.  Anyone can access this built-in api.  The libraries here only reduce some boilerplate, but nothing we do prevents other libraries from tapping into the same data.
 6.  Refreshing the browser doesn't lose the state.
 
 Some disadvantages of history.state:
 
-1.  Although an iframe gives you the ability to store up to 2M out of RAM, the cost of holding onto an iframe is about 350 kb.  
+1.  Although an iframe gives you the ability to store up to 2M outside of RAM, the cost of holding onto an iframe is about 350 kb.  So there is some overhead.
 2.  Unlike IndexedDB, storing data in history.data can't currently be done asynchronously.
 3.  Unlike IndexedDB, web workers don't have access to history.state
+
+To help alleviate issues 2 and 3, since we are not relying on this state management very much for binding between components (preferring direct passing via something like [petalia](https://github.com/bahrus/p-et-alia)) we can take some liberties in when to save to history.state, and for example wait for a window.requestAnimationFrame, confident that no one will care about such delays.
 
 So history.state should probably be used sparingly on low end devices, and  for applications where local storage is an acceptable alternative.
 
