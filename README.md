@@ -6,7 +6,7 @@
 
 # \<xtal-state\>
 
-**NB**  I am excited (and slightly embarassed) to report that AMP actually provides numerous components built around the same concept as these components -- namely, amp-bind (which I had heard about before this component was created) actually uses [history.state](https://amp.dev/documentation/components/amp-bind?referrer=ampproject.org#modifying-history-with-amp.pushstate()) as its "system of record" and all of the binding it provides for components like the datepicker actually stores the values in history.state!  So what do these components offer that AMP doesn't?  I guess the address parser, and the ability to have state at the local DOM as well as Shadow level.  But definitely take a look at AMP.
+**NB**  I am excited (and slightly embarassed) to report that AMP provides numerous components built around the same concept as these components -- namely, amp-bind (which I had heard about before this component was created) uses [history.state](https://amp.dev/documentation/components/amp-bind?referrer=ampproject.org#modifying-history-with-amp.pushstate()) as its "system of record" and all of the binding it provides for components like the datepicker actually stores the values in history.state!  Definitely take a look at AMP for an alternative to these components / api.
 
 xtal-state-* are a few Web components (and an api) that wrap and extend the power of the history api.
 
@@ -14,7 +14,7 @@ One of the goals of xtal-state is that it be scalable (think [Scala](https://www
 
 ## Problem Statement I -- Object-centric routing
 
-At the simplest level, it can provide part of a routing solution (but a view selector component, such as [if-diff](https://www.webcomponents.org/element/if-diff) is needed, in combination with these components for a full routing implementation).  But unlike typical routing solutions, perhaps, xtal-state* views the history.state object as the focal point, and the address bar as a subservient recorder of the history.state object.
+At the simplest level, it can provide part of a routing solution (but a view selector component, such as [if-diff](https://www.webcomponents.org/element/if-diff) is needed, in combination with these components, for a full routing implementation).  But unlike typical routing solutions, perhaps, xtal-state* views the history.state object as the focal point, and the address bar as a subservient recorder of the history.state object.
 
 At the other extreme, consider the following two problem statements.
 
@@ -79,6 +79,47 @@ Basically what we need is a miniature, 1 kb git client running in the browser, c
 ## Demo
 
 Here is a [demo](https://bahrus.github.io/purr-sist-demos/Example3.htm), which shows the outline of how these components, combined with [purr-sist](https://www.webcomponents.org/element/purr-sist) can be used to create "git in the browser."
+
+## Basic Concept
+
+history.state has a number of positive attributes, which is why I'm so interested in building (part of) state management around it:
+
+1.  The data is stored out of RAM, which is good for memory strapped devices.
+2.  Although the data size is limited, you can have multiple histories by using multiple iframes (preferably with style=display:none), which allows you to exceed the limit.   
+3.  Web sites that provide sensitive information shouldn't have any audit concerns with history.state, as there would likely be with other forms of local storage.
+4.  Support for time travel via the back button.  Adding developer tools on top of that seems pretty straightforward.
+5.  Built into the platform.  Anyone can access this built-in api.  The libraries here only reduce some boilerplate, but nothing we do prevents other libraries from tapping into the same data.
+
+Some disadvantages of history.state:
+
+1.  Although an iframe gives you the ability to store up to 640KB out of RAM, the cost of holding onto an iframe is about 350 kb.  
+2.  Unlike IndexedDB, storing data in history.data can't currently be done asynchronously.
+3.  Unlike IndexedDB, web workers don't have access to history.state
+
+So history.state should probably be used sparingly on low end devices, for applications where local storage is an acceptable alternative. 
+
+
+## Programmatic API
+
+To partake in usage of this state management solution without using these web components, you can get the window object containing the history.state:
+
+```JavaScript
+import {getWinCtx} from 'xtal-state/xtal-state-api.js';
+
+...
+getWinCtx(el, level).then(win =>{
+    console.log(win.history.state);
+    win.addEventListener('history-state-update', event =>{
+        //code is hit whenever history.pushState, replaceState is called, but not when back button is pressed 
+    });
+    win.addEventListener('popstate', event =>{
+        //regular popstate events
+    })
+})
+
+```
+
+where "el" is a DOM element, and "level" has the same meaning as described above.  Unless level is "global", "el" will be used as the reference point to apply the "level" to.
 
 ## Syntax
 
@@ -209,27 +250,7 @@ No.  Remember, xtal-state views history.state as the focal point, not the addres
 All four files are combined into a single IIFE class script file, dist/xtal-state.iife.js or dist/xtal-state.iife.min.js.  
 
 
-## Programmatic API (Not tested)
 
-To partake in usage of this state management solution without using these web components, you can get the window object containing the history.state:
-
-```JavaScript
-import {getWinCtx} from 'xtal-state/xtal-state-api.js';
-
-...
-getWinCtx(el, level).then(win =>{
-    console.log(win.history.state);
-    win.addEventListener('history-state-update', event =>{
-        //code is hit whenever history.pushState, replaceState is called, but not when back button is pressed 
-    });
-    win.addEventListener('popstate', event =>{
-        //regular popstate events
-    })
-})
-
-```
-
-where "el" is a DOM element, and "level" has the same meaning as described above.  Unless level is "global", "el" will be used as the reference point to apply the "level" to.
 
 ## Install the Polymer-CLI
 
