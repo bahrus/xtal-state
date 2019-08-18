@@ -6,9 +6,7 @@
 
 # \<xtal-state\>
 
-**NB**  I am excited (and slightly embarassed) to report that AMP provides numerous components built around the same concept as these components -- namely, amp-bind (which I had heard about before this component was created) uses [history.state](https://amp.dev/documentation/components/amp-bind?referrer=ampproject.org#modifying-history-with-amp.pushstate()) as its "system of record" and all of the binding it provides for components like the datepicker actually stores the values in history.state!  Definitely take a look at AMP for an alternative to these components / api.
 
-xtal-state-* are a few Web components (and an api) that wrap and extend the power of the history api.
 
 One of the goals of xtal-state is that it be scalable (think [Scala](https://www.scala-lang.org/old/node/250.html)) -- it can solve simple problems simply, with a miminal learning curve, but it can also be used to tackle progressively more difficult problems, each problem requiring more nuance and mastery.
 
@@ -75,6 +73,12 @@ Basically what we need is a miniature, 1 kb git client running in the browser, c
 *In the year 2412, Guinan, president-elect of the United Federation of Planets, wants to make good on her promise to modernize the UFP website.  The last known browser running IE11 was destroyed when the planet Psi 2000 imploded, so Guinan thought it was time to finally take full advantage of what the platform had to offer in terms of scope isolation.  The current version of the website mashes together websites from each outpost - 5,173,000 in total.  Each website was built using the most popular framework (and version) of the day when the outpost was established, and due to framework lock-in, never migrated to anything newer.  Some of those frameworks, in fact, were conceived when the Beastie Boys' "Sabotage" was topping the Earthling charts.  Finding qualified developers requires finding time singularities and bringing in [ancient talent](https://motherboard.vice.com/en_us/article/pgapzy/heavens-gate-web-designers-higher-source-suicide-cult).  The mashing together is done via iframes.  So the idea is to switch out iframes for loosely coupled web components.*
 
 *Doing her due diligence, Guinan visited alternate timelines where parallel Guinan's had tried the same thing. Guinan found one timeline where a mass inter-galactic civil-war had broken out.  The cause?  One of the web components had code that would update the window.history.state object.  This inadvertently caused another outposts's web component to initiate war with the Romulans.*   
+
+**NB**  I am excited (and slightly embarassed) to report that AMP provides numerous components built around the same concept as these components -- namely, amp-bind (which I had heard about before this component was created) uses [history.state](https://amp.dev/documentation/components/amp-bind?referrer=ampproject.org#modifying-history-with-amp.pushstate()) as its "system of record" and all of the binding it provides for components like the datepicker actually stores the values in history.state!  Definitely take a look at AMP for an alternative to these components / api.
+
+xtal-state differs, perhaps, in that it takes the name "history.state" to hart -- xtal-state regards DOM Elements / Custom Elements as independent, thinking beings with internal "memories," and regards the primary purpose of xtal-state is to help persist the key settings as needed, during refreshes, bookmarks or shared links.
+
+xtal-state-* are a few Web components (and an api) that wrap and extend the power of the history api.
 
 ## Demo
 
