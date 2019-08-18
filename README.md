@@ -103,9 +103,8 @@ Some disadvantages of history.state:
 
 To help alleviate issues 2 and 3, since we are not relying on this state management very much for binding between components (preferring direct passing via something like [petalia](https://github.com/bahrus/p-et-alia)) we can take some liberties in when to save to history.state, and for example wait for a window.requestAnimationFrame, confident that no one will care about such delays.
 
-So history.state should probably be used sparingly on low end devices, and  for applications where local storage is an acceptable alternative.
 
-We don't recommend using history.state to cache data, but only to save user selections.
+We don't recommend using history.state to cache data, but only to save user selections, and to help manage global state where appropriate, in order to avoid lengthy prop passing where convenient. 
 
 
 ## Programmatic API
