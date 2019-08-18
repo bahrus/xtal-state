@@ -97,7 +97,7 @@ history.state has a number of positive attributes, which is why it seems so invi
 
 Some disadvantages of history.state:
 
-1.  Although an iframe gives you the ability to store up to 2M outside of RAM, the cost of holding onto an iframe is about 350 kb.  So there is some overhead.
+1.  Although an iframe gives you the ability to store up to 2M outside of RAM (Firefox), the cost of holding onto an iframe is about 350 kb.  So there is some overhead.
 2.  Unlike IndexedDB, storing data in history.data can't currently be done asynchronously.
 3.  Unlike IndexedDB, web workers don't have access to history.state
 

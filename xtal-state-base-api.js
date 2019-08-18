@@ -30,7 +30,8 @@ function de(oldState, win, title) {
     const detail = {
         oldState: oldState,
         newState: win.history.state,
-        initVal: false
+        initVal: false,
+        title: title
     };
     const historyInfo = win[xtalStateInfoSym];
     if (!historyInfo.hasStarted) {
