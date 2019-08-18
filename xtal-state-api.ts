@@ -1,14 +1,6 @@
 import {getHost} from 'xtal-element/getHost.js';
-export const history_state_update = 'history-state-update';
-export interface IHistoryUpdateDetails {
-    oldState: any,
-    newState: any,
-    initVal: boolean,
-}
-export interface IHistoryInfo{
-    startedAsNull?: boolean;
-    hasStarted?:boolean;
-}
+import {init} from './xtal-state-base-api.js';
+
 /**
  * 
  * @param par Parent or document fragment which should mantain regional state
@@ -79,49 +71,5 @@ export function getWinCtx(el: HTMLElement, level: string){
     });
 }
 
-function de(oldState: any, win: any){
-    const detail = {
-        oldState: oldState,
-        newState: win.history.state,
-        initVal: false
-    } as IHistoryUpdateDetails;
-    const historyInfo = win.__xtalStateInfo as IHistoryInfo;
-    if(!historyInfo.hasStarted){
-        historyInfo.hasStarted = true;
-        if(historyInfo.startedAsNull){
-            detail.initVal = true;
-        }
-    }
-    const newEvent = new CustomEvent(history_state_update, {
-        detail: detail,
-        bubbles: true,
-        composed: true,
-    } as CustomEventInit);
-    win.dispatchEvent(newEvent);
-}
 
-function init(win: any): void{
-    if(win.__xtalStateInit) return;
-    win.__xtalStateInit = true;
-    if(!win.__xtalStateInfo){
-        win.__xtalStateInfo = {
-            startedAsNull: win.history.state === null,
-        } as IHistoryInfo;
-    }
-    const originalPushState = win.history.pushState;
-    const boundPushState = originalPushState.bind(win.history);
-    win.history.pushState = function (newState: any, title: string, URL: string) {
-        const oldState = win.history.state;
-        boundPushState(newState, title, URL);
-        de(oldState, win);
-    }
 
-    const originalReplaceState = win.history.replaceState;
-    const boundReplaceState = originalReplaceState.bind(win.history); 
-    win.history.replaceState = function (newState: any, title: string, URL: string) {
-        const oldState = win.history.state; 
-        boundReplaceState(newState, title, URL);
-        de(oldState, win);
-    }
-
-}

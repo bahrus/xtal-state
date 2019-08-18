@@ -1,5 +1,5 @@
 import { getHost } from 'xtal-element/getHost.js';
-export const history_state_update = 'history-state-update';
+import { init } from './xtal-state-base-api.js';
 /**
  *
  * @param par Parent or document fragment which should mantain regional state
@@ -73,48 +73,4 @@ export function getWinCtx(el, level) {
                 });
         }
     });
-}
-function de(oldState, win) {
-    const detail = {
-        oldState: oldState,
-        newState: win.history.state,
-        initVal: false
-    };
-    const historyInfo = win.__xtalStateInfo;
-    if (!historyInfo.hasStarted) {
-        historyInfo.hasStarted = true;
-        if (historyInfo.startedAsNull) {
-            detail.initVal = true;
-        }
-    }
-    const newEvent = new CustomEvent(history_state_update, {
-        detail: detail,
-        bubbles: true,
-        composed: true,
-    });
-    win.dispatchEvent(newEvent);
-}
-function init(win) {
-    if (win.__xtalStateInit)
-        return;
-    win.__xtalStateInit = true;
-    if (!win.__xtalStateInfo) {
-        win.__xtalStateInfo = {
-            startedAsNull: win.history.state === null,
-        };
-    }
-    const originalPushState = win.history.pushState;
-    const boundPushState = originalPushState.bind(win.history);
-    win.history.pushState = function (newState, title, URL) {
-        const oldState = win.history.state;
-        boundPushState(newState, title, URL);
-        de(oldState, win);
-    };
-    const originalReplaceState = win.history.replaceState;
-    const boundReplaceState = originalReplaceState.bind(win.history);
-    win.history.replaceState = function (newState, title, URL) {
-        const oldState = win.history.state;
-        boundReplaceState(newState, title, URL);
-        de(oldState, win);
-    };
 }

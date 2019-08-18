@@ -89,14 +89,17 @@ history.state has a number of positive attributes, which is why I'm so intereste
 3.  Web sites that provide sensitive information shouldn't have any audit concerns with history.state, as there would likely be with other forms of local storage.
 4.  Support for time travel via the back button.  Adding developer tools on top of that seems pretty straightforward.
 5.  Built into the platform.  Anyone can access this built-in api.  The libraries here only reduce some boilerplate, but nothing we do prevents other libraries from tapping into the same data.
+6.  Refreshing the browser doesn't lose the state.
 
 Some disadvantages of history.state:
 
-1.  Although an iframe gives you the ability to store up to 640KB out of RAM, the cost of holding onto an iframe is about 350 kb.  
+1.  Although an iframe gives you the ability to store up to 2M out of RAM, the cost of holding onto an iframe is about 350 kb.  
 2.  Unlike IndexedDB, storing data in history.data can't currently be done asynchronously.
 3.  Unlike IndexedDB, web workers don't have access to history.state
 
-So history.state should probably be used sparingly on low end devices, for applications where local storage is an acceptable alternative. 
+So history.state should probably be used sparingly on low end devices, and  for applications where local storage is an acceptable alternative.
+
+We don't recommend using history.state to cache data, but only to save user selections.
 
 
 ## Programmatic API

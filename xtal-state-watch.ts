@@ -1,5 +1,7 @@
 import {XtalStateBase} from './xtal-state-base.js';
-import {history_state_update, IHistoryUpdateDetails} from './xtal-state-api.js';
+
+import {IHistoryUpdateDetails} from './types.js';
+import {history_state_update} from './xtal-state-base-api.js'
 import {define} from 'trans-render/define.js';
 
 
