@@ -1,5 +1,4 @@
 import { getHost } from 'xtal-element/getHost.js';
-import { init } from './xtal-state-base-api.js';
 /**
  *
  * @param par Parent or document fragment which should mantain regional state
@@ -46,31 +45,31 @@ function getSC(el) {
     const test = getHost(el);
     return test.shadowRoot === null ? test : test.shadowRoot;
 }
-export function getWinCtx(el, level) {
-    const _t = this;
-    return new Promise((resolve, reject) => {
-        switch (level) {
-            case "global":
-                init(self);
-                resolve(self);
-                break;
-            case "local":
-                getIFrmWin(el.parentElement, ifrm => {
-                    init(ifrm.contentWindow);
-                    resolve(ifrm.contentWindow);
-                });
-                break;
-            case "shadow":
-                getIFrmWin(getSC(el), ifrm => {
-                    init(ifrm.contentWindow);
-                    resolve(ifrm.contentWindow);
-                });
-                break;
-            default:
-                getIFrmWin(getMchPar(el, level), ifrm => {
-                    init(ifrm.contentWindow);
-                    resolve(ifrm.contentWindow);
-                });
-        }
-    });
-}
+// export function getWinCtx(el: HTMLElement, level: string){
+//     const _t = this;
+//     return new Promise((resolve, reject) => {
+//         switch(level){
+//             case "global":
+//                 init(self);
+//                 resolve(self);
+//                 break;
+//             case "local":
+//                 getIFrmWin(el.parentElement, ifrm => {
+//                     init(ifrm.contentWindow);
+//                     resolve(ifrm.contentWindow);
+//                 });
+//                 break;
+//             case "shadow":
+//                 getIFrmWin(getSC(el), ifrm => {
+//                     init(ifrm.contentWindow);
+//                     resolve(ifrm.contentWindow)
+//                 });
+//                 break;
+//             default:
+//                 getIFrmWin(getMchPar(el, level), ifrm => {
+//                     init(ifrm.contentWindow);
+//                     resolve(ifrm.contentWindow)
+//                 } );
+//         }
+//     });
+// }

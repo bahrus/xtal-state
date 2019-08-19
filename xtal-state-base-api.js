@@ -52,7 +52,7 @@ export function pushState(state, title = '', url, win = window) {
 }
 function doState(state, verb, title = '', url = null, win = window) {
     window.requestAnimationFrame(() => {
-        const merged = mergeDeep(win.history.state, state);
+        const merged = mergeDeep(win.history.state || {}, state);
         window.requestAnimationFrame(() => {
             win.history[verb + 'State'](merged, title, url === null ? win.location.href : url);
         });

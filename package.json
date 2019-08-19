@@ -7,18 +7,26 @@
   "author": "bahrus <anderson.bruce.b@gmail.com>",
   "license": "MIT",
   "dependencies": {
-    "xtal-element": "0.0.60",
-    "trans-render": "0.0.113"
+    "trans-render": "0.0.113",
+    "xtal-element": "0.0.60"
   },
   "devDependencies": {
+    "@pika/web": "^0.5.1",
     "@webcomponents/webcomponentsjs": "2.2.10",
     "jiife": "0.0.12",
-    "p-et-alia": "0.0.8",
+    "p-et-alia": "0.0.22",
     "purr-sist": "0.0.58",
     "xtal-test": "0.0.19"
   },
+  "@pika/web": {
+    "webDependencies": [
+      "p-et-alia",
+      "purr-sist"
+    ]
+  },
   "scripts": {
     "test": "node createIIFE.js && tape test/*.js",
-    "serve": "node node_modules/xtal-test/serve.js"
+    "serve": "node node_modules/xtal-test/serve.js",
+    "prepare": "pika install"
   }
 }
