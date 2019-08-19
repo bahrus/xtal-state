@@ -6,7 +6,7 @@
 
 # \<xtal-state\>
 
-
+xtal-state is a family of web components that regard history.state as a nice basis for providing some (but maybe not all) state management for applications that want to support hetergeneous teams of loosely coupled content providers.
 
 One of the goals of xtal-state is that it be scalable (think [Scala](https://www.scala-lang.org/old/node/250.html)) -- it can solve simple problems simply, with a miminal learning curve, but it can also be used to tackle progressively more difficult problems, each problem requiring more nuance and mastery.
 
@@ -76,7 +76,7 @@ Basically what we need is a miniature, 1 kb git client running in the browser, c
 
 **NB**  I am excited (and slightly embarassed) to report that AMP provides numerous components built around the same concept as these components -- namely, amp-bind (which I had heard about before this component was created) uses [history.state](https://amp.dev/documentation/components/amp-bind?referrer=ampproject.org#modifying-history-with-amp.pushstate()) as its "system of record" and all of the binding it provides for components like the datepicker actually stores the values in history.state!  Definitely take a look at AMP for an alternative to these components / api.
 
-xtal-state differs, perhaps, in that it takes the name "history.state" to hart -- xtal-state regards DOM Elements / Custom Elements as independent, thinking beings with internal "memories," and regards the primary purpose of xtal-state is to help persist the key settings as needed, during refreshes, bookmarks or shared links.
+xtal-state differs, perhaps, in that it takes the name "history.state" to heart -- xtal-state regards DOM Elements / Custom Elements as independent, thinking beings with internal "memories," and regards the primary purpose of xtal-state as helping persist the key settings as needed, during history navigation (including page refreshes), for starters.  However, xtal-state *can* also be used as a way of sharing some state that transcends invidual (tightly coupled) components, in a limited fashion.
 
 xtal-state-* are a few Web components (and an api) that wrap and extend the power of the history api.
 
