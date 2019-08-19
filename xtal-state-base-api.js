@@ -4,12 +4,9 @@ import { mergeDeep } from 'trans-render/mergeDeep.js';
 export function init(win = window) {
     if (win[xtalStateInfoSym])
         return;
-    win[xtalStateInfoSym] = true;
-    if (!win[xtalStateInfoSym]) {
-        win[xtalStateInfoSym] = {
-            startedAsNull: win.history.state === null,
-        };
-    }
+    win[xtalStateInfoSym] = {
+        startedAsNull: win.history.state === null,
+    };
     const originalPushState = win.history.pushState;
     const boundPushState = originalPushState.bind(win.history);
     win.history.pushState = function (newState, title, URL) {
@@ -47,9 +44,17 @@ function de(oldState, win, title) {
     });
     win.dispatchEvent(newEvent);
 }
-export function setState(state, win = window) {
+export function setState(state, title = '', win = window) {
+    doState(state, 'replace', title, null, win);
+}
+export function pushState(state, title = '', url, win = window) {
+    doState(state, 'push', title, url, win);
+}
+function doState(state, verb, title = '', url = null, win = window) {
     window.requestAnimationFrame(() => {
         const merged = mergeDeep(win.history.state, state);
-        win.history.replaceState(merged, '', win.location.href);
+        window.requestAnimationFrame(() => {
+            win.history[verb + 'State'](merged, title, url === null ? win.location.href : url);
+        });
     });
 }

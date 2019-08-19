@@ -5,12 +5,9 @@ import {mergeDeep} from 'trans-render/mergeDeep.js';
 
 export function init(win: Window = window): void{
     if(win[xtalStateInfoSym]) return;
-    win[xtalStateInfoSym] = true;
-    if(!win[xtalStateInfoSym]){
-        win[xtalStateInfoSym] = {
-            startedAsNull: win.history.state === null,
-        } as IHistoryInfo;
-    }
+    win[xtalStateInfoSym] = {
+        startedAsNull: win.history.state === null,
+    } as IHistoryInfo;
     const originalPushState = win.history.pushState;
     const boundPushState = originalPushState.bind(win.history);
     win.history.pushState = function (newState: any, title: string, URL: string) {
@@ -52,11 +49,20 @@ function de(oldState: any, win: Window, title: string){
     win.dispatchEvent(newEvent);
 }
 
-export function setState(state: object, win: Window = window){
+export function setState(state: object, title: string = '', win: Window = window){
+    doState(state, 'replace', title, null, win);
+}
+
+export function pushState(state: object, title: string = '', url: string, win: Window = window){
+    doState(state, 'push', title, url, win);
+}
+
+function doState(state: object, verb: string, title: string  = '', url: string | null = null, win: Window = window){
     window.requestAnimationFrame(() => {
         const merged = mergeDeep(win.history.state, state);
-        win.history.replaceState(merged, '', win.location.href);
+        window.requestAnimationFrame(() =>{
+            win.history[verb + 'State'](merged, title, url === null ? win.location.href : url);
+        })
     });
-
 }
 
