@@ -244,22 +244,13 @@ If the address bar doesn't match the regular expression (or parseFn returns null
 ## Surely, xtal-state-parse watches for pop-state events, right?
 
 No.  Remember, xtal-state views history.state as the focal point, not the address bar.  The application is responsible for making sure the address bar can be parsed, and history restored, when the address bar contents are sent to someone else (or bookmarked for later use).  But xtal-state works with the premise that all binding should be done to history.state, not to the address bar.  And don't call me Shirley.
+  
 
-## xtal-state.js
-
-All four files are combined into a single IIFE class script file, dist/xtal-state.iife.js or dist/xtal-state.iife.min.js.  
-
-
-
-
-## Install the Polymer-CLI
-
-First, make sure you have the [Polymer CLI](https://www.npmjs.com/package/polymer-cli) and npm (packaged with [Node.js](https://nodejs.org)) installed. Run `npm install` to install your element's dependencies, then run `polymer serve` to serve your element locally.
 
 ## Viewing Your Element
 
 ```
-$ polymer serve
+$ npm serve
 ```
 
 ## Running Tests
