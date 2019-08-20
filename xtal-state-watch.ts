@@ -1,5 +1,6 @@
 import { XtalStateBase } from "./xtal-state-base.js";
 import { history_state_update, init } from "./xtal-state-api.js";
+import {define} from "trans-render/define.js";
 export class XtalStateWatch extends XtalStateBase {
   static get is() {
     return "xtal-state-watch";
@@ -68,9 +69,9 @@ export class XtalStateWatch extends XtalStateBase {
 
   notify() {
     if (this._disabled || !this._conn) return;
-    const state = this.history;
-    this.de("state", {
-      value: state
+    this.de("history", {
+      value: this.history
     });
   }
 }
+define(XtalStateWatch);

@@ -16,7 +16,8 @@
     "jiife": "0.0.12",
     "p-et-alia": "0.0.22",
     "purr-sist": "0.0.58",
-    "xtal-test": "0.0.19"
+    "xtal-test": "0.0.19",
+    "es-module-shims": "0.2.15"
   },
   "@pika/web": {
     "webDependencies": [

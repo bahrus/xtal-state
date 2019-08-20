@@ -19,6 +19,7 @@ export class XtalStateUpdate extends UrlFormatter(WithPath(XtalStateBase)) {
     constructor() {
         super(...arguments);
         this._title = '';
+        this._queuedHistory = [];
     }
     static get is() { return 'xtal-state-update'; }
     /**
@@ -118,17 +119,12 @@ export class XtalStateUpdate extends UrlFormatter(WithPath(XtalStateBase)) {
         }
         this._debouncer();
     }
-    mergedHistory() {
-        if (this._history === undefined)
-            return undefined;
-        return this.wrap(this._history);
-    }
     updateHistory() {
         if (this._rewrite) {
             const hist = this._new ? {} : this._queuedHistory.pop();
             if (hist === null || hist === undefined)
                 return;
-            setState(hist, this._title, this._win);
+            setState(this.wrap(hist), this._title, this._win);
         }
         else {
             if (this.make && !this.url)
@@ -148,7 +144,7 @@ export class XtalStateUpdate extends UrlFormatter(WithPath(XtalStateBase)) {
             if (hist === null || hist === undefined)
                 return;
             this._disabled = true;
-            pushState(hist, this._title, url, this._win);
+            pushState(this.wrap(hist), this._title, url, this._win);
             this.de('history', {
                 value: this._win.history.state
             });

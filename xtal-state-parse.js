@@ -1,4 +1,4 @@
-import { XtalStateBase } from './xtal-state-api.js';
+import { XtalStateBase } from './xtal-state-base.js';
 import { define } from 'trans-render/define.js';
 const with_url_pattern = 'with-url-pattern';
 const parse = 'parse';
@@ -70,25 +70,25 @@ export class XtalStateParse extends XtalStateBase {
     onParsePropsChange() {
         if (this._disabled || this.value || this.noMatch)
             return;
-        if (!this._window) {
-            setTimeout(() => {
-                this.onParsePropsChange();
-            }, 50);
-            return;
-        }
+        // if(!this._window){
+        //     setTimeout(() =>{
+        //         this.onParsePropsChange();
+        //     }, 50);
+        //     return;
+        // }
         if (!this._checkedNull) {
-            if (this._window.history.state === null) {
+            if (window.history.state === null) {
                 this.dataset.historyWasNull = 'true';
             }
             this._checkedNull = true;
         }
         let value = null;
         if (this._withURLPattern) {
-            value = XtalStateParse.parseAddressBar(this._parse, this._withURLPattern, this._window);
+            value = XtalStateParse.parseAddressBar(this._parse, this._withURLPattern, window);
             if (value === -1) {
                 if (!this._parseFn)
                     return;
-                const prseString = XtalStateParse.getObj(this._parse, this._window);
+                const prseString = XtalStateParse.getObj(this._parse, window);
                 value = this._parseFn(prseString, this);
             }
         }
@@ -105,8 +105,8 @@ export class XtalStateParse extends XtalStateBase {
                 value: value
             }, true);
         }
-        if (this._initHistoryIfNull && (this._window.history.state !== null))
-            this._window.history.replaceState(value, '', this._window.location.href);
+        if (this._initHistoryIfNull && (window.history.state !== null))
+            window.history.replaceState(value, '', window.location.href);
     }
     static getObj(parsePath, winObj) {
         let thingToParse = winObj;

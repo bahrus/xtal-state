@@ -109,7 +109,7 @@ export class XtalStateUpdate extends UrlFormatter(WithPath(XtalStateBase)) {
     }
     _win: Window | undefined;
     _init: boolean;
-    _queuedHistory: object[];
+    _queuedHistory: object[] = [];
     onPropsChange() {
         if(!super.onPropsChange()) return false;
         if (!this._make && !this._rewrite) return false;
@@ -130,10 +130,7 @@ export class XtalStateUpdate extends UrlFormatter(WithPath(XtalStateBase)) {
 
         this._debouncer();
     }
-    mergedHistory(){
-        if(this._history === undefined) return undefined;
-        return this.wrap(this._history);
-    }
+
 
 
     
@@ -142,7 +139,7 @@ export class XtalStateUpdate extends UrlFormatter(WithPath(XtalStateBase)) {
         if(this._rewrite){
             const hist = this._new ? {} : this._queuedHistory.pop();
             if(hist === null || hist === undefined) return;
-            setState(hist, this._title, this._win);
+            setState(this.wrap(hist), this._title, this._win);
         }else{
             if(this.make && !this.url) return;
             let url = this._url;
@@ -157,7 +154,7 @@ export class XtalStateUpdate extends UrlFormatter(WithPath(XtalStateBase)) {
             const hist = this._new ? {} : this._queuedHistory.pop();
             if(hist === null || hist === undefined) return;
             this._disabled = true;
-            pushState(hist, this._title, url, this._win);
+            pushState(this.wrap(hist), this._title, url, this._win);
             this.de('history',{
                 value: this._win.history.state
             });
