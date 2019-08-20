@@ -1,52 +1,47 @@
 import { XtallatX } from 'xtal-element/xtal-latx.js';
 import {hydrate, disabled} from 'trans-render/hydrate.js';
-import {getWinCtx} from './xtal-state-api.js';
-const level = 'level';
+import {} from './xtal-state-api.js';
+import {StoreKeeper} from './StoreKeeper.js';
+const guid = 'guid';
 
 export class XtalStateBase extends XtallatX(hydrate(HTMLElement)){
-    private _level: string;
-    get level(){
-        return this._level;
+    private _guid: string;
+    get guid(){
+        return this._guid;
     }
-    set level(val){
-        this.attr(level, val);
+    set guid(val){
+        this.attr(guid, val);
     }
     static get observedAttributes() {
-        return super.observedAttributes.concat([level]);
+        return super.observedAttributes.concat([guid]);
     }
-    _window: Window
-    get window(){
-        return this._window;
-    }
+    _storeKeeper : StoreKeeper | undefined;
     attributeChangedCallback(name: string, oldVal: string, newVal: string) {
         super.attributeChangedCallback(name, oldVal, newVal);
         switch(name){
-            case level:
-                if(this._level !== undefined) return;
-                this._level = newVal;
-                getWinCtx(this, this._level).then((win: Window) =>{
-                    this._window = win;
-                    this._notReady = false;
-                    this.onPropsChange();
-                })
+            case guid:
+                if(this._guid !== undefined) return;
+                this._guid = newVal;
+                this._storeKeeper = new StoreKeeper(this._guid);
                 break;
             
         }
-        if(name !== level) this.onPropsChange();
+        this.onPropsChange();
     }
     _conn!:boolean;
     connectedCallback(){
         this.style.display = 'none';
-        this.propUp(['disabled', level]);
+        this.propUp(['disabled', guid]);
         this._conn = true;
         this.onPropsChange();
 
     }
-    _notReady: boolean = true;;
+    disconnectedCallback(){
+        if(this._storeKeeper) this._storeKeeper.forget();
+    }
 
     
     onPropsChange() : boolean{
-        if(!this._conn || this._disabled || this._notReady || !this._window) return false;
-        return true;
+        return (this._conn && !this.disabled);
     }
 }

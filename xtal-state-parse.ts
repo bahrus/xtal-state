@@ -1,4 +1,4 @@
-import {XtalStateBase} from './xtal-state-base.js';
+import {XtalStateBase} from './xtal-state-api.js';
 import {define} from 'trans-render/define.js';
 const with_url_pattern = 'with-url-pattern';
 const parse = 'parse';

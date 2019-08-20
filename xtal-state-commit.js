@@ -1,4 +1,4 @@
-import { XtalStateBase } from './xtal-state-base.js';
+import { XtalStateBase } from './xtal-state-api.js';
 import { WithPath, with_path } from 'xtal-element/with-path.js';
 import { UrlFormatter } from './url-formatter.js';
 import { define } from 'trans-render/define.js';
