@@ -12,11 +12,11 @@
     <div class="vertical-section-container centered">
       <h3>Basic xtal-state demo</h3>
       <a data-test="hello">Test 1</a>
-      <p-d on="click" if="a" prop="history" val="target.dataset.test"></p-d>
+      <p-d on=click if=a prop=history val=target.dataset.test></p-d>
       <xtal-state-update rewrite></xtal-state-update>
       <xtal-state-watch></xtal-state-watch>
-      <p-d on=history-changed to=textContent val=target.history></p-d>
-      <div></div>
+      <p-d on=history-changed to=[-text-content] val=target.history></p-d>
+      <div -text-content></div>
 
         <script type="module" src="../web_modules/p-et-alia.js" defer></script>
         <!-- Use experimental import maps -->
