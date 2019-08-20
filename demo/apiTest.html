@@ -18,7 +18,10 @@
     }
     </script>
     <script type="module-shim">
-        import {setState} from '../xtal-state-base-api.js';
+        import {setState} from '../xtal-state-api.js';
+        window.addEventListener('history-state-update', e =>{
+            console.log(e.detail);
+        })
         setState({a: {
             b: 'c',
             d: 'e'

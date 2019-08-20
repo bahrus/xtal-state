@@ -6,7 +6,9 @@
 
 # \<xtal-state\>
 
-xtal-state is a family of web components that regard history.state as a nice basis for providing some (but maybe not all) state management for applications that want to support hetergeneous teams of loosely coupled content providers.
+**NB** This version contains some recent, possibly buggy, breaking changes.
+
+xtal-state is a family of web components that regard [history.state](https://www.chromestatus.com/metrics/feature/timeline/popularity/2618) as a nice basis for providing some (but maybe not all) state management for applications that want to support hetergeneous teams of loosely coupled content providers.
 
 One of the goals of xtal-state is that it be scalable (think [Scala](https://www.scala-lang.org/old/node/250.html)) -- it can solve simple problems simply, with a miminal learning curve, but it can also be used to tackle progressively more difficult problems, each problem requiring more nuance and mastery.
 
@@ -77,17 +79,19 @@ Basically what we need is a miniature, 1 kb git client running in the browser, c
 
 **NB**  I am excited (and slightly embarassed) to report that AMP provides numerous components built around the same concept as these components -- namely, amp-bind (which I had heard about before this component was created) uses [history.state](https://amp.dev/documentation/components/amp-bind?referrer=ampproject.org#modifying-history-with-amp.pushstate()) as its "system of record" and all of the binding it provides for components like the datepicker actually stores the values in history.state!  Definitely take a look at AMP for an alternative to these components / api.
 
-xtal-state differs, perhaps, in that it takes the name "history.state" to heart -- xtal-state regards DOM Elements / Custom Elements as independent, thinking beings with internal "memories," and regards the primary purpose of xtal-state as helping persist the key settings as needed, during history navigation (including page refreshes), for starters.  However, xtal-state *can* also be used as a way of sharing some state that transcends invidual (tightly coupled) components, in a limited fashion.
+xtal-state differs, perhaps, in that it takes the name "history.state" to heart -- xtal-state regards DOM Elements / Custom Elements as independent, thinking beings with internal "memories," that responds to human interaction directly, not via some abstract state store. So the primary purpose of xtal-state is helping persist the key settings as needed, during history navigation (including page refreshes), for starters.  Think about rapid "state" changes, like scrolling a large grid.  Do we really want all such UI state changes to pass through a diffuse state manager, which then has to figure out which other components to update?  
+
+However, xtal-state *can* also be used as a way of sharing some common state that transcends invidual (tightly coupled) components, in a limited fashion.
 
 xtal-state-* are a few Web components (and an api) that wrap and extend the power of the history api.
 
-## Demo
+<!--## Demo
 
-Here is a [demo](https://bahrus.github.io/purr-sist-demos/Example3.htm), which shows the outline of how these components, combined with [purr-sist](https://www.webcomponents.org/element/purr-sist) can be used to create "git in the browser."
+Here is a [demo](https://bahrus.github.io/purr-sist-demos/Example3.htm), which shows the outline of how these components, combined with [purr-sist](https://www.webcomponents.org/element/purr-sist) can be used to create "git in the browser."-->
 
 ## Basic Concept
 
-history.state has a number of positive attributes, which is why it seems so inviting to build "state" management around:
+history.state has a number of appealing characteristics, which is why it seems so inviting to build "state" management around it:
 
 1.  The data is stored out of RAM, which is good for memory strapped devices.
 2.  Although the data size is limited (the limit is configurable on Firefox), you can have multiple histories by using multiple iframes (preferably with style=display:none), which allows you to exceed the limit.   
@@ -102,10 +106,9 @@ Some disadvantages of history.state:
 2.  Unlike IndexedDB, storing data in history.data can't currently be done asynchronously.
 3.  Unlike IndexedDB, web workers don't have access to history.state
 
-To help alleviate issues 2 and 3, since we are not relying on this state management very much for binding between components (preferring direct passing via something like [petalia](https://github.com/bahrus/p-et-alia)) we can take some liberties in when to save to history.state, and for example wait for a window.requestAnimationFrame, confident that no one will care about such delays.
+To help alleviate issues 2 and 3, since we are not relying on this state management very much for binding between components (preferring direct passing via something like [petalia](https://github.com/bahrus/p-et-alia)) we can take some liberties in when to save to history.state, and for example wait for a window.requestAnimationFrame / debounce, confident that no one will care about such delays.
 
-
-history.state doesn't seem like a good place cache data, but only to save user selections / navigations, and to help manage global state where appropriate, in order to avoid lengthy prop passing where convenient. 
+history.state doesn't seem like a good place cache reams of data, but only to save user selections / navigations, and to help manage global state where appropriate, in order to avoid lengthy prop passing where convenient. 
 
 
 ## Programmatic API
@@ -113,63 +116,65 @@ history.state doesn't seem like a good place cache data, but only to save user s
 To partake in usage of this state management solution without using these web components, you can get the window object containing the history.state:
 
 ```JavaScript
-import {getWinCtx} from 'xtal-state/xtal-state-api.js';
-
-...
-getWinCtx(el, level).then(win =>{
-    console.log(win.history.state);
-    win.addEventListener('history-state-update', event =>{
-        //code is hit whenever history.pushState, replaceState is called, but not when back button is pressed 
-    });
-    win.addEventListener('popstate', event =>{
-        //regular popstate events
-    })
+import {setState} from '../xtal-state-api.js';
+window.addEventListener('history-state-update', e =>{
+    console.log(e.detail);
 })
+setState({a: {
+    b: 'c',
+    d: 'e'
+}});
+setState({
+    a:{
+        d: 'f'
+    }
+});
+
 
 ```
 
 where "el" is a DOM element, and "level" has the same meaning as described above.  Unless level is "global", "el" will be used as the reference point to apply the "level" to.
 
-## Syntax
+<!-- ## Syntax
 
-<!--
+
 ```
-<custom-element-demo>
+<custom-element-demox>
 <template>
     <div>
         <wc-info package-name="npm install xtal-state" href="https://unpkg.com/xtal-state@0.0.60/web-components.json"></wc-info>
         <script type="module" src="https://unpkg.com/wc-info@0.0.13/wc-info.js?module"></script>
     </div>
 </template>
-</custom-element-demo>
+</custom-element-demox>
 ```
 -->
 
 ## Updating history.state
 
-xtal-state-commit is a lightweight custom element that inserts its "history" property into the history.state object with an optional specified path.
+xtal-state-update is a lightweight custom element that deep merges its "history" property into the history.state object with an optional specified path.
 
 As with all the other web components discussed here, you can specify the "level" at which the history.state object should be modified:
 
 ```html
-<!--Polymer Notation -->
+<!--Petalia Notation -->
 <div>
-    <xtal-state-commit make level="local" history="[[newHistory]]" 
-        with-path="myPath" url="/tribble"></xtal-state-commit>
+    <xtal-state-update make -history guid=Walmart 
+        with-path=myPath url=/tribble></xtal-state-update>
 </div>
 ```
 
-Note the attribute "level."  Possible reserved values are "local", "shadow" and "global".  Since this is local, this will only affect the "history" of elements contained within the parent div tag.  If "level" is not one of these three values, it will assume this is a CSS "matches" expression, and it will only affect the history of elements contained within the ancestor tag matching the css selector.
+Note the optional attribute "guid."  This needs to be unique across all non shared "stores".  You can guarantee uniqueness by using an actual guid, for a massive application.  But for smaller applications, it can be more convenient and intuitive to use meaningful store names like "Walmart."
 
 The value of url can be hardcoded, as shown above, or set programmatically.  A third option is to allow reformatting of the url based on a regular expression, using the ES2018 replace and named capture groups:
 
 ```html
-<!--Polymer Notation -->
-<xtal-state-commit make history="[[newHistory]]" url="[[myBindingToYYYY-MM-DD-formattedDate]]" 
+<!--Petalia Notation -->
+<xtal-state-update make -history url="[[myBindingToYYYY-MM-DD-formattedDate]]" 
     url-search="(?<year>[0-9]{4})-(?<month>[0-9]{2})-(?<day>[0-9]{2})" 
     replace-url-value="?date=$<month>/$<day>/$<year>"
-    level="local" with-path="myPath">
-</xtal-state-commit>
+     with-path="myPath">
+</xtal-state-update>
 ```
 
 [Possible enhancement, TODO]:  To help make this more useful, if the "url" property is empty (and no stringify-fn is specified, discussed below), the component will [alphabetize](https://stackoverflow.com/questions/16167581/sort-object-properties-and-json-stringify) the properties of the history object, and then apply the regular expression replace]
@@ -180,21 +185,7 @@ In the meantime, there's a property, stringify-fn, which is passed the instance 
 
 ## Observing history.state
 
-xtal-state-watch watches for all history state changes.  Like xtal-state-commit, you can specify the level as "local", "shadow" or "global".  When history changes, it emits an event "history-changed".  
-
-## Deep merging history.state
-
-xtal-state-update extends xtal-state-commit, but adds the ability to *deep merge* changes to the existing history.state object, even with the same path, if it exists, so that other history updates done by other pieces of code will be even less likely to be lost.
-
-Syntax:
-
-```html
-<!-- Polymer notation -->
-<xtal-state-update make history="[[watchedObject]]" title="myTitle" url="/myURL" level="shadow" ></xtal-state-update>
-
-<xtal-state-update rewrite history="[[watchedObject]]" title="myTitle" url="/myURL" level="global"></xtal-state-update>
-
-```
+xtal-state-watch watches for all history state changes.  Like xtal-state-update, you can specify the level as "local", "shadow" or "global".  When history changes, it emits an event "history-changed".  
 
 
 ## Transcribing state from the address bar
