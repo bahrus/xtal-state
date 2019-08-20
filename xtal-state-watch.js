@@ -8,7 +8,7 @@ export class XtalStateWatch extends XtalStateBase {
     static get is() {
         return "xtal-state-watch";
     }
-    get state() {
+    get history() {
         if (this._win === undefined)
             return undefined;
         return this._win.history.state;
@@ -67,7 +67,7 @@ export class XtalStateWatch extends XtalStateBase {
     notify() {
         if (this._disabled || !this._conn)
             return;
-        const state = this.state;
+        const state = this.history;
         this.de("state", {
             value: state
         });
