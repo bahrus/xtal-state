@@ -51,6 +51,9 @@ export class XtalStateWatch extends XtalStateBase {
     win.addEventListener(history_state_update, this._stateChangeHandler);
     this._popStateHandler = this.popStateHandler.bind(this);
     win.addEventListener("popstate", this._popStateHandler);
+    if(win.history.state !== null){
+      this.notify();
+    }
   }
 
   disconnectedCallback() {
