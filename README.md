@@ -8,7 +8,36 @@
 
 **NB** This version contains some recent, possibly buggy, breaking changes.
 
-xtal-state is a family of web components that regard [history.state](https://www.chromestatus.com/metrics/feature/timeline/popularity/2618) as a nice basis for providing some (but maybe not all) state management for applications that want to support hetergeneous teams of loosely coupled content providers.
+## Basic Concept
+
+xtal-state-* are a few Web components (and an api) that wrap and extend the power of the history api.
+
+**NB**  I am excited (and slightly embarassed) to report that AMP provides numerous components built around the same concept as these components -- namely, amp-bind (which I had heard about before this component was created) uses [history.state](https://amp.dev/documentation/components/amp-bind?referrer=ampproject.org#modifying-history-with-amp.pushstate()) as its "system of record" and all of the binding it provides for components like the datepicker actually stores the values in history.state!  Definitely take a look at AMP for an alternative to these components / api.
+
+xtal-state differs, perhaps, in that it takes the name "history.state" to heart -- xtal-state regards DOM Elements / Custom Elements as independent, thinking beings with internal "memories", that respond to human interaction directly, not via some abstract state store. So the primary purpose of xtal-state is helping persist user invoked changes as needed, during history navigation (including page refreshes), for starters.  Think about rapid "state" changes, like scrolling a large grid.  Do we really want all such UI state changes to pass through a diffuse state manager, which then has to figure out which other components to update?  
+
+However, xtal-state *can* also be used as a way of sharing some common state that transcends individual (tightly coupled) components, in a limited fashion.
+
+[history.state](https://www.chromestatus.com/metrics/feature/timeline/popularity/2618) has a number of appealing characteristics, which is why it seems so inviting to build "state" management around:
+
+1.  The data is stored out of RAM, which is good for memory strapped devices.
+2.  Although the data size is limited (the limit is configurable on Firefox), you can have multiple histories by using multiple iframes (preferably with style=display:none), which allows you to exceed the limit.   
+3.  Web sites that provide sensitive information shouldn't have any audit concerns with history.state, as there would likely be with other forms of local storage like IndexedDB.
+4.  Support for time travel via the back button (and api).  Adding developer tools on top of that seems pretty straightforward.
+5.  Built into the platform.  Anyone can access this built-in api.  The libraries here only reduce some boilerplate, but nothing we do prevents other libraries from tapping into the same data.
+6.  Refreshing the browser doesn't lose the state.
+
+Some disadvantages of history.state:
+
+1.  Although an iframe gives you the ability to store up to 2M outside of RAM (Firefox), the cost of holding onto an iframe is about 350 kb.  So there is some overhead.
+2.  Unlike IndexedDB, storing data in history.data can't currently be done asynchronously.
+3.  Unlike IndexedDB, web workers don't have access to history.state
+
+To help alleviate issues 2 and 3, since we are not relying on this state management very much for binding between components (preferring direct passing via something like [petalia](https://github.com/bahrus/p-et-alia)) we can take some liberties as far as when to save to history.state, and for example wait for a window.requestAnimationFrame / debounce, confident that no one will care about such delays.
+
+history.state doesn't seem like a good place to cache reams of data, but only to save user selections / navigations, and to help manage global state where appropriate, in order to avoid lengthy prop passing where convenient.
+
+xtal-state is a family of web components that regard history.state as a nice basis for providing some (but maybe not all) state management for applications that want to support hetergeneous teams of loosely coupled content providers.
 
 One of the goals of xtal-state is that it be scalable (think [Scala](https://www.scala-lang.org/old/node/250.html)) -- it can solve simple problems simply, with a miminal learning curve, but it can also be used to tackle progressively more difficult problems, each problem requiring more nuance and mastery.
 
@@ -77,38 +106,13 @@ Basically what we need is a miniature, 1 kb git client running in the browser, c
 
 *Doing her due diligence, Guinan visited alternate timelines where parallel Guinan's had tried the same thing. Guinan found one timeline where a mass inter-galactic civil-war had broken out.  The cause?  One of the web components had code that would update the window.history.state object.  This inadvertently caused another outposts's web component to initiate war with the Romulans.*   
 
-**NB**  I am excited (and slightly embarassed) to report that AMP provides numerous components built around the same concept as these components -- namely, amp-bind (which I had heard about before this component was created) uses [history.state](https://amp.dev/documentation/components/amp-bind?referrer=ampproject.org#modifying-history-with-amp.pushstate()) as its "system of record" and all of the binding it provides for components like the datepicker actually stores the values in history.state!  Definitely take a look at AMP for an alternative to these components / api.
 
-xtal-state differs, perhaps, in that it takes the name "history.state" to heart -- xtal-state regards DOM Elements / Custom Elements as independent, thinking beings with internal "memories," that responds to human interaction directly, not via some abstract state store. So the primary purpose of xtal-state is helping persist the key settings as needed, during history navigation (including page refreshes), for starters.  Think about rapid "state" changes, like scrolling a large grid.  Do we really want all such UI state changes to pass through a diffuse state manager, which then has to figure out which other components to update?  
-
-However, xtal-state *can* also be used as a way of sharing some common state that transcends invidual (tightly coupled) components, in a limited fashion.
-
-xtal-state-* are a few Web components (and an api) that wrap and extend the power of the history api.
 
 <!--## Demo
 
 Here is a [demo](https://bahrus.github.io/purr-sist-demos/Example3.htm), which shows the outline of how these components, combined with [purr-sist](https://www.webcomponents.org/element/purr-sist) can be used to create "git in the browser."-->
 
-## Basic Concept
-
-history.state has a number of appealing characteristics, which is why it seems so inviting to build "state" management around it:
-
-1.  The data is stored out of RAM, which is good for memory strapped devices.
-2.  Although the data size is limited (the limit is configurable on Firefox), you can have multiple histories by using multiple iframes (preferably with style=display:none), which allows you to exceed the limit.   
-3.  Web sites that provide sensitive information shouldn't have any audit concerns with history.state, as there would likely be with other forms of local storage like IndexedDB.
-4.  Support for time travel via the back button.  Adding developer tools on top of that seems pretty straightforward.
-5.  Built into the platform.  Anyone can access this built-in api.  The libraries here only reduce some boilerplate, but nothing we do prevents other libraries from tapping into the same data.
-6.  Refreshing the browser doesn't lose the state.
-
-Some disadvantages of history.state:
-
-1.  Although an iframe gives you the ability to store up to 2M outside of RAM (Firefox), the cost of holding onto an iframe is about 350 kb.  So there is some overhead.
-2.  Unlike IndexedDB, storing data in history.data can't currently be done asynchronously.
-3.  Unlike IndexedDB, web workers don't have access to history.state
-
-To help alleviate issues 2 and 3, since we are not relying on this state management very much for binding between components (preferring direct passing via something like [petalia](https://github.com/bahrus/p-et-alia)) we can take some liberties in when to save to history.state, and for example wait for a window.requestAnimationFrame / debounce, confident that no one will care about such delays.
-
-history.state doesn't seem like a good place cache reams of data, but only to save user selections / navigations, and to help manage global state where appropriate, in order to avoid lengthy prop passing where convenient. 
+ 
 
 
 ## Programmatic API
@@ -133,7 +137,6 @@ setState({
 
 ```
 
-where "el" is a DOM element, and "level" has the same meaning as described above.  Unless level is "global", "el" will be used as the reference point to apply the "level" to.
 
 <!-- ## Syntax
 
@@ -154,17 +157,16 @@ where "el" is a DOM element, and "level" has the same meaning as described above
 
 xtal-state-update is a lightweight custom element that deep merges its "history" property into the history.state object with an optional specified path.
 
-As with all the other web components discussed here, you can specify the "level" at which the history.state object should be modified:
 
 ```html
 <!--Petalia Notation -->
 <div>
-    <xtal-state-update make -history guid=Walmart 
+    <xtal-state-update make -history guid=CircuitCity 
         with-path=myPath url=/tribble></xtal-state-update>
 </div>
 ```
 
-Note the optional attribute "guid."  This needs to be unique across all non shared "stores".  You can guarantee uniqueness by using an actual guid, for a massive application.  But for smaller applications, it can be more convenient and intuitive to use meaningful store names like "Walmart."
+Note the optional attribute "guid."  This needs to be unique across all non shared "stores".  You can guarantee uniqueness by using an actual guid, for a massive application.  But for smaller applications, it can be more convenient and intuitive to use meaningful store names like "CompUSA"
 
 The value of url can be hardcoded, as shown above, or set programmatically.  A third option is to allow reformatting of the url based on a regular expression, using the ES2018 replace and named capture groups:
 
