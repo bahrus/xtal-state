@@ -9,7 +9,7 @@ export class XtalStateWatch extends XtalStateBase {
   _win: Window | undefined;
   get history() {
     if (this._win === undefined) return undefined;
-    return this._win.history.state;
+    return this._win.history;
   }
   onPropsChange() {
     if (!super.onPropsChange()) return false;
@@ -73,7 +73,7 @@ export class XtalStateWatch extends XtalStateBase {
   notify() {
     if (this._disabled || !this._conn) return;
     this.de("history", {
-      value: this.history
+      value: this.history.state
     });
   }
 }

@@ -187,7 +187,7 @@ In the meantime, there's a property, stringify-fn, which is passed the instance 
 
 ## Observing history.state
 
-xtal-state-watch watches for all history state changes.  Like xtal-state-update, you can specify the level as "local", "shadow" or "global".  When history changes, it emits an event "history-changed".  
+xtal-state-watch watches for all history state changes.  When history changes, it emits an event "history-changed".  
 
 
 ## Transcribing state from the address bar

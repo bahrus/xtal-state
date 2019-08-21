@@ -12,7 +12,7 @@ export class XtalStateWatch extends XtalStateBase {
     get history() {
         if (this._win === undefined)
             return undefined;
-        return this._win.history.state;
+        return this._win.history;
     }
     onPropsChange() {
         if (!super.onPropsChange())
@@ -72,7 +72,7 @@ export class XtalStateWatch extends XtalStateBase {
         if (this._disabled || !this._conn)
             return;
         this.de("history", {
-            value: this.history
+            value: this.history.state
         });
     }
 }
