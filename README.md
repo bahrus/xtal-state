@@ -37,8 +37,6 @@ To help alleviate issues 2 and 3, since we are not relying on this state managem
 
 history.state doesn't seem like a good place to cache reams of data, but only to save user selections / navigations, and to help manage global state where appropriate, in order to avoid lengthy prop passing where convenient.
 
-xtal-state is a family of web components that regard history.state as a nice basis for providing some (but maybe not all) state management for applications that want to support hetergeneous teams of loosely coupled content providers.
-
 One of the goals of xtal-state is that it be scalable (think [Scala](https://www.scala-lang.org/old/node/250.html)) -- it can solve simple problems simply, with a miminal learning curve, but it can also be used to tackle progressively more difficult problems, each problem requiring more nuance and mastery.
 
 ## Problem Statement I -- Object-centric routing
