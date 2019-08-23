@@ -5,6 +5,7 @@ export class XtalStateWatch extends XtalStateBase {
     constructor() {
         super(...arguments);
         this._addedEventHandlers = false;
+        this._initialEvent = true;
     }
     static get is() {
         return "xtal-state-watch";
@@ -33,20 +34,22 @@ export class XtalStateWatch extends XtalStateBase {
     }
     stateChangeHandler(e) {
         const detail = e.detail;
+        let isPopstate = false;
         if (detail.initVal) {
             //win.__xtalStateInfo.hasStarted;
             this.dataset.historyInit = "true";
             this.dataset.popstate = "true";
+            isPopstate = true;
         }
         else {
             delete this.dataset.popstate;
             delete this.dataset.historyInit;
         }
-        this.notify();
+        this.notify(isPopstate);
     }
     popStateHandler(e) {
         this.dataset.popstate = "true";
-        this.notify();
+        this.notify(true);
     }
     addEventHandlers(win) {
         const info = init(win);
@@ -55,7 +58,7 @@ export class XtalStateWatch extends XtalStateBase {
         this._popStateHandler = this.popStateHandler.bind(this);
         win.addEventListener("popstate", this._popStateHandler);
         if (win.history.state !== null) {
-            this.notify();
+            this.notify(false);
         }
     }
     disconnectedCallback() {
@@ -68,12 +71,21 @@ export class XtalStateWatch extends XtalStateBase {
             }
         }
     }
-    notify() {
+    notify(isPopstate) {
         if (this._disabled || !this._conn)
             return;
+        if (this._initialEvent) {
+            this.dataset.initialEvent = "true";
+        }
+        else {
+            delete this.dataset.initialEvent;
+        }
         this.de("history", {
-            value: this.history.state
+            value: this.history.state,
+            isInitialEvent: this._initialEvent,
+            isPopstate: isPopstate,
         });
+        this._initialEvent = false;
     }
 }
 define(XtalStateWatch);
