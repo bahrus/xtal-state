@@ -53,9 +53,13 @@ export function pushState(state, title = '', url, win = window) {
 function doState(state, verb, title = '', url = null, win = window) {
     window.requestAnimationFrame(() => {
         let oldState = win.history.state;
-        if (oldState === null)
-            oldState = {};
-        const merged = (typeof (oldState === 'object') && (typeof (state) === 'object')) ? mergeDeep(oldState, state) : state;
+        // if(oldState === null) {
+        //     oldState = {};
+        // }else{
+        //     oldState = {...oldState};
+        // } ;
+        const val = typeof (state) === 'object' ? JSON.parse(JSON.stringify(state)) : state;
+        const merged = (typeof (oldState === 'object') && (typeof (state) === 'object')) ? mergeDeep(oldState, val) : state;
         window.requestAnimationFrame(() => {
             win.history[verb + 'State'](merged, title, url === null ? win.location.href : url);
         });

@@ -50,6 +50,7 @@ export class XtalStateUpdate extends UrlFormatter(WithPath(XtalStateBase)) {
     }
     set history(newVal: any) {
         //this._history = newVal;
+        
         this._queuedHistory.push(newVal);
         this.onPropsChange();
     }
