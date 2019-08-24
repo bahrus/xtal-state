@@ -44,8 +44,8 @@ function de(oldState, win, title) {
     });
     win.dispatchEvent(newEvent);
 }
-export function setState(state, title = '', win = window) {
-    doState(state, 'replace', title, null, win);
+export function setState(state, title = '', url = null, win = window) {
+    doState(state, 'replace', title, url, win);
 }
 export function pushState(state, title = '', url, win = window) {
     doState(state, 'push', title, url, win);

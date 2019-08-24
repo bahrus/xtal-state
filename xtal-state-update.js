@@ -120,27 +120,25 @@ export class XtalStateUpdate extends UrlFormatter(WithPath(XtalStateBase)) {
         this._debouncer();
     }
     updateHistory() {
+        let url = this._url;
+        if (url) {
+            url = this.adjustUrl(url);
+        }
+        // if(!url && this._new){
+        //     if(!this._replaceUrlValue){
+        //         url = this._win.location.href;
+        //     }
+        // }
         if (this._rewrite) {
-            const hist = this._new ? {} : this._queuedHistory.pop();
+            const hist = this._new ? {} : this._queuedHistory.shift();
             if (hist === null || hist === undefined)
                 return;
-            setState(this.wrap(hist), this._title, this._win);
+            setState(this.wrap(hist), this._title, this._url, this._win);
         }
         else {
-            if (this.make && !this.url)
-                return;
-            let url = this._url;
-            if (!url || this._new) {
-                if (!this._replaceUrlValue || this._new) {
-                    url = this._win.location.href;
-                }
-            }
-            if (!url)
-                return null;
-            url = this.adjustUrl(url);
-            if (url === null)
-                return;
-            const hist = this._new ? {} : this._queuedHistory.pop();
+            //if(this.make && !this.url) return;
+            //if(!url) return null; 
+            const hist = this._new ? {} : this._queuedHistory.shift();
             if (hist === null || hist === undefined)
                 return;
             this._disabled = true;
@@ -149,6 +147,9 @@ export class XtalStateUpdate extends UrlFormatter(WithPath(XtalStateBase)) {
                 value: this._win.history.state
             });
             this._disabled = false;
+        }
+        if (this._queuedHistory.length > 0) {
+            this._debouncer();
         }
     }
 }
