@@ -1,6 +1,5 @@
 import { XtallatX } from 'xtal-element/xtal-latx.js';
 import {hydrate, disabled} from 'trans-render/hydrate.js';
-import {} from './xtal-state-api.js';
 import {StoreKeeper} from './StoreKeeper.js';
 const guid = 'guid';
 

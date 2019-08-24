@@ -20,7 +20,7 @@ However, xtal-state *can* also be used as a way of sharing some common state tha
 
 [history.state](https://www.chromestatus.com/metrics/feature/timeline/popularity/2618) has a number of appealing characteristics, which is why it seems so inviting to build "state" management around:
 
-1.  The data is stored out of RAM, which is good for memory strapped devices.
+1.  The data is stored out of RAM, which is good for memory strapped devices. (Actually discussions on this matter are rather vague -- it seems historical states are stored to disk.  But if you directly modify the state object without using replaceState, it appears to stick somewhat, so who knows?)
 2.  Although the data size is limited (the limit is configurable on Firefox), you can have multiple histories by using multiple iframes (preferably with style=display:none), which allows you to exceed the limit.   
 3.  Web sites that provide sensitive information shouldn't have any audit concerns with history.state, as there would likely be with other forms of local storage like IndexedDB.
 4.  Support for time travel via the back button (and api).  Adding developer tools on top of that seems pretty straightforward.

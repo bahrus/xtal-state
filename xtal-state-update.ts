@@ -40,7 +40,7 @@ export class XtalStateUpdate extends UrlFormatter(WithPath(XtalStateBase)) {
     set rewrite(val: boolean) {
         this.attr(rewrite, val, '');
     }
-    _history: any;
+    //_history: any;
     /**
      * Window Context History Object
      */
@@ -49,7 +49,7 @@ export class XtalStateUpdate extends UrlFormatter(WithPath(XtalStateBase)) {
         return this._win.history.state;
     }
     set history(newVal: any) {
-        this._history = newVal;
+        //this._history = newVal;
         this._queuedHistory.push(newVal);
         this.onPropsChange();
     }
