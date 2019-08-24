@@ -50,16 +50,13 @@ export function setState(state, title = '', url = null, win = window) {
 export function pushState(state, title = '', url, win = window) {
     doState(state, 'push', title, url, win);
 }
-function doState(state, verb, title = '', url = null, win = window) {
+function doState(newState, verb, title = '', url = null, win = window) {
     window.requestAnimationFrame(() => {
         let oldState = win.history.state;
-        // if(oldState === null) {
-        //     oldState = {};
-        // }else{
-        //     oldState = {...oldState};
-        // } ;
-        const val = typeof (state) === 'object' ? JSON.parse(JSON.stringify(state)) : state;
-        const merged = (typeof (oldState === 'object') && (typeof (state) === 'object')) ? mergeDeep(oldState, val) : state;
+        const oldStateIsObj = (oldState !== null && typeof oldState === 'object');
+        if (oldStateIsObj)
+            oldState = { ...oldState };
+        const merged = (oldStateIsObj && (typeof (newState) === 'object')) ? mergeDeep(oldState, newState) : newState;
         window.requestAnimationFrame(() => {
             win.history[verb + 'State'](merged, title, url === null ? win.location.href : url);
         });
