@@ -147,7 +147,7 @@ export class XtalStateUpdate extends UrlFormatter(WithPath(XtalStateBase)) {
         if(this._rewrite){
             const hist = this._new ? {} : this._queuedHistory.shift();
             if(hist === null || hist === undefined) return;
-            setState(this.wrap(hist), this._title, this._url, this._win);
+            setState(this.wrap(hist), this._title, url, this._win);
         }else{
             //if(this.make && !this.url) return;
             //if(!url) return null; 
