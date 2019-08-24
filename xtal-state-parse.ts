@@ -75,7 +75,7 @@ export class XtalStateParse extends XtalStateBase{
     }
     _checkedNull: boolean = false;
     onParsePropsChange(){
-        if(this._disabled || this.value || this.noMatch) return;
+        if(this._disabled || this.value || this.noMatch || !this._conn) return;
         // if(!this._window){
         //     setTimeout(() =>{
         //         this.onParsePropsChange();

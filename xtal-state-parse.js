@@ -65,7 +65,7 @@ export class XtalStateParse extends XtalStateBase {
         this.attr('no-match', val.toString());
     }
     onParsePropsChange() {
-        if (this._disabled || this.value || this.noMatch)
+        if (this._disabled || this.value || this.noMatch || !this._conn)
             return;
         // if(!this._window){
         //     setTimeout(() =>{
