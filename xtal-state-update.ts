@@ -155,11 +155,11 @@ export class XtalStateUpdate extends UrlFormatter(WithPath(XtalStateBase)) {
             if(hist === null || hist === undefined) return;
             this._disabled = true;
             pushState(this.wrap(hist), this._title, url, this._win);
-            this.de('history',{
-                value: this._win.history.state
-            });
             this._disabled = false;
         }
+        this.de('history',{
+            value: this._win.history.state
+        });
         if(this._queuedHistory.length > 0){
             this._debouncer();
         }
