@@ -10,7 +10,7 @@ export class XtalStateParse extends XtalStateBase{
     static get observedAttributes(){return super.observedAttributes.concat([with_url_pattern, parse, init_history_if_null])}
 
     attributeChangedCallback(name: string, oldVal: string, newVal: string){
-        super.attributeChangedCallback(name, oldVal, newVal);
+        
         switch(name){
             case with_url_pattern:
                 this._withURLPattern = newVal;
@@ -18,10 +18,8 @@ export class XtalStateParse extends XtalStateBase{
             case parse:
                 this['_' + name] = newVal;
                 break;
-            default:
-                super.attributeChangedCallback(name, oldVal, newVal);
-                return;
         }
+        super.attributeChangedCallback(name, oldVal, newVal);
         this.onParsePropsChange();
     }
 
@@ -57,14 +55,13 @@ export class XtalStateParse extends XtalStateBase{
     set initHistoryIfNull(nv){
         this.attr(init_history_if_null, nv, '');
     }
-
     connectedCallback(){
         this.propUp(['withURLPattern', parse, 'initHistoryIfNull', 'parseFn']);
         super.connectedCallback();
         this.onParsePropsChange();
     }
     onPropsChange() : boolean{
-        if(this._initHistoryIfNull) return false;
+        if(this._initHistoryIfNull || !this._conn) return false;
         return super.onPropsChange();
     }
     value: any;
