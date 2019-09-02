@@ -37,12 +37,15 @@ history.state doesn't seem like a good place to cache reams of data, but only to
 
 One of the goals of xtal-state is that it be scalable (think [Scala](https://www.scala-lang.org/old/node/250.html)) -- it can solve simple problems simply, with a miminal learning curve, but it can also be used to tackle progressively more difficult problems, each problem requiring more nuance and mastery.
 
-## Problem Statement I -- Object-centric routing
+## Problem Statement I 
+<details>
+    <summary>Object-centric routing</summary>
 
 At the simplest level, it can provide part of a routing solution (but a view selector component, 
 such as [if-diff](https://www.webcomponents.org/element/if-diff) is needed, and a routing "link" component is also needed for a full routing implementation).  But unlike typical routing solutions, perhaps, xtal-state* views the history.state object as the focal point, and the address bar as a subservient recorder of the history.state object.
 
 At the other extreme, consider the following two problem statements.
+</details>
 
 ## Problem Statement II 
 
