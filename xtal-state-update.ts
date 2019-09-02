@@ -4,6 +4,7 @@ import {WithPath, with_path} from 'xtal-element/with-path.js';
 import {UrlFormatter} from './url-formatter.js';
 import {define} from 'trans-render/define.js';
 import {debounce} from 'xtal-element/debounce.js';
+import {XtalStateUpdateProps} from './types.d.js';
 
 const make = 'make';
 const rewrite = 'rewrite';
@@ -17,7 +18,7 @@ const new$$ = 'new';
  * Web component wrapper around the history api
  *
  */
-export class XtalStateUpdate extends UrlFormatter(WithPath(XtalStateBase)) {
+export class XtalStateUpdate extends UrlFormatter(WithPath(XtalStateBase)) implements XtalStateUpdateProps {
     static get is() { return 'xtal-state-update'; }
 
     _make!: boolean;

@@ -7,3 +7,11 @@ export interface IHistoryUpdateDetails {
     newState: any,
     initVal: boolean,
 }
+export interface XtalStateUpdateProps {
+    make: boolean,
+    rewrite: boolean,
+    history: any,
+    title: string,
+    new: boolean,
+    withPath: string
+}

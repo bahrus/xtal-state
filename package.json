@@ -20,6 +20,7 @@
     "xtal-test": "0.0.19",
     "es-module-shims": "0.2.15"
   },
+  "types": "types.d.ts",
   "@pika/web": {
     "webDependencies": [
       "p-et-alia",
