@@ -10,7 +10,9 @@
 
 xtal-state-* are a few Web components (and an api) that wrap and extend the power of the history api.
 
-**NB**  I am excited (and slightly embarrassed) to report that AMP provides numerous components built around the same basic concept as these components -- namely, amp-bind (which I had heard about before this component was created) uses [history.state](https://amp.dev/documentation/components/amp-bind?referrer=ampproject.org#modifying-history-with-amp.pushstate()) as its "system of record" and all of the binding it provides for components like the datepicker actually stores the values in history.state!  Definitely take a look at AMP for an alternative to these components / api.
+<details>
+<summary>Benefits of history.state</summary>
+**NB**  AMP provides numerous components built around a similar basic concept as these components -- namely, amp-bind (which I had heard about before this component was created) uses [history.state](https://amp.dev/documentation/components/amp-bind?referrer=ampproject.org#modifying-history-with-amp.pushstate()) as its "system of record" and all of the binding it provides for components like the datepicker actually stores the values in history.state!  Definitely take a look at AMP for an alternative to these components / api.
 
 xtal-state differs from AMP, perhaps, in that it takes the name "history.state" to heart -- xtal-state regards DOM Elements / Custom Elements as independent, thinking beings with internal "memories", that respond to human interaction directly, not via some abstract state store. So the primary purpose of xtal-state is helping persist user invoked changes as needed, during history navigation (including page refreshes), for starters.  Think about rapid "state" changes, like scrolling a large grid.  Do we really want all such UI state changes to pass through a diffuse state manager, which then has to figure out which other components to update?  
 
@@ -36,6 +38,7 @@ To help alleviate issues 2 and 3, since we are not relying on this state managem
 history.state doesn't seem like a good place to cache reams of data, but only to save user selections / navigations, and to help manage global state where appropriate, in order to avoid lengthy prop passing.
 
 One of the goals of xtal-state is that it be scalable (think [Scala](https://www.scala-lang.org/old/node/250.html)) -- it can solve simple problems simply, with a miminal learning curve, but it can also be used to tackle progressively more difficult problems, each problem requiring more nuance and mastery.
+</details>
 
 ## Problem Statement I 
 <details>
