@@ -12,16 +12,17 @@ xtal-state-* are a few Web components (and an api) that wrap and extend the powe
 
 <details>
 <summary>Benefits of history.state</summary>
+
 **NB**  AMP provides numerous components built around a similar basic concept as these components -- namely, amp-bind (which I had heard about before this component was created) uses [history.state](https://amp.dev/documentation/components/amp-bind?referrer=ampproject.org#modifying-history-with-amp.pushstate()) as its "system of record" and all of the binding it provides for components like the datepicker actually stores the values in history.state!  Definitely take a look at AMP for an alternative to these components / api.
 
-xtal-state differs from AMP, perhaps, in that it takes the name "history.state" to heart -- xtal-state regards DOM Elements / Custom Elements as independent, thinking beings with internal "memories", that respond to human interaction directly, not via some abstract state store. So the primary purpose of xtal-state is helping persist user invoked changes as needed, during history navigation (including page refreshes), for starters.  Think about rapid "state" changes, like scrolling a large grid.  Do we really want all such UI state changes to pass through a diffuse state manager, which then has to figure out which other components to update?  
+xtal-state differs from AMP, perhaps, in that it takes the name "history.state" to heart -- xtal-state regards DOM Elements / Custom Elements as independent, thinking beings with internal "memories", capable of spawning events spontaneously, that respond to human interaction directly, not via some abstract state store. So the primary purpose of xtal-state is helping persist user invoked changes as needed, during history navigation (including page refreshes), for starters.  Think about rapid "state" changes, like scrolling a large grid.  Do we really want all such UI state changes to pass through a diffuse state manager, which then has to figure out which other components to update?  
 
 However, xtal-state *can* also be used as a way of sharing some common state that transcends individual (tightly coupled) components, in a limited fashion.
 
 [history.state](https://www.chromestatus.com/metrics/feature/timeline/popularity/2618) has a number of appealing characteristics, which is why it seems so inviting to build "state" management around:
 
-1.  The data is stored out of RAM, which is good for memory strapped devices. (Actually discussions on this matter are rather murky -- it seems historical states are stored to disk.  But if you directly modify the state object without using replaceState, it appears to stick somewhat, so who knows?)
-2.  Although the data size is limited (the limit is configurable on Firefox), you can have multiple histories by using multiple iframes (preferably with style=display:none), which allows you to exceed the limit.  This also allows for scope isolation, and federated content. 
+1.  The data is stored (partly) out of RAM, which is good for memory strapped devices. (Actually discussions on this matter are rather murky -- it seems historical states are stored to disk.  But if you directly modify the state object without using replaceState, it appears to stick somewhat, so who knows?)
+2.  Although the data size is limited (especially on firefox, but that limit is configurable), you can have multiple histories by using multiple iframes (preferably with style=display:none), which allows you to exceed the limit.  This also allows for scope isolation, and federated content. 
 3.  Web sites that provide sensitive information shouldn't have audit concerns with history.state, as there would likely be with other forms of local storage like IndexedDB.
 4.  Support for time travel via the back button (and api).  Adding developer tools on top of that is pretty straightforward.
 5.  Built into the platform.  Anyone can access this built-in api.  The libraries here only reduce some boilerplate, but nothing we do prevents other libraries from tapping into the same data.
@@ -31,11 +32,11 @@ Some disadvantages of history.state:
 
 1.  Although an iframe gives you the ability to store up to 2M (outside of RAM?) (Firefox), the cost of holding onto an iframe is about 350 kb.  So there is some overhead.
 2.  Unlike IndexedDB, storing data in history.data can't currently be done asynchronously.
-3.  Unlike IndexedDB, web workers don't have access to history.state
+3.  Unlike IndexedDB, web workers don't have access to history.state (but help may be on the way with amp-script).
 
-To help alleviate issues 2 and 3, since we are not relying on this state management very much for binding between components (preferring direct passing via something like [petalia](https://github.com/bahrus/p-et-alia)) we can take some liberties as far as when to save to history.state, and for example wait for a window.requestAnimationFrame / debounce, confident that no one will care about such delays.
+To help alleviate issues 2 and 3, since we are not relying on this state management very much for binding between components (preferring direct passing via something like [petalia](https://github.com/bahrus/p-et-alia)) we can take some liberties as far as *when* to save to history.state, and for example wait for a window.requestAnimationFrame / debounce, confident that no one will care about such delays.
 
-history.state doesn't seem like a good place to cache reams of data, but only to save user selections / navigations, and to help manage global state where appropriate, in order to avoid lengthy prop passing.
+history.state doesn't seem like a good place to cache reams of data, but only to save user selections / navigations, and to help manage global state where appropriate, and in order to avoid lengthy prop passing.
 
 One of the goals of xtal-state is that it be scalable (think [Scala](https://www.scala-lang.org/old/node/250.html)) -- it can solve simple problems simply, with a miminal learning curve, but it can also be used to tackle progressively more difficult problems, each problem requiring more nuance and mastery.
 </details>
@@ -89,23 +90,20 @@ At the other extreme, consider the following two problem statements.
 
  
 
-## Problem Statement III -- Building https://UFP.gov
+## Problem Statement III
+
 <details>
+<summary>Building https://UFP.gov</summary>
 *In the year 2412, Guinan, president-elect of the United Federation of Planets, wants to make good on her promise to modernize the UFP website.  The last known browser running IE11 was destroyed when the planet Psi 2000 imploded, so Guinan thought it was time to finally take full advantage of what the platform had to offer in terms of scope isolation.  The current version of the website mashes together websites from each outpost - 5,173,000 in total.  Each website was built using the most popular framework (and version) of the day when the outpost was established, and due to framework lock-in, never migrated to anything newer.  Some of those frameworks, in fact, were conceived when the Beastie Boys' "Sabotage" was topping the Earthling charts.  Finding qualified developers requires finding time singularities and bringing in [ancient talent](https://motherboard.vice.com/en_us/article/pgapzy/heavens-gate-web-designers-higher-source-suicide-cult).  The mashing together is done via iframes.  So the idea is to switch out iframes for loosely coupled web components.*
 
 *Doing her due diligence, Guinan visited alternate timelines where parallel Guinan's had tried the same thing. Guinan found one timeline where a mass inter-galactic civil-war had broken out.  The cause?  One of the web components had code that would update the window.history.state object.  This inadvertently caused another outposts's web component to initiate war with the Romulans.*  
 </details>
-
- 
-
-
 
 <!--## Demo
 
 Here is a [demo](https://bahrus.github.io/purr-sist-demos/Example3.htm), which shows the outline of how these components, combined with [purr-sist](https://www.webcomponents.org/element/purr-sist) can be used to create "git in the browser."-->
 
  
-
 
 ## Programmatic API
 
@@ -159,7 +157,7 @@ xtal-state-update is a lightweight custom element that deep merges its "history"
 <!--Petalia Notation -->
 <div>
     <xtal-state-update make -history guid=CircuitCity 
-        with-path=myPath url=/tribble></xtal-state-update>
+        with-path=chapter11 url=/kaput></xtal-state-update>
 </div>
 ```
 
@@ -186,7 +184,6 @@ In the meantime, there's a property, stringify-fn, which is passed the instance 
 
 xtal-state-watch watches for all history state changes.  When history changes, it emits an event "history-changed".  
 
-
 ## Transcribing state from the address bar
 
 ### Parsing
@@ -202,7 +199,7 @@ In the Routing 101 scenario, xtal-state-parse will initialize history.state, onl
 
 In the 'git in the browser scenario", xtal-state-parse simply emits an event with the decoded id (or really, the parsed object, which may contain more information than a single id), and lets other components take it from there.  In this scenario, xtal-state-parse leaves the history untouched.  The event (and dynamic attributes of xtal-state-parse) let other components know whether history started out null or not.
 
-To let xtal-state-parse know which scenario is desired, for scenario 1 (routing 101) set attribute:  "init-history-if-null".  If that attribute isn't present, xtal-state-parse just emits an event "match-found," passing the matched object, or "no-match-found".
+To let xtal-state-parse know which scenario is desired, for scenario 1 (routing 101) set attribute:  "init-history-if-null".  If that attribute isn't present, xtal-state-parse just emits an event "match-found," passing the matched object, or "no-match-found" if the address bar doesn't match the pattern string.
 
 xtal-state-parse's primary way of parsing is based on the regular expression [named capture group enhancements](https://github.com/tc39/proposal-regexp-named-groups) that are part of [ES 2018](http://2ality.com/2017/05/regexp-named-capture-groups.html).  Only Chrome supports this feature currently.
 
@@ -230,6 +227,7 @@ then the syntax above will initialize history.state to:
 }
 ```
 
+
 [XregExp](http://xregexp.com/) is a library that inspired this spec, and that could provide a kind of polyfill for browsers that don't support named capture groups yet. However, it is a rather large polyfill, and supporting this is ultimately throw away code.  More useful is to be able to provide a parser function, should regular expressions not meet the requirements.  To set the parser function, use property "parseFn".  The signature of the function should be:
 
 > function(url: string) : object
@@ -249,6 +247,7 @@ No.  Remember, xtal-state views history.state as the focal point, not the addres
 ## Viewing Your Element
 
 ```
+$ npm install
 $ npm serve
 ```
 

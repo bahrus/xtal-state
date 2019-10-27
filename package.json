@@ -8,28 +8,22 @@
   "author": "bahrus <anderson.bruce.b@gmail.com>",
   "license": "MIT",
   "dependencies": {
-    "trans-render": "0.0.113",
-    "xtal-element": "0.0.60"
+    "trans-render": "0.0.136",
+    "xtal-element": "0.0.87"
   },
   "devDependencies": {
-    "@pika/web": "^0.5.1",
-    "@webcomponents/webcomponentsjs": "2.2.10",
-    "jiife": "0.0.12",
-    "p-et-alia": "0.0.22",
-    "purr-sist": "0.0.58",
-    "xtal-test": "0.0.19",
-    "es-module-shims": "0.2.15"
+    "@pika/web": "0.6.1",
+    "@webcomponents/webcomponentsjs": "2.3.0",
+    "jiife": "0.0.14",
+    "p-et-alia": "0.0.53",
+    "purr-sist": "0.0.60",
+    "xtal-test": "0.0.21",
+    "es-module-shims": "0.4.6"
   },
   "types": "types.d.ts",
-  "@pika/web": {
-    "webDependencies": [
-      "p-et-alia",
-      "purr-sist"
-    ]
-  },
   "scripts": {
     "test": "node createIIFE.js && tape test/*.js",
     "serve": "node node_modules/xtal-test/serve.js",
-    "prepare": "pika install"
+    "doc": "wca analyze xtal-*.js --outFile custom-elements.json"
   }
 }

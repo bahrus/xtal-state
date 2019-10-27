@@ -8,6 +8,9 @@ export class XtalStateBase extends XtallatX(hydrate(HTMLElement)){
     get guid(){
         return this._guid;
     }
+    /**
+     * 
+     */
     set guid(val){
         this.attr(guid, val);
     }

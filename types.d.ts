@@ -8,6 +8,7 @@ export interface IHistoryUpdateDetails {
     initVal: boolean,
 }
 export interface XtalStateUpdateProps {
+    guid: string,
     make: boolean,
     rewrite: boolean,
     history: any,
