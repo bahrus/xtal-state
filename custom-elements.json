@@ -2,6 +2,87 @@
   "version": 2,
   "tags": [
     {
+      "name": "xtal-state-parse",
+      "jsDoc": "/**\n * @element xtal-state-parse\n */",
+      "attributes": [
+        {
+          "name": "disabled",
+          "description": "Any component that emits events should not do so if it is disabled.\r\nNote that this is not enforced, but the disabled property is made available.\r\nUsers of this mix-in should ensure not to call \"de\" if this property is set to true.",
+          "jsDoc": "/**\r\n         * Any component that emits events should not do so if it is disabled.\r\n         * Note that this is not enforced, but the disabled property is made available.\r\n         * Users of this mix-in should ensure not to call \"de\" if this property is set to true.\r\n         * @attr\r\n         */",
+          "type": "boolean"
+        },
+        {
+          "name": "with-url-pattern",
+          "description": "Pattern to match for, using ES2018 named capture groups",
+          "jsDoc": "/**\n     * Pattern to match for, using ES2018 named capture groups\n     * @attr with-url-pattern\n     */",
+          "type": "any"
+        },
+        {
+          "name": "init-history-if-null",
+          "description": "Place parsed object into history.state if history.state is null",
+          "jsDoc": "/**\n     * Place parsed object into history.state if history.state is null\n     * @attr init-history-if-null\n     */",
+          "type": "any"
+        }
+      ],
+      "properties": [
+        {
+          "name": "val",
+          "type": "\"set\" | \"remove\""
+        },
+        {
+          "name": "disabled",
+          "description": "Any component that emits events should not do so if it is disabled.\r\nNote that this is not enforced, but the disabled property is made available.\r\nUsers of this mix-in should ensure not to call \"de\" if this property is set to true.",
+          "jsDoc": "/**\r\n         * Any component that emits events should not do so if it is disabled.\r\n         * Note that this is not enforced, but the disabled property is made available.\r\n         * Users of this mix-in should ensure not to call \"de\" if this property is set to true.\r\n         * @attr\r\n         */",
+          "type": "boolean"
+        },
+        {
+          "name": "evCount",
+          "description": "Tracks how many times each event type was called.",
+          "jsDoc": "/**\r\n         * Tracks how many times each event type was called.\r\n         */",
+          "type": "{ [key: string]: number; }"
+        },
+        {
+          "name": "asIs",
+          "type": "\"\" | \"-changed\""
+        },
+        {
+          "name": "guid",
+          "jsDoc": "/**\r\n     * \r\n     */",
+          "type": "string"
+        },
+        {
+          "name": "withURLPattern",
+          "description": "Pattern to match for, using ES2018 named capture groups",
+          "jsDoc": "/**\n     * Pattern to match for, using ES2018 named capture groups\n     * @attr with-url-pattern\n     */",
+          "type": "any"
+        },
+        {
+          "name": "parse",
+          "description": "Global string to parse. Example:  location.href",
+          "jsDoc": "/**\n     * Global string to parse. Example:  location.href\n     */",
+          "type": "any"
+        },
+        {
+          "name": "parseFn",
+          "description": "Function to parse address bar.",
+          "jsDoc": "/**\n     * Function to parse address bar.\n     */",
+          "type": "any"
+        },
+        {
+          "name": "initHistoryIfNull",
+          "description": "Place parsed object into history.state if history.state is null",
+          "jsDoc": "/**\n     * Place parsed object into history.state if history.state is null\n     * @attr init-history-if-null\n     */",
+          "type": "any"
+        },
+        {
+          "name": "noMatch",
+          "type": "any"
+        }
+      ],
+      "events": [],
+      "slots": []
+    },
+    {
       "name": "xtal-state-update",
       "description": "Web component wrapper around the history api",
       "jsDoc": "/**\n * Web component wrapper around the history api\n * @element xtal-state-update\n *\n *\n */",
@@ -103,6 +184,52 @@
         }
       ],
       "events": [],
+      "slots": []
+    },
+    {
+      "name": "xtal-state-watch",
+      "description": "Watch for history.state changes",
+      "jsDoc": "/**\n * Watch for history.state changes\n * @element xtal-state-watch\n * @event history-changed\n */",
+      "attributes": [
+        {
+          "name": "disabled",
+          "description": "Any component that emits events should not do so if it is disabled.\r\nNote that this is not enforced, but the disabled property is made available.\r\nUsers of this mix-in should ensure not to call \"de\" if this property is set to true.",
+          "jsDoc": "/**\r\n         * Any component that emits events should not do so if it is disabled.\r\n         * Note that this is not enforced, but the disabled property is made available.\r\n         * Users of this mix-in should ensure not to call \"de\" if this property is set to true.\r\n         * @attr\r\n         */",
+          "type": "boolean"
+        }
+      ],
+      "properties": [
+        {
+          "name": "val",
+          "type": "\"set\" | \"remove\""
+        },
+        {
+          "name": "disabled",
+          "description": "Any component that emits events should not do so if it is disabled.\r\nNote that this is not enforced, but the disabled property is made available.\r\nUsers of this mix-in should ensure not to call \"de\" if this property is set to true.",
+          "jsDoc": "/**\r\n         * Any component that emits events should not do so if it is disabled.\r\n         * Note that this is not enforced, but the disabled property is made available.\r\n         * Users of this mix-in should ensure not to call \"de\" if this property is set to true.\r\n         * @attr\r\n         */",
+          "type": "boolean"
+        },
+        {
+          "name": "evCount",
+          "description": "Tracks how many times each event type was called.",
+          "jsDoc": "/**\r\n         * Tracks how many times each event type was called.\r\n         */",
+          "type": "{ [key: string]: number; }"
+        },
+        {
+          "name": "asIs",
+          "type": "\"\" | \"-changed\""
+        },
+        {
+          "name": "guid",
+          "jsDoc": "/**\r\n     * \r\n     */",
+          "type": "string"
+        }
+      ],
+      "events": [
+        {
+          "name": "history-changed"
+        }
+      ],
       "slots": []
     }
   ]

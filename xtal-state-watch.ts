@@ -1,6 +1,11 @@
 import { XtalStateBase } from "./xtal-state-base.js";
 import { history_state_update, init } from "./xtal-state-api.js";
 import {define} from "trans-render/define.js";
+/**
+ * Watch for history.state changes
+ * @element xtal-state-watch
+ * @event history-changed
+ */
 export class XtalStateWatch extends XtalStateBase {
   static get is() {
     return "xtal-state-watch";

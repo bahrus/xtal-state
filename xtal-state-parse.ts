@@ -4,7 +4,9 @@ const with_url_pattern = 'with-url-pattern';
 const parse = 'parse';
 const init_history_if_null = 'init-history-if-null';
 
-
+/**
+ * @element xtal-state-parse
+ */
 export class XtalStateParse extends XtalStateBase{
     static get is(){return 'xtal-state-parse';}
     static get observedAttributes(){return super.observedAttributes.concat([with_url_pattern, parse, init_history_if_null])}
@@ -27,6 +29,10 @@ export class XtalStateParse extends XtalStateBase{
     get withURLPattern(){
         return this._withURLPattern;
     }
+    /**
+     * Pattern to match for, using ES2018 named capture groups
+     * @attr with-url-pattern
+     */
     set withURLPattern(val){
         this.attr(with_url_pattern, val);
     }
@@ -35,6 +41,9 @@ export class XtalStateParse extends XtalStateBase{
     get parse(){
         return this._parse;
     }
+    /**
+     * Global string to parse. Example:  location.href
+     */
     set parse(val){
         this.attr(parse, val);
     }
@@ -43,6 +52,9 @@ export class XtalStateParse extends XtalStateBase{
     get parseFn(){
         return this._parseFn;
     }
+    /**
+     * Function to parse address bar.
+     */
     set parseFn(nv){
         this._parseFn = nv;
         this.onParsePropsChange();
@@ -52,6 +64,10 @@ export class XtalStateParse extends XtalStateBase{
     get initHistoryIfNull(){
         return this._initHistoryIfNull;
     }
+    /**
+     * Place parsed object into history.state if history.state is null
+     * @attr init-history-if-null
+     */
     set initHistoryIfNull(nv){
         this.attr(init_history_if_null, nv, '');
     }
