@@ -8,17 +8,19 @@
   "author": "bahrus <anderson.bruce.b@gmail.com>",
   "license": "MIT",
   "dependencies": {
-    "trans-render": "0.0.136",
-    "xtal-element": "0.0.87"
+    "trans-render": "0.0.137",
+    "xtal-element": "0.0.90"
   },
   "devDependencies": {
     "@pika/web": "0.6.1",
     "@webcomponents/webcomponentsjs": "2.3.0",
     "jiife": "0.0.14",
-    "p-et-alia": "0.0.53",
+    "p-et-alia": "0.0.64",
     "purr-sist": "0.0.60",
     "xtal-test": "0.0.21",
-    "es-module-shims": "0.4.6"
+    "es-module-shims": "0.4.6",
+    "aggregator-fn": "0.0.18",
+    "xtal-json-editor": "0.0.41"
   },
   "types": "types.d.ts",
   "scripts": {
