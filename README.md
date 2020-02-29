@@ -44,7 +44,7 @@ One of the goals of xtal-state is that it be scalable (think [Scala](https://www
 
 ## Problem Statement I 
 <details>
-    <summary>Object-centric routing</summary>
+<summary>Object-centric routing</summary>
 
 At the simplest level, it can provide part of a routing solution (but a view selector component, 
 such as [if-diff](https://www.webcomponents.org/element/if-diff) is needed, and a routing "link" component is also needed for a full routing implementation).  But unlike typical routing solutions, perhaps, xtal-state* views the history.state object as the focal point, and the address bar as a subservient recorder of the history.state object.
@@ -110,7 +110,7 @@ One example of an existing service that requires no token or account, where one 
 And this strategy isn't very efficient.  It would require rapidly uploading a larger and larger object / JSON string as the user's application state grows, which could happen quite quickly.
 </details>
 </details>
-
+</details>
  
 
 ## Problem Statement III
