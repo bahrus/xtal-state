@@ -225,7 +225,7 @@ In the 'git in the browser scenario", xtal-state-parse simply emits an event wit
 
 To let xtal-state-parse know which scenario is desired, for scenario 1 (routing 101) set attribute:  "init-history-if-null".  If that attribute isn't present, xtal-state-parse just emits an event "match-found," passing the matched object, or "no-match-found" if the address bar doesn't match the pattern string.
 
-xtal-state-parse's primary way of parsing is based on the regular expression [named capture group enhancements](https://github.com/tc39/proposal-regexp-named-groups) that are part of [ES 2018](http://2ality.com/2017/05/regexp-named-capture-groups.html).  Only Chrome supports this feature currently.
+xtal-state-parse's primary way of parsing is based on the regular expression [named capture group enhancements](https://github.com/tc39/proposal-regexp-named-groups) that are part of [ES 2018](http://2ality.com/2017/05/regexp-named-capture-groups.html).  [Firefox does not yet support this feature](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Regular_Expressions#Browser_compatibility).
 
 Syntax:
 
