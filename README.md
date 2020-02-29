@@ -15,16 +15,16 @@ xtal-state-* are a few Web components (and an api) that wrap and extend the powe
 
 **NB**  AMP provides numerous components built around a similar basic concept as these components -- namely, amp-bind (which I had heard about before this component was created) uses [history.state](https://amp.dev/documentation/components/amp-bind?referrer=ampproject.org#modifying-history-with-amp.pushstate()) as its "system of record" and all of the binding it provides for components like the datepicker actually stores the values in history.state!  Definitely take a look at AMP for an alternative to these components / api.
 
-xtal-state differs from AMP, perhaps, in that it takes the name "history.state" to heart -- xtal-state regards DOM Elements / Custom Elements as independent, thinking beings with internal "memories", capable of spawning events spontaneously, that respond to human interaction directly, not via some abstract state store. So the primary purpose of xtal-state is helping persist user invoked changes as needed, during history navigation (including page refreshes), for starters.  Think about rapid "state" changes, like scrolling a large grid.  Do we really want all such UI state changes to pass through a diffuse state manager, which then has to figure out which other components to update?  
+xtal-state differs from AMP, perhaps, in that it takes the name "history.state" to heart -- xtal-state regards DOM Elements / Custom Elements as independent, thinking beings with internal "memories", capable of spawning events spontaneously.  And yes, they can respond to human interaction or neighboring elements changes directly, not via some abstract state store. So the primary purpose of xtal-state is helping persist user invoked changes as needed, during history navigation (including page refreshes), for starters.  Think about rapid "state" changes, like scrolling a large grid.  Do we really want all such UI state changes to pass through a diffuse state manager, which then has to figure out which other components to update?  
 
 However, xtal-state *can* also be used as a way of sharing some common state that transcends individual (tightly coupled) components, in a limited fashion.
 
 [history.state](https://www.chromestatus.com/metrics/feature/timeline/popularity/2618) has a number of appealing characteristics, which is why it seems so inviting to build "state" management around:
 
 1.  The data is stored (partly) out of RAM, which is good for memory strapped devices. (Actually discussions on this matter are rather murky -- it seems historical states are stored to disk.  But if you directly modify the state object without using replaceState, it appears to stick somewhat, so who knows?)
-2.  Although the data size is limited (especially on firefox, but that limit is configurable), you can have multiple histories by using multiple iframes (preferably with style=display:none), which allows you to exceed the limit.  This also allows for scope isolation, and federated content. 
+2.  Although the data size is limited (especially on Firefox, but that limit is configurable), you can have multiple histories by using multiple iframes (preferably with style=display:none), which allows you to exceed the limit.  This also allows for scope isolation, and federated content. 
 3.  Web sites that provide sensitive information shouldn't have audit concerns with history.state, as there would likely be with other forms of local storage like IndexedDB.
-4.  Support for time travel via the back button (and api).  Adding developer tools on top of that is pretty straightforward.
+4.  Support for time travel via the back button (and api).  Adding developer tools on top of that seems fairly straightforward.
 5.  Built into the platform.  Anyone can access this built-in api.  The libraries here only reduce some boilerplate, but nothing we do prevents other libraries from tapping into the same data.
 6.  Refreshing the browser doesn't lose the state.
 
@@ -33,12 +33,13 @@ Some disadvantages of history.state:
 1.  Although an iframe gives you the ability to store up to 2M (outside of RAM?) (Firefox), the cost of holding onto an iframe is about 350 kb.  So there is some overhead.
 2.  Unlike IndexedDB, storing data in history.data can't currently be done asynchronously.
 3.  Unlike IndexedDB, web workers don't have access to history.state (but help may be on the way with amp-script).
+4.  There is no built in mechanism for deep merging data into history.state, so each application using history.state needs to be a good cititzen, and not blindly trample over changes made elsewhere, possibly by different libraries.
 
 To help alleviate issues 2 and 3, since we are not relying on this state management very much for binding between components (preferring direct passing via something like [petalia](https://github.com/bahrus/p-et-alia)) we can take some liberties as far as *when* to save to history.state, and for example wait for a window.requestAnimationFrame / debounce, confident that no one will care about such delays.
 
 history.state doesn't seem like a good place to cache reams of data, but only to save user selections / navigations, and to help manage global state where appropriate, and in order to avoid lengthy prop passing.
 
-One of the goals of xtal-state is that it be scalable (think [Scala](https://www.scala-lang.org/old/node/250.html)) -- it can solve simple problems simply, with a miminal learning curve, but it can also be used to tackle progressively more difficult problems, each problem requiring more nuance and mastery.
+One of the goals of xtal-state is that it be scalable (think [Scala](https://www.scala-lang.org/old/node/250.html)) -- it can solve simple problems simply, with a minimal learning curve, but it can also be used to tackle progressively more difficult problems, each problem requiring more nuance and mastery.
 </details>
 
 ## Problem Statement I 
@@ -86,6 +87,28 @@ At the other extreme, consider the following two problem statements.
 
 *Chuck can't wait to send Sarah the page he is on, which so clearly shows that Vít Jedlička must be involved somehow.  Getting a warning that the fourth reboot would start in 15 seconds, Chuck quickly copies the url in the address bar, and sends it to Agent Walker's secured email account, just in the nick of time before the browser shuts down for the reboot.*
 
+<details>
+<summary>Why is this a difficult problem to solve?</summary>
+<details>
+<summary>
+Challenge 1: Chrome throws out the baby with the hash marker.
+</summary>
+The benefit of updating the window.location object (location.href and/or location.hash) as the user interacts with a web site, is that it allows the user to copy and paste the url corresponding to what they are seeing, and communicate it via email, text message etc.  Others can then open the application and zoom right to the place the user was excited to convey.  [At least, that's what I'd like to see happen, but most of the time, especially for complex business applications, this doesn't work].  And these days, many browsers support a sharing button, external to the web site, which sends the current url.  Sensible browsers, like Firefox, and Edge, include the hash tag part ("hash fragment") of the url.  Okay, I guess some neat freak commentators consider Chrome's recent URL castration / mutilation / amputation / lobotomy initiative a [feature](https://www.engadget.com/2018/02/19/chrome-cleans-messy-urls-share-phone/), not a bug.  I think this is quite problematic.  Sites like GitHub allow you to select a line number, which causes a hash location update to the url, specifying the line number.  Why does Chrome assume the user doesn't want to share that part of the URL?  That's a rather rude assumption, it seems to me.  Bad Chrome! 
+</details>
+<details>
+<summary>
+Badly aging Challenge 2: Internet Explorer and Edge:  Hold my beer.
+</summary>
+[Egads](https://stackoverflow.com/questions/16247162/max-size-of-location-hash-in-browser).
+</details>
+<details>
+<summary>So what to do?</summary>
+The simplest solution to this dilemma would be to persist the history.state object to a central database with every modification, and to just add the id pointing to this object in the address bar somewhere Google hasn't started expunging yet.
+
+One example of an existing service that requires no token or account, where one could store the stringified history.state object, is [myjson.com](http://myjson.com/) (maximum size unknown.).  NB:  Using such a service, and blindly accepting any id without serious verification, could put a damper on your weekend. 
+
+And this strategy isn't very efficient.  It would require rapidly uploading a larger and larger object / JSON string as the user's application state grows, which could happen quite quickly.
+</details>
 </details>
 
  
