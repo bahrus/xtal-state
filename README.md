@@ -131,7 +131,7 @@ Here is a [demo](https://bahrus.github.io/purr-sist-demos/Example3.htm), which s
 
 ## Programmatic API
 
-To partake in usage of this state management solution without using these web components, you can get the window object containing the history.state:
+To partake in usage of this state management solution without using these web components, you can use the following api:
 
 ```JavaScript
 import {setState} from '../xtal-state-api.js';
