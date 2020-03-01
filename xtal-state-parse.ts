@@ -111,7 +111,6 @@ export class XtalStateParse extends XtalStateBase{
                 value = this._parseFn(prseString, this);
             }
         }
-        
         if(value === null) {
             this.noMatch = true;
             this.de('no-match-found', {

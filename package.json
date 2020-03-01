@@ -23,7 +23,7 @@
   },
   "types": "types.d.ts",
   "scripts": {
-    "test": "node createIIFE.js && tape test/*.js",
+    "test": "node test/test-all.js",
     "serve": "node node_modules/xtal-test/serve.js",
     "doc": "wca analyze xtal-*.js --outFile custom-elements.json"
   }
