@@ -151,6 +151,13 @@ setState({
 
 ```
 
+The full (typescript) signatures are as follows:
+
+```TypeScript
+export function setState(state: object, title: string = '', url: string | null = null, win: Window = window){}
+export function pushState(state: object, title: string = '', url: string, win: Window = window){}
+```
+
 
 ## Debugging history.state:
 

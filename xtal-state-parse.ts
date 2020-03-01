@@ -92,12 +92,6 @@ export class XtalStateParse extends XtalStateBase{
     _checkedNull: boolean = false;
     onParsePropsChange(){
         if(this._disabled || this.value || this.noMatch || !this._conn) return;
-        // if(!this._window){
-        //     setTimeout(() =>{
-        //         this.onParsePropsChange();
-        //     }, 50);
-        //     return;
-        // }
         if(!this._checkedNull){
             if(window.history.state === null){
                 this.dataset.historyWasNull = 'true';
