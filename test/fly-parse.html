@@ -11,17 +11,31 @@
         with-url-pattern="http://(?<domain>[a-z\.\:0-9]*)/test/(?<first>[a-z0-9]*)-(?<second>[a-z0-9]*)" 
         init-history-if-null>
     </xtal-state-parse>
+    <p-d on=match-found to=[-lhs] m=1></p-d>
+    <if-diff id=ifdiff if -lhs equals -rhs data-key-name=match m=1></if-diff>
+    <script>
+        ifdiff.rhs = {domain: "localhost:3030", first: "fly", second: "parse"};
+    </script>
+    <div data-match=0>
+        <template>
+            <div mark>There was an old lady who swallowed a fly;</div>
+        </template>
+    </div>
     <script defer src="../../node_modules/es-module-shims/dist/es-module-shims.js"></script>
     <script type="importmap-shim">
     {
         "imports": {
             "xtal-element/": "../../node_modules/xtal-element/",
-            "trans-render/": "../../node_modules/trans-render/"
+            "trans-render/": "../../node_modules/trans-render/",
+            "if-diff/": "../../node_modules/if-diff/",
+            "p-et-alia/": "../../node_modules/p-et-alia/"
         }
     }
     </script>
     <script  type="module-shim">
         import '../../xtal-state-parse.js';
+        import 'if-diff/if-diff.js';
+        import 'p-et-alia/p-d.js';
     </script>
 </body>
 </html>

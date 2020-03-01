@@ -141,7 +141,7 @@ export class XtalStateParse extends XtalStateBase{
             let thingToParse = this.getObj(parsePath, winObj);
             const parsed = reg.exec(<any>thingToParse as string);
             if(!parsed) return null;
-            return parsed['groups'];
+            return Object.assign({}, parsed['groups']); //weird bug(?) in chrome requires this:  parsed groups is a strange type of primitive object with no methods.
         }catch(err){
             return -1;
         }
