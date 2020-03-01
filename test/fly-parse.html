@@ -8,13 +8,13 @@
 <body>
     <xtal-state-parse 
         parse="location.href"  
-        with-url-pattern="http://(?<domain>[a-z\.\:0-9]*)/test/(?<first>[a-z0-9]*)-(?<second>[a-z0-9]*)" 
+        with-url-pattern="http://(?<domain>[a-z]*)\:[0-9]*/test/(?<first>[a-z0-9]*)-(?<second>[a-z0-9]*)[\.html]*" 
         init-history-if-null>
     </xtal-state-parse>
     <p-d on=match-found to=[-lhs] m=1></p-d>
     <if-diff id=ifdiff if -lhs equals -rhs data-key-name=match m=1></if-diff>
     <script>
-        ifdiff.rhs = {domain: "localhost:3030", first: "fly", second: "parse"};
+        ifdiff.rhs = {domain: "localhost", first: "fly", second: "parse"};
     </script>
     <div data-match=0>
         <template>
