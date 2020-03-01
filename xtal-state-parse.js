@@ -18,6 +18,9 @@ export class XtalStateParse extends XtalStateBase {
             case with_url_pattern:
                 this._withURLPattern = newVal;
                 break;
+            case init_history_if_null:
+                this._initHistoryIfNull = newVal !== null;
+                break;
             case parse:
                 this['_' + name] = newVal;
                 break;
@@ -84,12 +87,6 @@ export class XtalStateParse extends XtalStateBase {
     onParsePropsChange() {
         if (this._disabled || this.value || this.noMatch || !this._conn)
             return;
-        // if(!this._window){
-        //     setTimeout(() =>{
-        //         this.onParsePropsChange();
-        //     }, 50);
-        //     return;
-        // }
         if (!this._checkedNull) {
             if (window.history.state === null) {
                 this.dataset.historyWasNull = 'true';
@@ -119,7 +116,7 @@ export class XtalStateParse extends XtalStateBase {
                 value: value
             }, true);
         }
-        if (this._initHistoryIfNull && (window.history.state !== null))
+        if (this._initHistoryIfNull && (window.history.state === null))
             window.history.replaceState(value, '', window.location.href);
     }
     static getObj(parsePath, winObj) {
