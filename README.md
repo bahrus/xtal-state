@@ -79,7 +79,7 @@ At the other extreme, consider the following two problem statements.
 
 *"Who is Soorjo Alexander William Langobard Oliphant Chuckerbutty III?" he asks, playfully, and turns around and walks away.*
 
-*It was then that Chuck spots the tattoo on the back of the groundskeeper's neck.  Chuck experiences one of his flashes, that started the day his old roomate, Bryce, had sent Chuck a high speed transmission of the most valuable CIA secrets, which somehow seeped right into Chuck's subconscious.*
+*It was then that Chuck spots the tattoo on the back of the groundskeeper's neck.  Chuck experiences one of his flashes, that started the day his old roommate, Bryce, had sent Chuck a high speed transmission of the most valuable CIA secrets, which somehow seeped right into Chuck's subconscious.*
 
 *That tattoo was also spotted on Czech politician Vít Jedlička!*
 
