@@ -15,14 +15,14 @@ xtal-state-* are a few Web components (and an api) that wrap and extend the powe
 
 **NB**  AMP provides numerous components built around a similar basic concept as these components -- namely, amp-bind (which I had heard about before this component was created) uses [history.state](https://amp.dev/documentation/components/amp-bind?referrer=ampproject.org#modifying-history-with-amp.pushstate()) as its "system of record" and all of the binding it provides for components like the datepicker actually stores the values in history.state!  Definitely take a look at AMP for an alternative to these components / api.
 
-xtal-state differs from AMP, perhaps, in that it takes the name "history.state" to heart -- xtal-state regards DOM Elements / Custom Elements as independent, thinking beings with internal "memories", capable of spawning events spontaneously.  They can respond to human interaction or directly to events from neighboring elements, and do not require being sielded from direct communication via some abstract state store. So the primary purpose of xtal-state is helping persist user invoked changes as needed, during history navigation (including page refreshes), for starters.  Think about rapid "state" changes, like scrolling a large grid.  Do we really want all such UI state changes to pass through a diffuse state manager, which then has to figure out which other components to update?  
+xtal-state differs from AMP, perhaps, in that it takes the name "history.state" to heart -- xtal-state regards DOM Elements / Custom Elements as independent, thinking beings with internal "memories", capable of spawning events spontaneously.  They can respond to human interaction or directly to events from neighboring elements, and do not require being shielded from direct communication via some abstract state store. So the primary purpose of xtal-state is helping persist user invoked changes as needed, during history navigation (including page refreshes), for starters.  Think about rapid "state" changes, like scrolling a large grid.  Do we really want all such UI state changes to pass through a diffuse state manager, which then has to figure out which other components to update?  
 
 However, xtal-state *can* also be used as a way of sharing some common state that transcends individual (tightly coupled) components, in a limited fashion.
 
 [history.state](https://www.chromestatus.com/metrics/feature/timeline/popularity/2618) has a number of appealing characteristics, which is why it seems so inviting to build "state" management around:
 
 1.  The data is stored (partly) out of RAM, which is good for memory strapped devices. (Actually discussions on this matter are rather murky -- it seems historical states are stored to disk.  But if you directly modify the state object without using replaceState, it appears to stick somewhat.)
-2.  Although the data size is limited (especially on Firefox, but that limit is configurable), you can have multiple histories by using multiple iframes (preferably with style=display:none), which allows you to exceed the limit.  This also allows for scope isolation, and federated content. 
+2.  Although the data size is limited (especially on Firefox, but that limit is configurable), you can have multiple histories by using multiple iframes (preferably with style=display:none, and opening some blank.html file from the same domain also seems to be a requirement), which allows you to exceed the limit.  This also allows for rock solid state scope isolation, and federated content. 
 3.  Web sites that provide sensitive information shouldn't have audit concerns with history.state, as there would likely be with other forms of local storage like IndexedDB.
 4.  Support for time travel via the back button (and api).  Adding developer tools on top of that seems fairly straightforward.
 5.  Built into the platform.  Anyone can access this built-in api.  The libraries here only reduce some boilerplate, but nothing we do prevents other libraries from tapping into the same data.
@@ -33,7 +33,7 @@ Some disadvantages of history.state:
 1.  Although an iframe gives you the ability to store up to 2M (outside of RAM?) (Firefox), the cost of holding onto an iframe is about 350 kb.  So there is some overhead.
 2.  Unlike IndexedDB, storing data in history.data can't currently be done asynchronously.
 3.  Unlike IndexedDB, web workers don't have access to history.state (but help may be on the way with amp-script).
-4.  There is no built in mechanism for deep merging data into history.state, so each application using history.state needs to be a good cititzen, and not blindly trample over changes made elsewhere, possibly by different libraries.
+4.  There is no built in mechanism for deep merging data into history.state, so each application using history.state needs to be a good citizen, and not blindly trample over changes made elsewhere, possibly by different libraries.
 
 To help alleviate issues 2 and 3, since we are not relying on this state management very much for binding between components (preferring direct passing via something like [petalia](https://github.com/bahrus/p-et-alia)) we can take some liberties as far as *when* to save to history.state, and for example wait for a window.requestAnimationFrame / debounce, confident that no one will care about such delays.
 
@@ -47,7 +47,7 @@ One of the goals of xtal-state is that it be scalable (think [Scala](https://www
 <summary>Object-centric routing</summary>
 
 At the simplest level, it can provide part of a routing solution (but a view selector component, 
-such as [if-diff](https://www.webcomponents.org/element/if-diff) is needed, and a routing "link" component is also needed for a full routing implementation).  But unlike typical routing solutions, perhaps, xtal-state* views the history.state object as the focal point, and the address bar as a subservient recorder of the history.state object.
+such as [if-diff](https://www.webcomponents.org/element/if-diff) is needed, as well as a routing "link" component for a full routing implementation).  But unlike typical routing solutions, perhaps, xtal-state* views the history.state object as the focal point, and the address bar as a subservient recorder of the history.state object.
 
 At the other extreme, consider the following two problem statements.
 </details>
@@ -63,7 +63,7 @@ At the other extreme, consider the following two problem statements.
 
 *Agent Walker sends recent recruit Chuck Bartowski to visit the tombstone of Oliphant Chuckerbutty (Senior), located in Paddington [located within greater London], in search of clues.*
 
-*Chuck Bartowski is a lanky, earnest looking twenty-something with tangled, somewhat curly dark hair.  He works at Buy More as a computer service technician, after being expelled from Standford University's CS Program. Chuck is relieved and excited to be sent away on his first solo mission.  Relieved, because he had just admitted to his feelings for Agent Walker the previous day, who stood there, stoically.*
+*Chuck Bartowski is a lanky, earnest looking twenty-something with tangled, somewhat curly dark hair.  He works at Buy More as a computer service technician, after being expelled from Stanford University's CS Program. Chuck is relieved and excited to be sent away on his first solo mission.  Relieved, because he had just admitted to his feelings for Agent Walker the previous day, who stood there, stoically.*
 
 *"We should keep our relationship purely professional" she responded.  But was there a faint glimmer of ambiguity in her face?  Or was Chuck just desperate for any sign of mutual attraction?  Anyway, things had become rather awkward between them -- and going on this mission would help him keep his mind off of Sarah.*
 
@@ -71,7 +71,7 @@ At the other extreme, consider the following two problem statements.
 
 *When Chuck arrives at the gravesite of Oliphant Chuckerbutty some 12 hours later, he is disappointed to see that the place was rather neglected, with no interesting markings that might lead anywhere.  Feeling like a total failure, Chuck sits down on the wet earth, burying his head in his hands.  Twenty minutes go by, and then Chuck hears someone whistling a tune that sounds eerily familiar, yet new and exciting at the same time.  The tune was clearly written by Krzysztof Penderecki, and obviously follows the mold he set with "Threnody to the Victims of Hiroshima."  But it is something Chuck has never heard before.  Of course! This must be the rumored "Dies Irae", but Chuck knew Penderecki had not yet completed the work.  Penderecki was one of the recent disappearances, who had left behind the mysterious note!*
 
-*Chuck spins around to determine the source of the melody.  It's a young lad, the cemetary's groundkeeper.*
+*Chuck spins around to determine the source of the melody.  It's a young lad, the cemetery's groundskeeper.*
 
 *"Where did you learn that piece you're whistling?  I haven't seen any recordings of it yet!" Chuck demands.*
 
@@ -79,9 +79,9 @@ At the other extreme, consider the following two problem statements.
 
 *"Who is Soorjo Alexander William Langobard Oliphant Chuckerbutty III?" he asks, playfully, and turns around and walks away.*
 
-*It was then that Chuck spots the tatoo on the back of the groundkeeper's neck.  Chuck experiences one of his flashes, that started the day his old roomate, Bryce, had sent Chuck a high speed transmission of the most valuable CIA secrets, which somehow seeped right into Chuck's subconscious.*
+*It was then that Chuck spots the tattoo on the back of the groundskeeper's neck.  Chuck experiences one of his flashes, that started the day his old roomate, Bryce, had sent Chuck a high speed transmission of the most valuable CIA secrets, which somehow seeped right into Chuck's subconscious.*
 
-*That tatoo was also spotted on Czech politician Vít Jedlička!*
+*That tattoo was also spotted on Czech politician Vít Jedlička!*
 
 *Whipping out his laptop, which is still undergoing the Windows 10 update, Chuck opens up the MS Edge browser, and pages through the introductory tutorial.  Once that's done, he opens up a top secret web site maintained by the CIA.  The website allows Chuck to select any business he wants, and it displays a tree-like org-chart, starting from the CEO on down.  It allows Chuck to add multiple such companies on the same page, showing different org charts, so Chuck can look for patterns.  Chuck expands the nodes on each company whose CEO had disappeared -- Amazon, Whole Foods (prior to the merger), Overstock.com, Craigslist, the Dallas Mavericks... In each case Chuck is able to find Vít Jedlička, working the cigar stand closest to the CEO's office, joining a week or two before the CEO disappeared!*
 
@@ -105,7 +105,7 @@ Badly aging Challenge 2: Internet Explorer and Edge:  Hold my beer.
 <summary>So what to do?</summary>
 The simplest solution to this dilemma would be to persist the history.state object to a central database with every modification, and to just add the id pointing to this object in the address bar somewhere Google hasn't started expunging yet.
 
-One example of an existing service that requires no token or account, where one could store the stringified history.state object, is [myjson.com](http://myjson.com/) (maximum size unknown.).  NB:  Using such a service, and blindly accepting any id without serious verification, could put a damper on your weekend. 
+One example of an existing service that requires no token or account, where one could store the stringified history.state object, is [myjson.com](http://myjson.com/) (maximum size unknown.).  **NB**:  Using such a service, and blindly accepting any id without serious verification, could put a damper on your weekend. 
 
 And this strategy isn't very efficient.  It would require rapidly uploading a larger and larger object / JSON string as the user's application state grows, which could happen quite quickly.
 </details>
@@ -158,6 +158,7 @@ export function setState(state: object, title: string = '', url: string | null =
 export function pushState(state: object, title: string = '', url: string, win: Window = window){}
 ```
 
+These functions add support for deep merging into window.history.state, thus (quite likely) preserving values set from other content providers.  Also, a little bit of window.requestAnimationFrame iw used to (hopefully) reduce jank, since window.history.push/replaceState is synchronous.
 
 ## Debugging history.state:
 
@@ -179,7 +180,7 @@ In the browser console, enter:  import('https://unpkg.com/xtal-shell@0.0.20/$hel
 ```
 -->
 
-## Updating history.state
+## Updating history.state declaratively
 
 xtal-state-update is a lightweight custom element that deep merges its "history" property into the history.state object with an optional specified path.
 
@@ -194,7 +195,7 @@ xtal-state-update is a lightweight custom element that deep merges its "history"
 
 Note the optional attribute "guid."  This needs to be unique across all non shared "stores".  You can guarantee uniqueness by using an actual guid, for a massive application.  But for smaller applications, it can be more convenient and intuitive to use meaningful store names like "CompUSA"
 
-The value of url can be hardcoded, as shown above, or set programmatically.  A third option is to allow reformatting of the url based on a regular expression, using the ES2018 replace and named capture groups:
+The value of url can be hard-coded, as shown above, or set programmatically.  A third option is to allow reformatting of the url based on a regular expression, using the ES2018 replace and named capture groups:
 
 ```html
 <!--Petalia Notation -->
@@ -209,11 +210,11 @@ The value of url can be hardcoded, as shown above, or set programmatically.  A t
 
 But as universal support for ES2018 is some time off, this is a kind of pie-in-the-sky untested idea for now.
 
-In the meantime, there's a property, stringify-fn, which is passed the instance of xtal-state, which can return the actual url used in the history.push/replace call.
+In the meantime, there's a property, stringify-fn, which is passed the instance of xtal-state, which can return the actual url used in the history.push/replace call.  
 
-## Observing history.state
+## Observing history.state declaratively
 
-xtal-state-watch watches for all history state changes.  When history changes, it emits an event "history-changed".  
+Custom element "xtal-state-watch" watches for all history state changes.  When history changes, it emits an event "history-changed".  
 
 ## Transcribing state from the address bar
 
@@ -284,6 +285,9 @@ $ npm serve
 
 ## Running Tests
 
-WIP
+```
+$ npm run test
+```
 
+Tests currently fail due to Firefox's surprising delay in implementing ES2018 / RegEx enhancements.
 
