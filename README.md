@@ -158,7 +158,7 @@ export function setState(state: object, title: string = '', url: string | null =
 export function pushState(state: object, title: string = '', url: string, win: Window = window){}
 ```
 
-These functions add support for deep merging into window.history.state, thus (quite likely) preserving values set from other content providers.  Also, a little bit of window.requestAnimationFrame iw used to (hopefully) reduce jank, since window.history.push/replaceState is synchronous.
+These functions add support for deep merging into window.history.state, thus (quite likely) preserving values set from other content providers.  Also, a little bit of window.requestAnimationFrame is used to (hopefully) reduce jank, since window.history.push/replaceState is synchronous.
 
 ## Debugging history.state:
 
