@@ -270,6 +270,16 @@ If attribute "init-history-if-null" is set, then if the url-pattern and/or parse
 
 If the address bar doesn't match the regular expression (or parseFn returns null), an event with name "no-match-found" is emitted.
 
+For more complex applications, it may be desirable to be able to use multiple named capture group regular expressions, and find the first expression that "fits" the address bar, and populate history.state accordingly.
+
+Rather than trying to second guess such requirements, it should be possible to override method:
+
+```Typescript
+parseAddressBar(parsePath: string, urlPattern: string, winObj: Window){}
+```
+
+in order to achieve more complex parsing.
+
 ## Surely, xtal-state-parse watches for pop-state events, right?
 
 No.  Remember, xtal-state views history.state as the focal point, not the address bar.  The application is responsible for making sure the address bar can be parsed, and history restored, when the address bar contents are sent to someone else (or bookmarked for later use).  But xtal-state works with the premise that all binding should be done to history.state, not to the address bar.  And don't call me Shirley.

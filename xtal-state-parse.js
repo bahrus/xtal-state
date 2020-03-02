@@ -95,11 +95,11 @@ export class XtalStateParse extends XtalStateBase {
         }
         let value = null;
         if (this._withURLPattern) {
-            value = XtalStateParse.parseAddressBar(this._parse, this._withURLPattern, window);
+            value = this.parseAddressBar(this._parse, this._withURLPattern, window);
             if (value === -1) {
                 if (!this._parseFn)
                     return;
-                const prseString = XtalStateParse.getObj(this._parse, window);
+                const prseString = this.getObj(this._parse, window);
                 value = this._parseFn(prseString, this);
             }
         }
@@ -119,15 +119,7 @@ export class XtalStateParse extends XtalStateBase {
         if (this._initHistoryIfNull && (window.history.state === null))
             window.history.replaceState(value, '', window.location.href);
     }
-    static getObj(parsePath, winObj) {
-        let thingToParse = winObj;
-        parsePath.split('.').forEach(token => {
-            if (thingToParse)
-                thingToParse = thingToParse[token];
-        });
-        return thingToParse;
-    }
-    static parseAddressBar(parsePath, urlPattern, winObj) {
+    parseAddressBar(parsePath, urlPattern, winObj) {
         try {
             const reg = new RegExp(urlPattern);
             let thingToParse = this.getObj(parsePath, winObj);
@@ -139,6 +131,14 @@ export class XtalStateParse extends XtalStateBase {
         catch (err) {
             return -1;
         }
+    }
+    getObj(parsePath, winObj) {
+        let thingToParse = winObj;
+        parsePath.split('.').forEach(token => {
+            if (thingToParse)
+                thingToParse = thingToParse[token];
+        });
+        return thingToParse;
     }
 }
 define(XtalStateParse);
