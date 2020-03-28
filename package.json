@@ -8,14 +8,14 @@
   "author": "bahrus <anderson.bruce.b@gmail.com>",
   "license": "MIT",
   "dependencies": {
-    "trans-render": "0.0.142",
+    "trans-render": "0.0.143",
     "xtal-element": "0.0.101"
   },
   "devDependencies": {
     "@webcomponents/webcomponentsjs": "2.4.2",
-    "p-et-alia": "0.0.72",
+    "p-et-alia": "0.0.74",
     "purr-sist": "0.0.60",
-    "xtal-test": "0.0.41",
+    "xtal-test": "0.0.44",
     "es-module-shims": "0.4.6",
     "aggregator-fn": "0.0.21",
     "xtal-json-editor": "0.0.41",
