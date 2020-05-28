@@ -1,23 +1,23 @@
 import { XtalStateBase } from "./xtal-state-base.js";
 import { history_state_update, init } from "./xtal-state-api.js";
-import {define} from "trans-render/define.js";
+import {define} from "xtal-element/xtal-latx.js";
 /**
  * Watch for history.state changes
  * @element xtal-state-watch
  * @event history-changed
  */
 export class XtalStateWatch extends XtalStateBase {
-  static get is() {
-    return "xtal-state-watch";
-  }
+
+  static is = "xtal-state-watch";
+  
   _addedEventHandlers = false;
   _win: Window | undefined;
   get history() {
     if (this._win === undefined) return undefined;
     return this._win.history;
   }
-  onPropsChange() {
-    if (!super.onPropsChange()) return false;
+  onPropsChange(name: string) {
+    super.onPropsChange(name);
     if (!this._addedEventHandlers) {
       this._addedEventHandlers = true;
       if (this._storeKeeper) {
@@ -78,7 +78,7 @@ export class XtalStateWatch extends XtalStateBase {
   }
   _initialEvent = true;
   notify(isPopstate: boolean) {
-    if (this._disabled || !this._conn) return;
+    if (this._disabled || !this._connected) return;
     if(this._initialEvent){
       this.dataset.initialEvent = "true";
     }else{

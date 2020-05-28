@@ -1,14 +1,9 @@
 import { XtalStateBase } from './xtal-state-base.js';
 import { pushState, setState } from './xtal-state-api.js';
-import { WithPath, with_path } from 'xtal-element/with-path.js';
+import { WithPath } from 'xtal-element/with-path.js';
 import { UrlFormatter } from './url-formatter.js';
-import { define } from 'trans-render/define.js';
+import { define } from 'xtal-element/xtal-latx.js';
 import { debounce } from 'xtal-element/debounce.js';
-const make = 'make';
-const rewrite = 'rewrite';
-const history$ = 'history';
-const title = 'title';
-const new$$ = 'new';
 /**
  * Web component wrapper around the history api
  * @element xtal-state-update
@@ -18,27 +13,11 @@ const new$$ = 'new';
 export class XtalStateUpdate extends UrlFormatter(WithPath(XtalStateBase)) {
     constructor() {
         super(...arguments);
-        this._title = '';
+        /**
+         * Title to use when calling push/replace state
+         */
+        this.title = '';
         this._queuedHistory = [];
-    }
-    static get is() { return 'xtal-state-update'; }
-    get make() {
-        return this._make;
-    }
-    /**
-     * PushState in history
-     */
-    set make(val) {
-        this.attr(make, val, '');
-    }
-    get rewrite() {
-        return this._rewrite;
-    }
-    /**
-     * Replace State into history
-     */
-    set rewrite(val) {
-        this.attr(rewrite, val, '');
     }
     get history() {
         if (this._win === undefined)
@@ -50,64 +29,24 @@ export class XtalStateUpdate extends UrlFormatter(WithPath(XtalStateBase)) {
      */
     set history(newVal) {
         this._queuedHistory.push(newVal);
-        this.onPropsChange();
-    }
-    get title() {
-        return this._title;
-    }
-    /**
-     * Title to use when calling push/replace state
-     */
-    set title(val) {
-        this.attr(title, val);
-    }
-    get new() {
-        return this._new;
-    }
-    /**
-     * Initite history to empty object
-     */
-    set new(v) {
-        this.attr(new$$, v, '');
-    }
-    static get observedAttributes() {
-        return super.observedAttributes.concat(super.UFAttribs).concat([make, rewrite, title, with_path, new$$]);
-    }
-    attributeChangedCallback(n, ov, nv) {
-        switch (n) {
-            case new$$:
-            case rewrite:
-            case make:
-                this['_' + n] = nv !== null;
-                break;
-            case title:
-                this['_' + n] = nv;
-                break;
-            case with_path:
-                this._withPath = nv;
-                break;
-        }
-        super.attributeChangedCallback(n, ov, nv);
+        this.onPropsChange('history');
     }
     connectedCallback() {
-        this.propUp([make, rewrite, title, 'withPath', 'stringifyFn', new$$, 'syncHistory'].concat([history$]));
         this._debouncer = debounce(() => {
             this.updateHistory();
         }, 50);
         super.connectedCallback();
     }
-    onPropsChange() {
-        if (!super.onPropsChange())
-            return false;
-        if (!this._make && !this._rewrite)
+    onPropsChange(name) {
+        super.onPropsChange(name);
+        if (!this.make && !this.rewrite)
             return false;
         if (!this._init) {
             this._init = true;
             if (this._storeKeeper) {
                 this._storeKeeper.getContextWindow().then(win => {
                     this._win = win;
-                    //init(win);
-                    this.onPropsChange();
+                    this.onPropsChange(name);
                 });
                 return;
             }
@@ -115,25 +54,26 @@ export class XtalStateUpdate extends UrlFormatter(WithPath(XtalStateBase)) {
                 this._win = window;
             }
         }
-        this._debouncer();
+        if (this._debouncer !== undefined)
+            this._debouncer();
     }
     updateHistory() {
-        let url = this._url;
+        let url = this.url;
         if (url) {
             url = this.adjustUrl(url);
         }
-        if (this._rewrite) {
-            const hist = this._new ? {} : this._queuedHistory.shift();
+        if (this.rewrite) {
+            const hist = this.new ? {} : this._queuedHistory.shift();
             if (hist === null || hist === undefined)
                 return;
-            setState(this.wrap(hist), this._title, url, this._win);
+            setState(this.wrap(hist), this.title, url, this._win);
         }
         else {
-            const hist = this._new ? {} : this._queuedHistory.shift();
+            const hist = this.new ? {} : this._queuedHistory.shift();
             if (hist === null || hist === undefined)
                 return;
             this._disabled = true;
-            pushState(this.wrap(hist), this._title, url, this._win);
+            pushState(this.wrap(hist), this.title, url, this._win);
             this._disabled = false;
         }
         this.de('history', {
@@ -144,4 +84,11 @@ export class XtalStateUpdate extends UrlFormatter(WithPath(XtalStateBase)) {
         }
     }
 }
+XtalStateUpdate.is = 'xtal-state-update';
+XtalStateUpdate.attributeProps = ({ make, rewrite, history, disabled, guid, url, urlSearch, replaceUrlValue, stringifyFn }) => ({
+    bool: [disabled, make, rewrite],
+    obj: [history, stringifyFn],
+    str: [guid, url, urlSearch, replaceUrlValue],
+    reflect: [disabled, make, rewrite, guid, url, urlSearch, replaceUrlValue],
+});
 define(XtalStateUpdate);

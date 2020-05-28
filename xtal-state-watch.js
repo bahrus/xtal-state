@@ -1,6 +1,6 @@
 import { XtalStateBase } from "./xtal-state-base.js";
 import { history_state_update, init } from "./xtal-state-api.js";
-import { define } from "trans-render/define.js";
+import { define } from "xtal-element/xtal-latx.js";
 /**
  * Watch for history.state changes
  * @element xtal-state-watch
@@ -12,17 +12,13 @@ export class XtalStateWatch extends XtalStateBase {
         this._addedEventHandlers = false;
         this._initialEvent = true;
     }
-    static get is() {
-        return "xtal-state-watch";
-    }
     get history() {
         if (this._win === undefined)
             return undefined;
         return this._win.history;
     }
-    onPropsChange() {
-        if (!super.onPropsChange())
-            return false;
+    onPropsChange(name) {
+        super.onPropsChange(name);
         if (!this._addedEventHandlers) {
             this._addedEventHandlers = true;
             if (this._storeKeeper) {
@@ -77,7 +73,7 @@ export class XtalStateWatch extends XtalStateBase {
         }
     }
     notify(isPopstate) {
-        if (this._disabled || !this._conn)
+        if (this._disabled || !this._connected)
             return;
         if (this._initialEvent) {
             this.dataset.initialEvent = "true";
@@ -93,4 +89,5 @@ export class XtalStateWatch extends XtalStateBase {
         this._initialEvent = false;
     }
 }
+XtalStateWatch.is = "xtal-state-watch";
 define(XtalStateWatch);
