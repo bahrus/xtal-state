@@ -9,11 +9,11 @@
   "license": "MIT",
   "dependencies": {
     "trans-render": "0.0.182",
-    "xtal-element": "0.0.159"
+    "xtal-element": "0.0.161"
   },
   "devDependencies": {
     "@webcomponents/webcomponentsjs": "2.4.3",
-    "p-et-alia": "0.0.80",
+    "p-et-alia": "0.0.81",
     "purr-sist": "0.0.66",
     "xtal-test": "0.0.44",
     "es-module-shims": "0.4.6",

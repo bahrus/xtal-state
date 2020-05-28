@@ -9,6 +9,7 @@ export class XtalStateParse extends XtalStateBase {
         this._checkedNull = false;
     }
     onPropsChange(name) {
+        super.onPropsChange(name);
         if (this._disabled || this.value || this.noMatch || !this._connected)
             return;
         if (!this._checkedNull) {

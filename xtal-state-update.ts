@@ -6,6 +6,7 @@ import {define} from 'xtal-element/xtal-latx.js';
 import {AttributeProps} from 'xtal-element/types.d.js';
 import {debounce} from 'xtal-element/debounce.js';
 import {XtalStateUpdateProps} from './types.d.js';
+import {PropAction} from 'xtal-element/types.d.js';
 
 
 /**
@@ -41,7 +42,7 @@ export class XtalStateUpdate extends UrlFormatter(WithPath(XtalStateBase)) imple
      */
     set history(newVal: any) {
         this._queuedHistory.push(newVal);
-        this.onPropsChange('history');
+        if(this._debouncer !== undefined) this._debouncer();
     }
 
     /**
@@ -66,23 +67,23 @@ export class XtalStateUpdate extends UrlFormatter(WithPath(XtalStateBase)) imple
     _init: boolean;
     _queuedHistory: object[] = [];
 
-    onPropsChange(name: string) {
-        super.onPropsChange(name);
-        if (!this.make && !this.rewrite) return false;
-        if(!this._init){
-            this._init = true;
-            if (this._storeKeeper) {
-                this._storeKeeper.getContextWindow().then(win => {
-                  this._win = win;
-                  this.onPropsChange(name);
-                });
-                return;
-            } else {
-                this._win = window;
+    propActions = super.propActions.concat([
+        ({disabled, self} : XtalStateUpdate) =>{
+            if(!self._init){
+                self._init = true;
+                if (self._storeKeeper) {
+                    self._storeKeeper.getContextWindow().then(win => {
+                        self._win = win;
+                        self.onPropsChange('disabled');
+                    });
+                    return;
+                } else {
+                    self._win = window;
+                }
             }
         }
-        if(this._debouncer !== undefined) this._debouncer();
-    }
+    ] as PropAction[]);
+
     
     updateHistory() {
         let url = this.url;

@@ -18,6 +18,23 @@ export class XtalStateUpdate extends UrlFormatter(WithPath(XtalStateBase)) {
          */
         this.title = '';
         this._queuedHistory = [];
+        this.propActions = super.propActions.concat([
+            ({ disabled, self }) => {
+                if (!self._init) {
+                    self._init = true;
+                    if (self._storeKeeper) {
+                        self._storeKeeper.getContextWindow().then(win => {
+                            self._win = win;
+                            self.onPropsChange('disabled');
+                        });
+                        return;
+                    }
+                    else {
+                        self._win = window;
+                    }
+                }
+            }
+        ]);
     }
     get history() {
         if (this._win === undefined)
@@ -29,33 +46,14 @@ export class XtalStateUpdate extends UrlFormatter(WithPath(XtalStateBase)) {
      */
     set history(newVal) {
         this._queuedHistory.push(newVal);
-        this.onPropsChange('history');
+        if (this._debouncer !== undefined)
+            this._debouncer();
     }
     connectedCallback() {
         this._debouncer = debounce(() => {
             this.updateHistory();
         }, 50);
         super.connectedCallback();
-    }
-    onPropsChange(name) {
-        super.onPropsChange(name);
-        if (!this.make && !this.rewrite)
-            return false;
-        if (!this._init) {
-            this._init = true;
-            if (this._storeKeeper) {
-                this._storeKeeper.getContextWindow().then(win => {
-                    this._win = win;
-                    this.onPropsChange(name);
-                });
-                return;
-            }
-            else {
-                this._win = window;
-            }
-        }
-        if (this._debouncer !== undefined)
-            this._debouncer();
     }
     updateHistory() {
         let url = this.url;
