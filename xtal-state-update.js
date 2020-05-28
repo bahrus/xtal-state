@@ -18,7 +18,7 @@ export class XtalStateUpdate extends UrlFormatter(WithPath(XtalStateBase)) {
          */
         this.title = '';
         this._queuedHistory = [];
-        this.propActions = super.propActions.concat([
+        this.propActions = this.propActions.concat([
             ({ disabled, self }) => {
                 if (!self._init) {
                     self._init = true;

@@ -17,7 +17,7 @@ export class XtalStateWatch extends XtalStateBase {
     if (this._win === undefined) return undefined;
     return this._win.history;
   }
-  propActions = super.propActions.concat([
+  propActions = this.propActions.concat([
     ({disabled, self} : XtalStateWatch) =>{
       if (!self._addedEventHandlers) {
         self._addedEventHandlers = true;

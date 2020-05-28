@@ -10,7 +10,7 @@ export class XtalStateWatch extends XtalStateBase {
     constructor() {
         super(...arguments);
         this._addedEventHandlers = false;
-        this.propActions = super.propActions.concat([
+        this.propActions = this.propActions.concat([
             ({ disabled, self }) => {
                 if (!self._addedEventHandlers) {
                     self._addedEventHandlers = true;

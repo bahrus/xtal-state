@@ -67,7 +67,7 @@ export class XtalStateUpdate extends UrlFormatter(WithPath(XtalStateBase)) imple
     _init: boolean;
     _queuedHistory: object[] = [];
 
-    propActions = super.propActions.concat([
+    propActions = this.propActions.concat([
         ({disabled, self} : XtalStateUpdate) =>{
             if(!self._init){
                 self._init = true;
