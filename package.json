@@ -9,7 +9,7 @@
   "license": "MIT",
   "dependencies": {
     "trans-render": "0.0.182",
-    "xtal-element": "0.0.161"
+    "xtal-element": "0.0.162"
   },
   "devDependencies": {
     "@webcomponents/webcomponentsjs": "2.4.3",
