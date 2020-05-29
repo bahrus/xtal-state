@@ -17,12 +17,13 @@ import {PropAction} from 'xtal-element/types.d.js';
  */
 export class XtalStateUpdate extends UrlFormatter(WithPath(XtalStateBase)) implements XtalStateUpdateProps {
     static is = 'xtal-state-update'; 
-    static attributeProps = ({make, rewrite, history, disabled, guid, url, urlSearch, replaceUrlValue, stringifyFn, withPath}: XtalStateUpdate) => ({
-        bool: [disabled, make, rewrite],
-        obj: [history, stringifyFn],
-        str: [guid, url, urlSearch, replaceUrlValue, withPath],
-        reflect: [disabled, make, rewrite, guid, url, urlSearch, replaceUrlValue, withPath],
-    }) as AttributeProps;
+    static attributeProps = ({make, rewrite, history, disabled, guid, url, urlSearch, replaceUrlValue, stringifyFn, withPath}: XtalStateUpdate) =>{
+        const bool = [disabled, make, rewrite];
+        const obj = [history, stringifyFn];
+        const str = [guid, url, urlSearch, replaceUrlValue, withPath];
+        const reflect = [...bool, ...obj, ...str];
+        return {bool, obj, str} as AttributeProps;
+    } 
     /**
      * PushState in history
      */
@@ -85,7 +86,7 @@ export class XtalStateUpdate extends UrlFormatter(WithPath(XtalStateBase)) imple
     ] as PropAction[]);
 
     
-    updateHistory() {
+    async updateHistory() {
         let url = this.url;
         if(url){
             url = this.adjustUrl(url);
@@ -94,13 +95,12 @@ export class XtalStateUpdate extends UrlFormatter(WithPath(XtalStateBase)) imple
         if(this.rewrite){
             const hist = this.new ? {} : this._queuedHistory.shift();
             if(hist === null || hist === undefined) return;
-            setState(this.wrap(hist), this.title !== undefined ? this.title : '', url, this._win);
+            await setState(this.wrap(hist), this.title !== undefined ? this.title : '', url, this._win);
         }else{
-
             const hist = this.new ? {} : this._queuedHistory.shift();
             if(hist === null || hist === undefined) return;
             this._disabled = true;
-            pushState(this.wrap(hist), this.title !== undefined ? this.title : '', url, this._win);
+            await pushState(this.wrap(hist), this.title !== undefined ? this.title : '', url, this._win);
             this._disabled = false;
         }
         this.de('history', {

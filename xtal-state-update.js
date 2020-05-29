@@ -51,7 +51,7 @@ export class XtalStateUpdate extends UrlFormatter(WithPath(XtalStateBase)) {
         }, 50);
         super.connectedCallback();
     }
-    updateHistory() {
+    async updateHistory() {
         let url = this.url;
         if (url) {
             url = this.adjustUrl(url);
@@ -60,14 +60,14 @@ export class XtalStateUpdate extends UrlFormatter(WithPath(XtalStateBase)) {
             const hist = this.new ? {} : this._queuedHistory.shift();
             if (hist === null || hist === undefined)
                 return;
-            setState(this.wrap(hist), this.title !== undefined ? this.title : '', url, this._win);
+            await setState(this.wrap(hist), this.title !== undefined ? this.title : '', url, this._win);
         }
         else {
             const hist = this.new ? {} : this._queuedHistory.shift();
             if (hist === null || hist === undefined)
                 return;
             this._disabled = true;
-            pushState(this.wrap(hist), this.title !== undefined ? this.title : '', url, this._win);
+            await pushState(this.wrap(hist), this.title !== undefined ? this.title : '', url, this._win);
             this._disabled = false;
         }
         this.de('history', {
@@ -79,10 +79,11 @@ export class XtalStateUpdate extends UrlFormatter(WithPath(XtalStateBase)) {
     }
 }
 XtalStateUpdate.is = 'xtal-state-update';
-XtalStateUpdate.attributeProps = ({ make, rewrite, history, disabled, guid, url, urlSearch, replaceUrlValue, stringifyFn, withPath }) => ({
-    bool: [disabled, make, rewrite],
-    obj: [history, stringifyFn],
-    str: [guid, url, urlSearch, replaceUrlValue, withPath],
-    reflect: [disabled, make, rewrite, guid, url, urlSearch, replaceUrlValue, withPath],
-});
+XtalStateUpdate.attributeProps = ({ make, rewrite, history, disabled, guid, url, urlSearch, replaceUrlValue, stringifyFn, withPath }) => {
+    const bool = [disabled, make, rewrite];
+    const obj = [history, stringifyFn];
+    const str = [guid, url, urlSearch, replaceUrlValue, withPath];
+    const reflect = [...bool, ...obj, ...str];
+    return { bool, obj, str };
+};
 define(XtalStateUpdate);

@@ -45,20 +45,23 @@ function de(oldState, win, title) {
     win.dispatchEvent(newEvent);
 }
 export function setState(state, title = '', url = null, win = window) {
-    doState(state, 'replace', title, url, win);
+    return doState(state, 'replace', title, url, win);
 }
 export function pushState(state, title = '', url, win = window) {
-    doState(state, 'push', title, url, win);
+    return doState(state, 'push', title, url, win);
 }
 function doState(newState, verb, title = '', url = null, win = window) {
-    window.requestAnimationFrame(() => {
-        let oldState = win.history.state;
-        const oldStateIsObj = (oldState !== null && typeof oldState === 'object');
-        if (oldStateIsObj)
-            oldState = { ...oldState };
-        const merged = (oldStateIsObj && (typeof (newState) === 'object')) ? mergeDeep(oldState, newState) : newState;
+    return new Promise((resolve, reject) => {
         window.requestAnimationFrame(() => {
-            win.history[verb + 'State'](merged, title, url === null ? win.location.href : url);
+            let oldState = win.history.state;
+            const oldStateIsObj = (oldState !== null && typeof oldState === 'object');
+            if (oldStateIsObj)
+                oldState = { ...oldState };
+            const merged = (oldStateIsObj && (typeof (newState) === 'object')) ? mergeDeep(oldState, newState) : newState;
+            window.requestAnimationFrame(() => {
+                win.history[verb + 'State'](merged, title, url === null ? win.location.href : url);
+                resolve();
+            });
         });
     });
 }

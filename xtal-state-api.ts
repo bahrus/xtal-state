@@ -50,23 +50,26 @@ function de(oldState: any, win: Window, title: string){
 }
 
 export function setState(state: object, title: string = '', url: string | null = null, win: Window = window){
-    doState(state, 'replace', title, url, win);
+    return doState(state, 'replace', title, url, win);
 }
 
 export function pushState(state: object, title: string = '', url: string, win: Window = window){
-    doState(state, 'push', title, url, win);
+    return doState(state, 'push', title, url, win);
 }
 
 function doState(newState: object, verb: string, title: string  = '', url: string | null = null, win: Window = window){
-    window.requestAnimationFrame(() => {
-        
-        let oldState = win.history.state;
-        const oldStateIsObj = (oldState !== null && typeof oldState === 'object');
-        if(oldStateIsObj) oldState = {...oldState};
-        const merged = (oldStateIsObj && (typeof(newState) === 'object')) ? mergeDeep(oldState, newState) : newState;
-        window.requestAnimationFrame(() =>{
-            win.history[verb + 'State'](merged, title, url === null ? win.location.href : url);
-        })
-    });
+    return new Promise((resolve, reject) =>{
+        window.requestAnimationFrame(() => {
+            let oldState = win.history.state;
+            const oldStateIsObj = (oldState !== null && typeof oldState === 'object');
+            if(oldStateIsObj) oldState = {...oldState};
+            const merged = (oldStateIsObj && (typeof(newState) === 'object')) ? mergeDeep(oldState, newState) : newState;
+            window.requestAnimationFrame(() =>{
+                win.history[verb + 'State'](merged, title, url === null ? win.location.href : url);
+                resolve();
+            })
+        });
+    })
+
 }
 

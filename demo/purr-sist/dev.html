@@ -64,7 +64,7 @@
         <!-- Update global history.state object -->
         <xtal-state-update  -history rewrite level=global url-search="(?<store>(.*?))" replace-url-value="?id=$<store>" id=historyUpdater></xtal-state-update>
         <!-- Send new history.state object to object persister -->
-        <p-d on=history-changed prop=newVal val=target.history skip-init></p-d>
+        <p-d on=history-changed prop=newVal val=target.history skip-init log></p-d>
         <!-- Persist history.state to remote store-->   
         <purr-sist-jsonblob write -new -store-id disabled=2></purr-sist-jsonblob>
 
