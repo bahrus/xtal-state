@@ -48,7 +48,7 @@ export class XtalStateUpdate extends UrlFormatter(WithPath(XtalStateBase)) imple
     /**
      * Title to use when calling push/replace state
      */
-    title = '';
+    title;
 
 
     /**
@@ -94,13 +94,13 @@ export class XtalStateUpdate extends UrlFormatter(WithPath(XtalStateBase)) imple
         if(this.rewrite){
             const hist = this.new ? {} : this._queuedHistory.shift();
             if(hist === null || hist === undefined) return;
-            setState(this.wrap(hist), this.title, url, this._win);
+            setState(this.wrap(hist), this.title !== undefined ? this.title : '', url, this._win);
         }else{
 
             const hist = this.new ? {} : this._queuedHistory.shift();
             if(hist === null || hist === undefined) return;
             this._disabled = true;
-            pushState(this.wrap(hist), this.title, url, this._win);
+            pushState(this.wrap(hist), this.title !== undefined ? this.title : '', url, this._win);
             this._disabled = false;
         }
         this.de('history', {

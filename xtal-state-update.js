@@ -13,10 +13,6 @@ import { debounce } from 'xtal-element/debounce.js';
 export class XtalStateUpdate extends UrlFormatter(WithPath(XtalStateBase)) {
     constructor() {
         super(...arguments);
-        /**
-         * Title to use when calling push/replace state
-         */
-        this.title = '';
         this._queuedHistory = [];
         this.propActions = this.propActions.concat([
             ({ disabled, self }) => {
@@ -64,14 +60,14 @@ export class XtalStateUpdate extends UrlFormatter(WithPath(XtalStateBase)) {
             const hist = this.new ? {} : this._queuedHistory.shift();
             if (hist === null || hist === undefined)
                 return;
-            setState(this.wrap(hist), this.title, url, this._win);
+            setState(this.wrap(hist), this.title !== undefined ? this.title : '', url, this._win);
         }
         else {
             const hist = this.new ? {} : this._queuedHistory.shift();
             if (hist === null || hist === undefined)
                 return;
             this._disabled = true;
-            pushState(this.wrap(hist), this.title, url, this._win);
+            pushState(this.wrap(hist), this.title !== undefined ? this.title : '', url, this._win);
             this._disabled = false;
         }
         this.de('history', {
