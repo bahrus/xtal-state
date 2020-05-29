@@ -3,7 +3,7 @@ import { hydrate } from 'trans-render/hydrate.js';
 import { StoreKeeper } from './StoreKeeper.js';
 export class XtalStateBase extends XtallatX(hydrate(HTMLElement)) {
     constructor() {
-        super();
+        super(...arguments);
         this.propActions = [
             ({ guid, self }) => {
                 if (guid !== undefined) {

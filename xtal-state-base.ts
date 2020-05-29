@@ -12,17 +12,14 @@ export class XtalStateBase extends XtallatX(hydrate(HTMLElement)){
 
     _storeKeeper : StoreKeeper | undefined;
 
-    constructor(){
-        super();
-        this.propActions = [
-            ({guid, self} : XtalStateBase) =>{
-                if(guid !== undefined){
-                    self._storeKeeper = new StoreKeeper(guid);
-                }
-            } 
-        ] as PropAction[];
-    }
 
+    propActions = [
+        ({guid, self} : XtalStateBase) =>{
+            if(guid !== undefined){
+                self._storeKeeper = new StoreKeeper(guid);
+            }
+        } 
+    ] as PropAction[];
 
     disconnectedCallback(){
         if(this._storeKeeper) this._storeKeeper.forget();
