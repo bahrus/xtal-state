@@ -79,10 +79,10 @@ export class XtalStateUpdate extends UrlFormatter(WithPath(XtalStateBase)) {
     }
 }
 XtalStateUpdate.is = 'xtal-state-update';
-XtalStateUpdate.attributeProps = ({ make, rewrite, history, disabled, guid, url, urlSearch, replaceUrlValue, stringifyFn }) => ({
+XtalStateUpdate.attributeProps = ({ make, rewrite, history, disabled, guid, url, urlSearch, replaceUrlValue, stringifyFn, withPath }) => ({
     bool: [disabled, make, rewrite],
     obj: [history, stringifyFn],
-    str: [guid, url, urlSearch, replaceUrlValue],
-    reflect: [disabled, make, rewrite, guid, url, urlSearch, replaceUrlValue],
+    str: [guid, url, urlSearch, replaceUrlValue, withPath],
+    reflect: [disabled, make, rewrite, guid, url, urlSearch, replaceUrlValue, withPath],
 });
 define(XtalStateUpdate);

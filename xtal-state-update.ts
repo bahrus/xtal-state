@@ -17,11 +17,11 @@ import {PropAction} from 'xtal-element/types.d.js';
  */
 export class XtalStateUpdate extends UrlFormatter(WithPath(XtalStateBase)) implements XtalStateUpdateProps {
     static is = 'xtal-state-update'; 
-    static attributeProps = ({make, rewrite, history, disabled, guid, url, urlSearch, replaceUrlValue, stringifyFn}: XtalStateUpdate) => ({
+    static attributeProps = ({make, rewrite, history, disabled, guid, url, urlSearch, replaceUrlValue, stringifyFn, withPath}: XtalStateUpdate) => ({
         bool: [disabled, make, rewrite],
         obj: [history, stringifyFn],
-        str: [guid, url, urlSearch, replaceUrlValue],
-        reflect: [disabled, make, rewrite, guid, url, urlSearch, replaceUrlValue],
+        str: [guid, url, urlSearch, replaceUrlValue, withPath],
+        reflect: [disabled, make, rewrite, guid, url, urlSearch, replaceUrlValue, withPath],
     }) as AttributeProps;
     /**
      * PushState in history
