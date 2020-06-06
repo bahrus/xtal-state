@@ -2,8 +2,8 @@ import { XtalStateBase } from './xtal-state-base.js';
 import { pushState, setState } from './xtal-state-api.js';
 import { WithPath } from 'xtal-element/with-path.js';
 import { UrlFormatter } from './url-formatter.js';
-import { define } from 'xtal-element/xtal-latx.js';
 import { debounce } from 'xtal-element/debounce.js';
+import { define } from 'xtal-element/xtal-latx.js';
 /**
  * Web component wrapper around the history api
  * @element xtal-state-update
@@ -67,9 +67,9 @@ let XtalStateUpdate = /** @class */ (() => {
                 const hist = this.new ? {} : this._queuedHistory.shift();
                 if (hist === null || hist === undefined)
                     return;
-                this._disabled = true;
+                this.disabled = true;
                 await pushState(this.wrap(hist), this.title !== undefined ? this.title : '', url, this._win);
-                this._disabled = false;
+                this.disabled = false;
             }
             this.de('history', {
                 value: this._win.history.state
@@ -84,7 +84,7 @@ let XtalStateUpdate = /** @class */ (() => {
         const bool = [disabled, make, rewrite];
         const obj = [history, stringifyFn];
         const str = [guid, url, urlSearch, replaceUrlValue, withPath];
-        const reflect = [...bool, ...obj, ...str];
+        const reflect = [...bool, ...str];
         return { bool, obj, str };
     };
     return XtalStateUpdate;

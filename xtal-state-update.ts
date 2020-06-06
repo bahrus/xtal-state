@@ -2,12 +2,11 @@ import {XtalStateBase} from './xtal-state-base.js';
 import {init, pushState, setState} from './xtal-state-api.js';
 import {WithPath, with_path} from 'xtal-element/with-path.js';
 import {UrlFormatter} from './url-formatter.js';
-import {define} from 'xtal-element/xtal-latx.js';
 import {AttributeProps} from 'xtal-element/types.d.js';
 import {debounce} from 'xtal-element/debounce.js';
 import {XtalStateUpdateProps} from './types.d.js';
 import {PropAction} from 'xtal-element/types.d.js';
-
+import {define } from 'xtal-element/xtal-latx.js';
 
 /**
  * Web component wrapper around the history api
@@ -21,7 +20,7 @@ export class XtalStateUpdate extends UrlFormatter(WithPath(XtalStateBase)) imple
         const bool = [disabled, make, rewrite];
         const obj = [history, stringifyFn];
         const str = [guid, url, urlSearch, replaceUrlValue, withPath];
-        const reflect = [...bool, ...obj, ...str];
+        const reflect = [...bool, ...str];
         return {bool, obj, str} as AttributeProps;
     } 
     /**
@@ -99,9 +98,9 @@ export class XtalStateUpdate extends UrlFormatter(WithPath(XtalStateBase)) imple
         }else{
             const hist = this.new ? {} : this._queuedHistory.shift();
             if(hist === null || hist === undefined) return;
-            this._disabled = true;
+            this.disabled = true;
             await pushState(this.wrap(hist), this.title !== undefined ? this.title : '', url, this._win);
-            this._disabled = false;
+            this.disabled = false;
         }
         this.de('history', {
             value: this._win.history.state
