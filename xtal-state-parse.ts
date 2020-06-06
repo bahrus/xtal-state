@@ -45,7 +45,7 @@ export class XtalStateParse extends XtalStateBase{
     _checkedNull: boolean = false;
     onPropsChange(name: string){
         super.onPropsChange(name);
-        if(this._disabled || this.value || this.noMatch || !this._connected) return;
+        if(this.disabled || this.value || this.noMatch || !this._xlConnected) return;
         if(!this._checkedNull){
             if(window.history.state === null){
                 this.dataset.historyWasNull = 'true';
