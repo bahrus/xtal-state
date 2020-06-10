@@ -3,7 +3,7 @@ import { pushState, setState } from './xtal-state-api.js';
 import { WithPath } from 'xtal-element/with-path.js';
 import { UrlFormatter } from './url-formatter.js';
 import { debounce } from 'xtal-element/debounce.js';
-import { define } from 'xtal-element/xtal-latx.js';
+import { define, de } from 'xtal-element/xtal-latx.js';
 /**
  * Web component wrapper around the history api
  * @element xtal-state-update
@@ -71,7 +71,7 @@ let XtalStateUpdate = /** @class */ (() => {
                 await pushState(this.wrap(hist), this.title !== undefined ? this.title : '', url, this._win);
                 this.disabled = false;
             }
-            this.de('history', {
+            this[de]('history', {
                 value: this._win.history.state
             });
             if (this._queuedHistory.length > 0) {

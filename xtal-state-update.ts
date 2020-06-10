@@ -6,7 +6,7 @@ import {AttributeProps} from 'xtal-element/types.d.js';
 import {debounce} from 'xtal-element/debounce.js';
 import {XtalStateUpdateProps} from './types.d.js';
 import {PropAction} from 'xtal-element/types.d.js';
-import {define } from 'xtal-element/xtal-latx.js';
+import {define, de } from 'xtal-element/xtal-latx.js';
 
 /**
  * Web component wrapper around the history api
@@ -102,7 +102,7 @@ export class XtalStateUpdate extends UrlFormatter(WithPath(XtalStateBase)) imple
             await pushState(this.wrap(hist), this.title !== undefined ? this.title : '', url, this._win);
             this.disabled = false;
         }
-        this.de('history', {
+        this[de]('history', {
             value: this._win.history.state
         });
         if(this._queuedHistory.length > 0){
