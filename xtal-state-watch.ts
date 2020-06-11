@@ -1,6 +1,6 @@
 import { XtalStateBase } from "./xtal-state-base.js";
 import { history_state_update, init } from "./xtal-state-api.js";
-import {define} from "xtal-element/xtal-latx.js";
+import {define, de} from "xtal-element/xtal-latx.js";
 import {PropAction} from 'xtal-element/types.d.js';
 /**
  * Watch for history.state changes
@@ -84,13 +84,13 @@ export class XtalStateWatch extends XtalStateBase {
   }
   _initialEvent = true;
   notify(isPopstate: boolean) {
-    if (this._disabled || !this._connected) return;
+    if (this.disabled || !this._xlConnected) return;
     if(this._initialEvent){
       this.dataset.initialEvent = "true";
     }else{
       delete this.dataset.initialEvent;
     }
-    this.de("history", {
+    this[de]("history", {
       value: this.history.state,
       isInitialEvent: this._initialEvent,
       isPopstate: isPopstate,
