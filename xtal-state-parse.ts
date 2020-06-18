@@ -1,5 +1,5 @@
 import {XtalStateBase} from './xtal-state-base.js';
-import {define} from 'xtal-element/xtal-latx.js';
+import {define, de} from 'xtal-element/xtal-latx.js';
 import {AttributeProps} from 'xtal-element/types.d.js';
 
 
@@ -64,13 +64,13 @@ export class XtalStateParse extends XtalStateBase{
         }
         if(value === null) {
             this.noMatch = true;
-            this.de('no-match-found', {
+            this[de]('no-match-found', {
                 value: true,
             }, true);
             return;
         }else{
             this.value = value;
-            this.de('match-found', {
+            this[de]('match-found', {
                 value: value
             }, true);
         }
