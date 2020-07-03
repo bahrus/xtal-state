@@ -13,7 +13,9 @@ xtal-state-* are a few Web components (and an api) that wrap and extend the powe
 <details>
 <summary>Benefits of history.state</summary>
 
-**NB**  AMP provides numerous components built around a similar basic concept as these components -- namely, amp-bind (which I had heard about before this component was created) uses [history.state](https://amp.dev/documentation/components/amp-bind?referrer=ampproject.org#modifying-history-with-amp.pushstate()) as its "system of record" and all of the binding it provides for components like the datepicker actually stores the values in history.state!  Definitely take a look at AMP for an alternative to these components / api.
+**NB I**  AMP provides numerous components built around a similar basic concept as these components -- namely, amp-bind (which I had heard about before this component was created) uses [history.state](https://amp.dev/documentation/components/amp-bind?referrer=ampproject.org#modifying-history-with-amp.pushstate()) as its "system of record" and all of the binding it provides for components like the datepicker actually stores the values in history.state!  Definitely take a look at AMP for an alternative to these components / api.
+
+**NB II** Some [promising standards proposals](https://github.com/slightlyoff/history_api) seem to address the difficulties raised by this screed.
 
 xtal-state differs from AMP, perhaps, in that it takes the name "history.state" to heart -- xtal-state regards DOM Elements / Custom Elements as independent, thinking beings with internal "memories", capable of spawning events spontaneously.  They can respond to human interaction or directly to events from neighboring elements, and do not require being shielded from direct communication via some abstract state store. So the primary purpose of xtal-state is helping persist user invoked changes as needed, during history navigation (including page refreshes), for starters.  Think about rapid "state" changes, like scrolling a large grid.  Do we really want all such UI state changes to pass through a diffuse state manager, which then has to figure out which other components to update?  
 
