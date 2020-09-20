@@ -39,42 +39,38 @@ const linkValue = ({ disabled, value, noMatch, _xlConnected, self, withUrlPatter
 /**
  * @element xtal-state-parse
  */
-let XtalStateParse = /** @class */ (() => {
-    class XtalStateParse extends XtalStateBase {
-        constructor() {
-            super(...arguments);
-            this._checkedNull = false;
-            this.propActions = [linkValue];
+export class XtalStateParse extends XtalStateBase {
+    constructor() {
+        super(...arguments);
+        this._checkedNull = false;
+        this.propActions = [linkValue];
+    }
+    parseAddressBar(parsePath, urlPattern, winObj) {
+        try {
+            const reg = new RegExp(urlPattern);
+            let thingToParse = this.getObj(parsePath, winObj);
+            const parsed = reg.exec(thingToParse);
+            if (!parsed)
+                return null;
+            return Object.assign({}, parsed['groups']); //weird bug(?) in chrome requires this:  parsed groups is a strange type of primitive object with no methods.
         }
-        parseAddressBar(parsePath, urlPattern, winObj) {
-            try {
-                const reg = new RegExp(urlPattern);
-                let thingToParse = this.getObj(parsePath, winObj);
-                const parsed = reg.exec(thingToParse);
-                if (!parsed)
-                    return null;
-                return Object.assign({}, parsed['groups']); //weird bug(?) in chrome requires this:  parsed groups is a strange type of primitive object with no methods.
-            }
-            catch (err) {
-                return -1;
-            }
-        }
-        getObj(parsePath, winObj) {
-            let thingToParse = winObj;
-            parsePath.split('.').forEach(token => {
-                if (thingToParse)
-                    thingToParse = thingToParse[token];
-            });
-            return thingToParse;
+        catch (err) {
+            return -1;
         }
     }
-    XtalStateParse.is = 'xtal-state-parse';
-    XtalStateParse.attributeProps = ({ disabled, withUrlPattern, parse, parseFn, initHistoryIfNull, guid }) => ({
-        bool: [disabled, initHistoryIfNull],
-        str: [guid, parse, withUrlPattern],
-        obj: [parseFn]
-    });
-    return XtalStateParse;
-})();
-export { XtalStateParse };
+    getObj(parsePath, winObj) {
+        let thingToParse = winObj;
+        parsePath.split('.').forEach(token => {
+            if (thingToParse)
+                thingToParse = thingToParse[token];
+        });
+        return thingToParse;
+    }
+}
+XtalStateParse.is = 'xtal-state-parse';
+XtalStateParse.attributeProps = ({ disabled, withUrlPattern, parse, parseFn, initHistoryIfNull, guid }) => ({
+    bool: [disabled, initHistoryIfNull],
+    str: [guid, parse, withUrlPattern],
+    obj: [parseFn]
+});
 define(XtalStateParse);

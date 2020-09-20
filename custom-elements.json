@@ -1,147 +1,68 @@
 {
-  "version": 2,
+  "version": "experimental",
   "tags": [
     {
       "name": "xtal-state-parse",
-      "jsDoc": "/**\n * @element xtal-state-parse\n */",
+      "path": "./xtal-state-parse.js",
       "attributes": [
         {
           "name": "disabled",
           "description": "Any component that emits events should not do so if it is disabled.\r\nNote that this is not enforced, but the disabled property is made available.\r\nUsers of this mix-in should ensure not to call \"de\" if this property is set to true.",
-          "jsDoc": "/**\r\n         * Any component that emits events should not do so if it is disabled.\r\n         * Note that this is not enforced, but the disabled property is made available.\r\n         * Users of this mix-in should ensure not to call \"de\" if this property is set to true.\r\n         * @attr\r\n         */",
           "type": "boolean"
-        },
-        {
-          "name": "with-url-pattern",
-          "description": "Pattern to match for, using ES2018 named capture groups",
-          "jsDoc": "/**\n     * Pattern to match for, using ES2018 named capture groups\n     * @attr with-url-pattern\n     */",
-          "type": "any"
-        },
-        {
-          "name": "init-history-if-null",
-          "description": "Place parsed object into history.state if history.state is null",
-          "jsDoc": "/**\n     * Place parsed object into history.state if history.state is null\n     * @attr init-history-if-null\n     */",
-          "type": "any"
         }
       ],
       "properties": [
         {
-          "name": "val",
-          "type": "\"set\" | \"remove\""
-        },
-        {
-          "name": "disabled",
-          "description": "Any component that emits events should not do so if it is disabled.\r\nNote that this is not enforced, but the disabled property is made available.\r\nUsers of this mix-in should ensure not to call \"de\" if this property is set to true.",
-          "jsDoc": "/**\r\n         * Any component that emits events should not do so if it is disabled.\r\n         * Note that this is not enforced, but the disabled property is made available.\r\n         * Users of this mix-in should ensure not to call \"de\" if this property is set to true.\r\n         * @attr\r\n         */",
-          "type": "boolean"
-        },
-        {
-          "name": "evCount",
-          "description": "Tracks how many times each event type was called.",
-          "jsDoc": "/**\r\n         * Tracks how many times each event type was called.\r\n         */",
-          "type": "{ [key: string]: number; }"
-        },
-        {
-          "name": "asIs",
-          "type": "\"\" | \"-changed\""
-        },
-        {
           "name": "guid",
-          "jsDoc": "/**\r\n     * \r\n     */",
           "type": "string"
         },
         {
-          "name": "withURLPattern",
-          "description": "Pattern to match for, using ES2018 named capture groups",
-          "jsDoc": "/**\n     * Pattern to match for, using ES2018 named capture groups\n     * @attr with-url-pattern\n     */",
-          "type": "any"
+          "name": "propActions",
+          "type": "{}[]",
+          "default": "[\"linkValue\"]"
         },
         {
-          "name": "parse",
-          "description": "Global string to parse. Example:  location.href",
-          "jsDoc": "/**\n     * Global string to parse. Example:  location.href\n     */",
-          "type": "any"
-        },
-        {
-          "name": "parseFn",
-          "description": "Function to parse address bar.",
-          "jsDoc": "/**\n     * Function to parse address bar.\n     */",
-          "type": "any"
-        },
-        {
-          "name": "initHistoryIfNull",
-          "description": "Place parsed object into history.state if history.state is null",
-          "jsDoc": "/**\n     * Place parsed object into history.state if history.state is null\n     * @attr init-history-if-null\n     */",
-          "type": "any"
-        },
-        {
-          "name": "noMatch",
-          "type": "any"
+          "name": "disabled",
+          "attribute": "disabled",
+          "description": "Any component that emits events should not do so if it is disabled.\r\nNote that this is not enforced, but the disabled property is made available.\r\nUsers of this mix-in should ensure not to call \"de\" if this property is set to true.",
+          "type": "boolean"
         }
-      ],
-      "events": [],
-      "slots": []
+      ]
     },
     {
       "name": "xtal-state-update",
+      "path": "./xtal-state-update.js",
       "description": "Web component wrapper around the history api",
-      "jsDoc": "/**\n * Web component wrapper around the history api\n * @element xtal-state-update\n *\n *\n */",
       "attributes": [
-        {
-          "name": "disabled",
-          "description": "Any component that emits events should not do so if it is disabled.\r\nNote that this is not enforced, but the disabled property is made available.\r\nUsers of this mix-in should ensure not to call \"de\" if this property is set to true.",
-          "jsDoc": "/**\r\n         * Any component that emits events should not do so if it is disabled.\r\n         * Note that this is not enforced, but the disabled property is made available.\r\n         * Users of this mix-in should ensure not to call \"de\" if this property is set to true.\r\n         * @attr\r\n         */",
-          "type": "boolean"
-        },
         {
           "name": "with-path",
           "description": "object inside a new empty object, with key equal to this value.\r\nE.g. if the incoming object is {foo: 'hello', bar: 'world'}\r\nand with-path = 'myPath'\r\nthen the source object which be merged into is:\r\n{myPath: {foo: 'hello', bar: 'world'}}",
-          "jsDoc": "/**\r\n        * object inside a new empty object, with key equal to this value.\r\n        * E.g. if the incoming object is {foo: 'hello', bar: 'world'}\r\n        * and with-path = 'myPath'\r\n        * then the source object which be merged into is:\r\n        * {myPath: {foo: 'hello', bar: 'world'}}\r\n        * @attr with-path\r\n        */",
           "type": "string"
+        },
+        {
+          "name": "disabled",
+          "description": "Any component that emits events should not do so if it is disabled.\r\nNote that this is not enforced, but the disabled property is made available.\r\nUsers of this mix-in should ensure not to call \"de\" if this property is set to true.",
+          "type": "boolean"
         }
       ],
       "properties": [
         {
-          "name": "val",
-          "type": "\"set\" | \"remove\""
-        },
-        {
-          "name": "disabled",
-          "description": "Any component that emits events should not do so if it is disabled.\r\nNote that this is not enforced, but the disabled property is made available.\r\nUsers of this mix-in should ensure not to call \"de\" if this property is set to true.",
-          "jsDoc": "/**\r\n         * Any component that emits events should not do so if it is disabled.\r\n         * Note that this is not enforced, but the disabled property is made available.\r\n         * Users of this mix-in should ensure not to call \"de\" if this property is set to true.\r\n         * @attr\r\n         */",
-          "type": "boolean"
-        },
-        {
-          "name": "evCount",
-          "description": "Tracks how many times each event type was called.",
-          "jsDoc": "/**\r\n         * Tracks how many times each event type was called.\r\n         */",
-          "type": "{ [key: string]: number; }"
-        },
-        {
-          "name": "asIs",
-          "type": "\"\" | \"-changed\""
-        },
-        {
-          "name": "guid",
-          "jsDoc": "/**\r\n     * \r\n     */",
-          "type": "string"
-        },
-        {
-          "name": "withPath",
-          "description": "object inside a new empty object, with key equal to this value.\r\nE.g. if the incoming object is {foo: 'hello', bar: 'world'}\r\nand with-path = 'myPath'\r\nthen the source object which be merged into is:\r\n{myPath: {foo: 'hello', bar: 'world'}}",
-          "jsDoc": "/**\r\n        * object inside a new empty object, with key equal to this value.\r\n        * E.g. if the incoming object is {foo: 'hello', bar: 'world'}\r\n        * and with-path = 'myPath'\r\n        * then the source object which be merged into is:\r\n        * {myPath: {foo: 'hello', bar: 'world'}}\r\n        * @attr with-path\r\n        */",
-          "type": "string"
+          "name": "history",
+          "description": "Window Context History.State Object to push/replace"
         },
         {
           "name": "url",
+          "description": "URL to use when calling push/replace state",
           "type": "string"
         },
         {
           "name": "urlSearch",
+          "description": "Regular expression to search url for.",
           "type": "string"
         },
         {
           "name": "replaceUrlValue",
+          "description": "Replace URL expression, coupled with urlSearch",
           "type": "string"
         },
         {
@@ -149,88 +70,62 @@
           "type": "(t: any) => string"
         },
         {
-          "name": "value",
-          "type": "any"
-        },
-        {
-          "name": "make",
-          "description": "PushState in history",
-          "jsDoc": "/**\n     * PushState in history\n     */",
-          "type": "any"
-        },
-        {
-          "name": "rewrite",
-          "description": "Replace State into history",
-          "jsDoc": "/**\n     * Replace State into history\n     */",
-          "type": "any"
-        },
-        {
-          "name": "history",
-          "description": "Window Context History.State Object to push/replace",
-          "jsDoc": "/**\n     * Window Context History.State Object to push/replace\n     */",
-          "type": "any"
-        },
-        {
-          "name": "title",
-          "description": "Title to use when calling push/replace state",
-          "jsDoc": "/**\n     * Title to use when calling push/replace state\n     */",
+          "name": "withPath",
+          "attribute": "with-path",
+          "description": "object inside a new empty object, with key equal to this value.\r\nE.g. if the incoming object is {foo: 'hello', bar: 'world'}\r\nand with-path = 'myPath'\r\nthen the source object which be merged into is:\r\n{myPath: {foo: 'hello', bar: 'world'}}",
           "type": "string"
         },
         {
-          "name": "new",
-          "description": "Initite history to empty object",
-          "jsDoc": "/**\n     * Initite history to empty object\n     */",
-          "type": "any"
+          "name": "guid",
+          "type": "string"
+        },
+        {
+          "name": "propActions",
+          "default": "[null]"
+        },
+        {
+          "name": "disabled",
+          "attribute": "disabled",
+          "description": "Any component that emits events should not do so if it is disabled.\r\nNote that this is not enforced, but the disabled property is made available.\r\nUsers of this mix-in should ensure not to call \"de\" if this property is set to true.",
+          "type": "boolean"
         }
-      ],
-      "events": [],
-      "slots": []
+      ]
     },
     {
       "name": "xtal-state-watch",
+      "path": "./xtal-state-watch.js",
       "description": "Watch for history.state changes",
-      "jsDoc": "/**\n * Watch for history.state changes\n * @element xtal-state-watch\n * @event history-changed\n */",
       "attributes": [
         {
           "name": "disabled",
           "description": "Any component that emits events should not do so if it is disabled.\r\nNote that this is not enforced, but the disabled property is made available.\r\nUsers of this mix-in should ensure not to call \"de\" if this property is set to true.",
-          "jsDoc": "/**\r\n         * Any component that emits events should not do so if it is disabled.\r\n         * Note that this is not enforced, but the disabled property is made available.\r\n         * Users of this mix-in should ensure not to call \"de\" if this property is set to true.\r\n         * @attr\r\n         */",
           "type": "boolean"
         }
       ],
       "properties": [
         {
-          "name": "val",
-          "type": "\"set\" | \"remove\""
-        },
-        {
-          "name": "disabled",
-          "description": "Any component that emits events should not do so if it is disabled.\r\nNote that this is not enforced, but the disabled property is made available.\r\nUsers of this mix-in should ensure not to call \"de\" if this property is set to true.",
-          "jsDoc": "/**\r\n         * Any component that emits events should not do so if it is disabled.\r\n         * Note that this is not enforced, but the disabled property is made available.\r\n         * Users of this mix-in should ensure not to call \"de\" if this property is set to true.\r\n         * @attr\r\n         */",
-          "type": "boolean"
-        },
-        {
-          "name": "evCount",
-          "description": "Tracks how many times each event type was called.",
-          "jsDoc": "/**\r\n         * Tracks how many times each event type was called.\r\n         */",
-          "type": "{ [key: string]: number; }"
-        },
-        {
-          "name": "asIs",
-          "type": "\"\" | \"-changed\""
+          "name": "history"
         },
         {
           "name": "guid",
-          "jsDoc": "/**\r\n     * \r\n     */",
           "type": "string"
+        },
+        {
+          "name": "propActions",
+          "default": "[null]"
+        },
+        {
+          "name": "disabled",
+          "attribute": "disabled",
+          "description": "Any component that emits events should not do so if it is disabled.\r\nNote that this is not enforced, but the disabled property is made available.\r\nUsers of this mix-in should ensure not to call \"de\" if this property is set to true.",
+          "type": "boolean"
         }
       ],
       "events": [
         {
           "name": "history-changed"
         }
-      ],
-      "slots": []
+      ]
     }
   ]
 }
