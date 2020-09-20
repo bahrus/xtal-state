@@ -1,6 +1,21 @@
 import { XtalStateBase } from "./xtal-state-base.js";
 import { history_state_update, init } from "./xtal-state-api.js";
 import { define, de } from "xtal-element/xtal-latx.js";
+export const addEventHandlers = ({ self }) => {
+    if (!self._addedEventHandlers) {
+        self._addedEventHandlers = true;
+        if (self._storeKeeper) {
+            self._storeKeeper.getContextWindow().then(win => {
+                self._win = win;
+                self.addEventHandlers(win);
+            });
+        }
+        else {
+            self._win = window;
+            self.addEventHandlers(window);
+        }
+    }
+};
 /**
  * Watch for history.state changes
  * @element xtal-state-watch
@@ -11,21 +26,7 @@ export class XtalStateWatch extends XtalStateBase {
         super(...arguments);
         this._addedEventHandlers = false;
         this.propActions = this.propActions.concat([
-            ({ disabled, self }) => {
-                if (!self._addedEventHandlers) {
-                    self._addedEventHandlers = true;
-                    if (self._storeKeeper) {
-                        self._storeKeeper.getContextWindow().then(win => {
-                            self._win = win;
-                            self.addEventHandlers(win);
-                        });
-                    }
-                    else {
-                        self._win = window;
-                        self.addEventHandlers(window);
-                    }
-                }
-            }
+            addEventHandlers
         ]);
         this._initialEvent = true;
     }

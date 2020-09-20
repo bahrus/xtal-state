@@ -2,6 +2,22 @@ import { XtalStateBase } from "./xtal-state-base.js";
 import { history_state_update, init } from "./xtal-state-api.js";
 import {define, de} from "xtal-element/xtal-latx.js";
 import {PropAction} from 'xtal-element/types.d.js';
+
+export const addEventHandlers = ({self}: XtalStateWatch) => {
+  if (!self._addedEventHandlers) {
+    self._addedEventHandlers = true;
+    if (self._storeKeeper) {
+      self._storeKeeper.getContextWindow().then(win => {
+        self._win = win;
+        self.addEventHandlers(win);
+      });
+    } else {
+      self._win = window;
+      self.addEventHandlers(window);
+    }
+  }
+}
+
 /**
  * Watch for history.state changes
  * @element xtal-state-watch
@@ -21,21 +37,8 @@ export class XtalStateWatch extends XtalStateBase {
     return this._win.history;
   }
   propActions = this.propActions.concat([
-    ({disabled, self} : XtalStateWatch) =>{
-      if (!self._addedEventHandlers) {
-        self._addedEventHandlers = true;
-        if (self._storeKeeper) {
-          self._storeKeeper.getContextWindow().then(win => {
-            self._win = win;
-            self.addEventHandlers(win);
-          });
-        } else {
-          self._win = window;
-          self.addEventHandlers(window);
-        }
-      }
-    }
-] as PropAction[]);
+    addEventHandlers
+  ] as PropAction[]);
   onPropsChange(name: string) {
     super.onPropsChange(name);
 

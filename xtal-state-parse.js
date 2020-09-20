@@ -1,24 +1,24 @@
 import { XtalStateBase } from './xtal-state-base.js';
 import { define, de } from 'xtal-element/xtal-latx.js';
-const linkValue = ({ disabled, value, noMatch, _xlConnected, self, withUrlPattern, initHistoryIfNull }) => {
-    //value only gets set once
-    if (disabled || value !== undefined || noMatch || !_xlConnected)
-        return;
+const linkCheckedNull = ({ self, disabled }) => {
     if (!self._checkedNull) {
         if (window.history.state === null) {
             self.dataset.historyWasNull = 'true';
         }
         self._checkedNull = true;
     }
+};
+const linkValue = ({ disabled, value, noMatch, _xlConnected, self, withUrlPattern, initHistoryIfNull, parseFn }) => {
+    //value only gets set once
+    if (disabled || value !== undefined || noMatch || !_xlConnected || (withUrlPattern === undefined && parseFn === undefined))
+        return;
     let val = null;
-    if (withUrlPattern !== undefined) {
+    if (parseFn !== undefined) {
+        const prseString = self.getObj(self.parse, window);
+        val = self.parseFn(prseString, self);
+    }
+    else {
         val = self.parseAddressBar(self.parse, withUrlPattern, window);
-        if (val === -1) {
-            if (!self.parseFn)
-                return;
-            const prseString = self.getObj(self.parse, window);
-            val = self.parseFn(prseString, self);
-        }
     }
     if (val === null) {
         self.noMatch = true;
@@ -44,7 +44,7 @@ export class XtalStateParse extends XtalStateBase {
     constructor() {
         super(...arguments);
         this._checkedNull = false;
-        this.propActions = [linkValue];
+        this.propActions = [linkCheckedNull, linkValue];
     }
     parseAddressBar(parsePath, urlPattern, winObj) {
         try {
@@ -72,9 +72,10 @@ export class XtalStateParse extends XtalStateBase {
  * @private
  */
 XtalStateParse.is = 'xtal-state-parse';
-XtalStateParse.attributeProps = ({ withUrlPattern, parse, parseFn, initHistoryIfNull, guid }) => ({
+XtalStateParse.attributeProps = ({ withUrlPattern, parse, parseFn, initHistoryIfNull, guid, value }) => ({
     bool: [initHistoryIfNull],
     str: [guid, parse, withUrlPattern],
-    obj: [parseFn]
+    obj: [parseFn, value],
+    notify: [value]
 });
 define(XtalStateParse);

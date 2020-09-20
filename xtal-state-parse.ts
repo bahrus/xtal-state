@@ -2,23 +2,24 @@ import {XtalStateBase} from './xtal-state-base.js';
 import {define, de} from 'xtal-element/xtal-latx.js';
 import {AttributeProps} from 'xtal-element/types.d.js';
 
-const linkValue = ({disabled, value, noMatch, _xlConnected, self, withUrlPattern, initHistoryIfNull}: XtalStateParse) => {
-    //value only gets set once
-    if(disabled || value !== undefined || noMatch || !_xlConnected) return;
+const linkCheckedNull = ({self, disabled}: XtalStateParse) => {
     if(!self._checkedNull){
         if(window.history.state === null){
             self.dataset.historyWasNull = 'true';
         }
         self._checkedNull = true;
     }
+}
+
+const linkValue = ({disabled, value, noMatch, _xlConnected, self, withUrlPattern, initHistoryIfNull, parseFn}: XtalStateParse) => {
+    //value only gets set once
+    if(disabled || value !== undefined || noMatch || !_xlConnected || (withUrlPattern === undefined && parseFn === undefined)) return;
     let val: any = null;
-    if(withUrlPattern !== undefined){
+    if(parseFn !== undefined){
+        const prseString = self.getObj(self.parse, window);
+        val = self.parseFn(prseString, self);
+    }else{
         val = self.parseAddressBar(self.parse, withUrlPattern, window);
-        if(val === -1){
-            if(!self.parseFn) return;
-            const prseString = self.getObj(self.parse, window);
-            val = self.parseFn(prseString, self);
-        }
     }
     if(val === null) {
         self.noMatch = true;
@@ -46,10 +47,11 @@ export class XtalStateParse extends XtalStateBase{
      */
     static is = 'xtal-state-parse';
 
-    static attributeProps = ({withUrlPattern, parse, parseFn, initHistoryIfNull, guid}: XtalStateParse) => ({
+    static attributeProps = ({withUrlPattern, parse, parseFn, initHistoryIfNull, guid, value}: XtalStateParse) => ({
         bool: [initHistoryIfNull],
         str: [guid, parse, withUrlPattern],
-        obj: [parseFn]
+        obj: [parseFn, value],
+        notify: [value]
     }) as AttributeProps;
 
     /**
@@ -80,7 +82,7 @@ export class XtalStateParse extends XtalStateBase{
 
     _checkedNull: boolean = false;
 
-    propActions = [linkValue];
+    propActions = [linkCheckedNull, linkValue];
 
     parseAddressBar(parsePath: string, urlPattern: string, winObj: Window){
         try{
