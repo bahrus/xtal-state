@@ -25,6 +25,6 @@
   "scripts": {
     "test": "node test/test-all.js",
     "serve": "node node_modules/xtal-test/serve.js",
-    "doc": "wca analyze xtal-*.js --outFile custom-elements.json"
+    "doc": "wca analyze xtal-state-example0.js --outFile custom-elements.json"
   }
 }

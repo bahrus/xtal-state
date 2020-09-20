@@ -9,6 +9,9 @@ import {PropAction} from 'xtal-element/types.d.js';
  */
 export class XtalStateWatch extends XtalStateBase {
 
+  /**
+   * @private
+   */
   static is = "xtal-state-watch";
   
   _addedEventHandlers = false;

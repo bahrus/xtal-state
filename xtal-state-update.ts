@@ -15,7 +15,14 @@ import {define, de } from 'xtal-element/xtal-latx.js';
  *
  */
 export class XtalStateUpdate extends UrlFormatter(WithPath(XtalStateBase)) implements XtalStateUpdateProps {
+    /**
+     * @private
+     */
     static is = 'xtal-state-update'; 
+    /**
+     * 
+     * @private
+     */
     static attributeProps = ({make, rewrite, history, disabled, guid, url, urlSearch, replaceUrlValue, stringifyFn, withPath}: XtalStateUpdate) =>{
         const bool = [disabled, make, rewrite];
         const obj = [history, stringifyFn];

@@ -3,8 +3,20 @@
   "tags": [
     {
       "name": "xtal-state-parse",
-      "path": "./xtal-state-parse.js",
+      "path": "./xtal-state-example0.js",
       "attributes": [
+        {
+          "name": "with-url-pattern",
+          "description": "Pattern to match for, using ES2018 named capture groups",
+          "type": "string",
+          "default": "\"\""
+        },
+        {
+          "name": "init-history-if-null",
+          "description": "Place parsed object into history.state if history.state is null",
+          "type": "boolean",
+          "default": "false"
+        },
         {
           "name": "disabled",
           "description": "Any component that emits events should not do so if it is disabled.\r\nNote that this is not enforced, but the disabled property is made available.\r\nUsers of this mix-in should ensure not to call \"de\" if this property is set to true.",
@@ -13,12 +25,49 @@
       ],
       "properties": [
         {
+          "name": "withUrlPattern",
+          "attribute": "with-url-pattern",
+          "description": "Pattern to match for, using ES2018 named capture groups",
+          "type": "string",
+          "default": "\"\""
+        },
+        {
+          "name": "parse",
+          "description": "Global string to parse. Example:  location.href",
+          "type": "string",
+          "default": "\"\""
+        },
+        {
+          "name": "parseFn",
+          "description": "Function to parse address bar."
+        },
+        {
+          "name": "initHistoryIfNull",
+          "attribute": "init-history-if-null",
+          "description": "Place parsed object into history.state if history.state is null",
+          "type": "boolean",
+          "default": "false"
+        },
+        {
+          "name": "value"
+        },
+        {
+          "name": "noMatch",
+          "type": "boolean"
+        },
+        {
           "name": "guid",
-          "type": "string"
+          "type": "string",
+          "default": "\"\""
+        },
+        {
+          "name": "attributeProps",
+          "type": "({ withUrlPattern, parse, parseFn, initHistoryIfNull, guid }: XtalStateParse) => AttributeProps",
+          "default": "\"({withUrlPattern, parse, parseFn, initHistoryIfNull, guid}: XtalStateParse) => ({\\r\\n        bool: [initHistoryIfNull],\\r\\n        str: [guid, parse, withUrlPattern],\\r\\n        obj: [parseFn]\\r\\n    }) as AttributeProps\""
         },
         {
           "name": "propActions",
-          "type": "{}[]",
+          "type": "(({ disabled, value, noMatch, _xlConnected, self, withUrlPattern, initHistoryIfNull }: XtalStateParse) => void)[]",
           "default": "[\"linkValue\"]"
         },
         {
@@ -27,12 +76,112 @@
           "description": "Any component that emits events should not do so if it is disabled.\r\nNote that this is not enforced, but the disabled property is made available.\r\nUsers of this mix-in should ensure not to call \"de\" if this property is set to true.",
           "type": "boolean"
         }
+      ],
+      "events": [
+        {
+          "name": "match-found"
+        },
+        {
+          "name": "match-not-found"
+        }
       ]
     },
     {
       "name": "xtal-state-update",
-      "path": "./xtal-state-update.js",
-      "description": "Web component wrapper around the history api",
+      "path": "./xtal-state-example0.js",
+      "attributes": [
+        {
+          "name": "with-path",
+          "description": "object inside a new empty object, with key equal to this value.\r\nE.g. if the incoming object is {foo: 'hello', bar: 'world'}\r\nand with-path = 'myPath'\r\nthen the source object which be merged into is:\r\n{myPath: {foo: 'hello', bar: 'world'}}",
+          "type": "string",
+          "default": "\"\""
+        },
+        {
+          "name": "disabled",
+          "description": "Any component that emits events should not do so if it is disabled.\r\nNote that this is not enforced, but the disabled property is made available.\r\nUsers of this mix-in should ensure not to call \"de\" if this property is set to true.",
+          "type": "boolean"
+        }
+      ],
+      "properties": [
+        {
+          "name": "make",
+          "description": "PushState in history",
+          "type": "boolean",
+          "default": "false"
+        },
+        {
+          "name": "rewrite",
+          "description": "Replace State into history",
+          "type": "boolean",
+          "default": "false"
+        },
+        {
+          "name": "history",
+          "description": "Window Context History.State Object to push/replace"
+        },
+        {
+          "name": "title",
+          "description": "Title to use when calling push/replace state"
+        },
+        {
+          "name": "new",
+          "description": "Initiate history to empty object",
+          "type": "boolean"
+        },
+        {
+          "name": "url",
+          "description": "URL to use when calling push/replace state",
+          "type": "string",
+          "default": "\"\""
+        },
+        {
+          "name": "urlSearch",
+          "description": "Regular expression to search url for.",
+          "type": "string",
+          "default": "\"\""
+        },
+        {
+          "name": "replaceUrlValue",
+          "description": "Replace URL expression, coupled with urlSearch",
+          "type": "string",
+          "default": "\"\""
+        },
+        {
+          "name": "stringifyFn"
+        },
+        {
+          "name": "withPath",
+          "attribute": "with-path",
+          "description": "object inside a new empty object, with key equal to this value.\r\nE.g. if the incoming object is {foo: 'hello', bar: 'world'}\r\nand with-path = 'myPath'\r\nthen the source object which be merged into is:\r\n{myPath: {foo: 'hello', bar: 'world'}}",
+          "type": "string",
+          "default": "\"\""
+        },
+        {
+          "name": "guid",
+          "type": "string",
+          "default": "\"\""
+        },
+        {
+          "name": "propActions",
+          "default": "\"this.propActions.concat([\\r\\n        ({disabled, self} : XtalStateUpdate) =>{\\r\\n            if(!self._init){\\r\\n                self._init = true;\\r\\n                if (self._storeKeeper) {\\r\\n                    self._storeKeeper.getContextWindow().then(win => {\\r\\n                        self._win = win;\\r\\n                        self.onPropsChange('disabled');\\r\\n                    });\\r\\n                    return;\\r\\n                } else {\\r\\n                    self._win = window;\\r\\n                }\\r\\n            }\\r\\n        }\\r\\n    ] as PropAction[])\""
+        },
+        {
+          "name": "disabled",
+          "attribute": "disabled",
+          "description": "Any component that emits events should not do so if it is disabled.\r\nNote that this is not enforced, but the disabled property is made available.\r\nUsers of this mix-in should ensure not to call \"de\" if this property is set to true.",
+          "type": "boolean"
+        }
+      ],
+      "events": [
+        {
+          "name": "history",
+          "description": "changed Fires after this component updates history."
+        }
+      ]
+    },
+    {
+      "name": "xtal-state-watch",
+      "path": "./xtal-state-example0.js",
       "attributes": [
         {
           "name": "with-path",
@@ -47,8 +196,27 @@
       ],
       "properties": [
         {
+          "name": "make",
+          "description": "PushState in history",
+          "type": "boolean"
+        },
+        {
+          "name": "rewrite",
+          "description": "Replace State into history",
+          "type": "boolean"
+        },
+        {
           "name": "history",
           "description": "Window Context History.State Object to push/replace"
+        },
+        {
+          "name": "title",
+          "description": "Title to use when calling push/replace state"
+        },
+        {
+          "name": "new",
+          "description": "Initiate history to empty object",
+          "type": "boolean"
         },
         {
           "name": "url",
@@ -77,42 +245,12 @@
         },
         {
           "name": "guid",
-          "type": "string"
+          "type": "string",
+          "default": "\"\""
         },
         {
           "name": "propActions",
-          "default": "[null]"
-        },
-        {
-          "name": "disabled",
-          "attribute": "disabled",
-          "description": "Any component that emits events should not do so if it is disabled.\r\nNote that this is not enforced, but the disabled property is made available.\r\nUsers of this mix-in should ensure not to call \"de\" if this property is set to true.",
-          "type": "boolean"
-        }
-      ]
-    },
-    {
-      "name": "xtal-state-watch",
-      "path": "./xtal-state-watch.js",
-      "description": "Watch for history.state changes",
-      "attributes": [
-        {
-          "name": "disabled",
-          "description": "Any component that emits events should not do so if it is disabled.\r\nNote that this is not enforced, but the disabled property is made available.\r\nUsers of this mix-in should ensure not to call \"de\" if this property is set to true.",
-          "type": "boolean"
-        }
-      ],
-      "properties": [
-        {
-          "name": "history"
-        },
-        {
-          "name": "guid",
-          "type": "string"
-        },
-        {
-          "name": "propActions",
-          "default": "[null]"
+          "default": "\"this.propActions.concat([\\r\\n        ({disabled, self} : XtalStateUpdate) =>{\\r\\n            if(!self._init){\\r\\n                self._init = true;\\r\\n                if (self._storeKeeper) {\\r\\n                    self._storeKeeper.getContextWindow().then(win => {\\r\\n                        self._win = win;\\r\\n                        self.onPropsChange('disabled');\\r\\n                    });\\r\\n                    return;\\r\\n                } else {\\r\\n                    self._win = window;\\r\\n                }\\r\\n            }\\r\\n        }\\r\\n    ] as PropAction[])\""
         },
         {
           "name": "disabled",

@@ -78,7 +78,14 @@ export class XtalStateUpdate extends UrlFormatter(WithPath(XtalStateBase)) {
         }
     }
 }
+/**
+ * @private
+ */
 XtalStateUpdate.is = 'xtal-state-update';
+/**
+ *
+ * @private
+ */
 XtalStateUpdate.attributeProps = ({ make, rewrite, history, disabled, guid, url, urlSearch, replaceUrlValue, stringifyFn, withPath }) => {
     const bool = [disabled, make, rewrite];
     const obj = [history, stringifyFn];

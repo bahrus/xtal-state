@@ -93,5 +93,8 @@ export class XtalStateWatch extends XtalStateBase {
         this._initialEvent = false;
     }
 }
+/**
+ * @private
+ */
 XtalStateWatch.is = "xtal-state-watch";
 define(XtalStateWatch);

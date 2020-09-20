@@ -38,6 +38,7 @@ const linkValue = ({ disabled, value, noMatch, _xlConnected, self, withUrlPatter
 };
 /**
  * @element xtal-state-parse
+ * @event
  */
 export class XtalStateParse extends XtalStateBase {
     constructor() {
@@ -67,9 +68,12 @@ export class XtalStateParse extends XtalStateBase {
         return thingToParse;
     }
 }
+/**
+ * @private
+ */
 XtalStateParse.is = 'xtal-state-parse';
-XtalStateParse.attributeProps = ({ disabled, withUrlPattern, parse, parseFn, initHistoryIfNull, guid }) => ({
-    bool: [disabled, initHistoryIfNull],
+XtalStateParse.attributeProps = ({ withUrlPattern, parse, parseFn, initHistoryIfNull, guid }) => ({
+    bool: [initHistoryIfNull],
     str: [guid, parse, withUrlPattern],
     obj: [parseFn]
 });

@@ -37,13 +37,17 @@ const linkValue = ({disabled, value, noMatch, _xlConnected, self, withUrlPattern
 
 /**
  * @element xtal-state-parse
+ * @event 
  */
 export class XtalStateParse extends XtalStateBase{
 
+    /**
+     * @private
+     */
     static is = 'xtal-state-parse';
 
-    static attributeProps = ({disabled, withUrlPattern, parse, parseFn, initHistoryIfNull, guid}: XtalStateParse) => ({
-        bool: [disabled, initHistoryIfNull],
+    static attributeProps = ({withUrlPattern, parse, parseFn, initHistoryIfNull, guid}: XtalStateParse) => ({
+        bool: [initHistoryIfNull],
         str: [guid, parse, withUrlPattern],
         obj: [parseFn]
     }) as AttributeProps;
