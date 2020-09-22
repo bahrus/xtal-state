@@ -235,14 +235,19 @@ Custom element "xtal-state-watch" watches for all history state changes.  When h
 
 ## Transcribing state from the address bar
 
-### Parsing
+### Parsing (Breaking changes, WIP)
 
 xtal-state-parse is another web component that helps with parsing the address bar url and, often, populating history.state object when the page loads. 
 
-There are two distinctly different scenarios for how this can work.  For now xtal-state-parse (at least one instance thereof) assumes you are adopting one or the other scenario:
+There are three distinctly different scenarios for how this can work.  For now xtal-state-parse (at least one instance thereof) assumes you are adopting one of these three scenarios:
 
-1.  Routing 101 Scenario:  The critical pieces of information that need to go into history.state are all encoded in the address bar.
-2.  Git in the browser scenario:  The address bar simply contains an id somewhere, which we need, but that id doesn't need to go into history.state.  Rather, the id is used to query some remote data store, and *that* object is what is to go into history.state.
+1.  SPA Routing 101 Scenario:  A handful (at most) of critical pieces (string, number primitives) of information that need to go into history.state are all encoded in the address bar, to the left of the hash fragment (#).
+2.  Local git in the browser scenario:  In addition to 1., a complex "ui state" is needed for sharing / bookmarking, that encodes key user navigations, including tree like manipulations of cascading menu selections, filter hierarchies, scrolling, etc, best represented by a JSON-serializable object.
+3.  Remote git in the browser:  Extension of 2., but compatible with the sharing button (Chrome / Android) -- The address bar simply contains an id somewhere, which we need, but that id doesn't need to go into history.state.  Rather, the id is used to query some remote data store, and *that* object is what is to go into history.state.
+
+Scenario 3 is a rather drastic departure from scenarios 1 and 2, and poses performance challenges (requiring either a separate fetch call before the desired state can be established, or embedding the state as part of html payload, which can complicate caching strategies).  It is considerably more complex.
+
+Recognizing the waning days of IE/Edge, with their hash fragment length limitations, and the potential for being able to transition to a [promising related standard](https://github.com/slightlyoff/history_api#ui-state-fragments), option 2 now seems to be an attainable middle ground that could keep option 3 at bay.
 
 In the Routing 101 scenario, xtal-state-parse will initialize history.state, only if history.state starts out null.  
 
