@@ -25,9 +25,6 @@ export class XtalStateWatch extends XtalStateBase {
     constructor() {
         super(...arguments);
         this._addedEventHandlers = false;
-        this.propActions = this.propActions.concat([
-            addEventHandlers
-        ]);
         this._initialEvent = true;
     }
     get history() {
@@ -35,14 +32,10 @@ export class XtalStateWatch extends XtalStateBase {
             return undefined;
         return this._win.history;
     }
-    onPropsChange(name) {
-        super.onPropsChange(name);
-    }
     stateChangeHandler(e) {
         const detail = e.detail;
         let isPopstate = false;
         if (detail.initVal) {
-            //win.__xtalStateInfo.hasStarted;
             this.dataset.historyInit = "true";
             this.dataset.popstate = "true";
             isPopstate = true;
@@ -66,6 +59,10 @@ export class XtalStateWatch extends XtalStateBase {
         if (win.history.state !== null) {
             this.notify(false);
         }
+    }
+    connectedCallback() {
+        super.connectedCallback();
+        addEventHandlers(this);
     }
     disconnectedCallback() {
         if (this._win) {

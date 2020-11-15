@@ -49,7 +49,7 @@ One of the goals of xtal-state is that it be scalable (think [Scala](https://www
 <summary>Object-centric routing</summary>
 
 At the simplest level, it can provide part of a routing solution (but a view selector component, 
-such as [if-diff](https://www.webcomponents.org/element/if-diff) is needed, as well as a routing "link" component for a full routing implementation).  But unlike typical routing solutions, perhaps, xtal-state* views the history.state object as the focal point, and the address bar as a subservient recorder of the history.state object.
+such as [if-diff](https://www.webcomponents.org/element/if-diff) is needed, as well as a routing ["link" component](https://github.com/bahrus/navigate-trait) for a full routing implementation).  But unlike typical routing solutions, perhaps, xtal-state* views the history.state object as the focal point, and the address bar as a subservient recorder of the history.state object.
 
 At the other extreme, consider the following two problem statements.
 
